@@ -1,0 +1,17 @@
+
+model Congregation {
+  id         Int      @id @default(autoincrement())
+  fullName   String   @map("full_name") @db.VarChar(255)
+  nik        String?  @unique @db.VarChar(50)
+  address    String?  @db.Text
+  phone      String?  @db.VarChar(20)
+  gender     Gender?
+  birthDate  DateTime? @map("birth_date") @db.Date
+  isMustahik Boolean  @default(false) @map("is_mustahik")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  mustahik Mustahik?
+
+  @@map("congregations")
+}
