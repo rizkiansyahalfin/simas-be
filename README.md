@@ -3,11 +3,17 @@ Sistem Informasi Manajemen Masjid (Backend)
 
 
 ## Keterangan
-### Inventory:
-Logic untuk inventories dan loans
-### Finance: 
-Logic untuk zis dan cash transaction
-### Donations
-Berkaitan dengan mustahik dan distribution
+### NEW RBAC Middleware
+Validasi role per endpoint
 
-## Untuk penjelasan lebih lanjut bisa cek pdf di grup atau tanya langsung
+> Contoh Penggunaan
+>
+>>router.post(
+>>"/articles",
+>>authMiddleware,
+>>rbacMiddleware("superadmin", "admin_kegiatan"),
+>>ArticleController.create
+>>)
+
+### NEW Auth Login endpoint
+Basic Login endpoint
