@@ -2,12 +2,6 @@
 Sistem Informasi Manajemen Masjid (Backend)
 
 
-## Keterangan
-### Inventory:
-Logic untuk inventories dan loans
-### Finance: 
-Logic untuk zis dan cash transaction
-### Donations
-Berkaitan dengan mustahik dan distribution
-
-## Untuk penjelasan lebih lanjut bisa cek pdf di grup atau tanya langsung
+## Branch development
+### Semua update sistem dan feature akan di merge ke sini
+### Untuk testing dan Pull branch bisa di ambil dari branch ini
