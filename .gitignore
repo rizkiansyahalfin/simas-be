@@ -2,5 +2,5 @@
 .env
 
 node_modules
-/generated/prisma
+generated/
 package-lock.json
