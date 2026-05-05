@@ -1,0 +1,16 @@
+model CashTransaction {
+  id              Int       @id @default(autoincrement())
+  type            TransactionType
+  amount          Decimal   @db.Decimal(15, 2)
+  category        String    @db.VarChar(100)
+  description     String?   @db.Text
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  createdBy       Int       @map("created_by")
+  deletedAt       DateTime? @map("deleted_at") // Soft Delete
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  creator User @relation(fields: [createdBy], references: [id])
+
+  @@map("cash_transactions")
+}
