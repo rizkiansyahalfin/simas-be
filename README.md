@@ -2,29 +2,18 @@
 
 Sistem Informasi Manajemen Masjid (Backend)
 
-## Branch development
+# Keterangan
 
-### Semua update sistem dan feature akan di merge ke sini
+## NEW Users GET/POST/PUT/PATCH endpoint
 
-### Untuk testing dan Pull branch bisa di ambil dari branch ini
+Fitus khusus super admin untuk menambah, mengubah, dan mengaktif/nonaktifkan users
 
-## Keterangan:
+## NEW Finance Summary
 
-### feat/be-auth-login-rbac :
+Ringkasan saldo masjid, menckup zis transaction, cash transaction, dan pembagian data perbulan
 
-#### NEW RBAC Middleware
+### Minor changes/updates
 
-Validasi role per endpoint
-
-> Contoh Penggunaan
->
-> > router.post(
-> > "/articles",
-> > authMiddleware,
-> > rbacMiddleware("superadmin", "admin_kegiatan"),
-> > ArticleController.create
-> > )
-
-#### NEW Auth Login endpoint
-
-Basic Login endpoint
+#### > Added pagination and optimization for finance
+#### > Added zis transaction logic for finance
+#### > Updated RBAC middleware for more protection
