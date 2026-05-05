@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Sistem Informasi Manajemen Masjid (Backend)",
   "main": "index.js",
-  "type": "module",
+  "type": "",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "prisma generate && tsc",
