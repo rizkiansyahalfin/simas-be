@@ -1,0 +1,15 @@
+
+model Mustahik {
+  id              Int              @id @default(autoincrement())
+  congregationId  Int              @unique @map("congregation_id")
+  category        MustahikCategory
+  notes           String?          @db.Text
+  isActive        Boolean          @default(true) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  congregation          Congregation           @relation(fields: [congregationId], references: [id])
+  mustahikDistributions MustahikDistribution[]
+
+  @@map("mustahiks")
+}

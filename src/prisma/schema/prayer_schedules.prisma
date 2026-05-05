@@ -1,0 +1,15 @@
+
+model PrayerSchedule {
+  id         Int      @id @default(autoincrement())
+  prayerDate DateTime @map("prayer_date") @db.Date
+  city       String   @db.VarChar(100)
+  subuh      DateTime? @db.Time
+  dzuhur     DateTime? @db.Time
+  ashar      DateTime? @db.Time
+  maghrib    DateTime? @db.Time
+  isya       DateTime? @db.Time
+  fetchedAt  DateTime @default(now()) @map("fetched_at")
+
+  @@index([prayerDate, city], name: "idx_prayer_date")
+  @@map("prayer_schedules")
+}
