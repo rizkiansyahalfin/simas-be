@@ -21,6 +21,10 @@ export const authMiddleware = (
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!)
 
+    if (typeof decoded === 'object' && decoded !== null && 'isActive' in decoded && (decoded as any).isActive === false) {
+      return res.status(403).json({ message: 'Account inactive' })
+    }
+
     req.user = decoded as any
 
     next()

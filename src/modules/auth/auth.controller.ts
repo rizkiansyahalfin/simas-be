@@ -1,11 +1,12 @@
 import { Request, Response } from "express"
 import { AuthService } from "./auth.service"
 import { LoginRequest }from "./auth.type"
+import { loginSchema } from "./auth.validation"
 
 export const AuthController = {
   async login(req: Request, res: Response) {
     try {
-      const { email, password }: LoginRequest = req.body
+      const { email, password }: LoginRequest = loginSchema.parse(req.body) || req.body
 
       const result = await AuthService.login({ email, password })
 
@@ -16,7 +17,7 @@ export const AuthController = {
     } catch (error: any) {
       return res.status(401).json({
         success: false,
-        message: error.message
+        error_code: error.message
       })
     }
   }
