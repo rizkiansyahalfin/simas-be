@@ -30,13 +30,15 @@ export type LoginResponse = {
 export type JwtPayload = {
   id: number
   role: Role
+  isActive?: boolean
 }
 
 // ======================
-// AUTH USER (ATTACHED TO REQUEST)
-// ======================
+ // AUTH USER (ATTACHED TO REQUEST)
+ // ======================
 
 export type AuthUser = {
   id: number
   role: Role
+  isActive?: boolean
 }

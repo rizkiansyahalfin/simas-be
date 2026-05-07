@@ -1,34 +1,42 @@
-import { Request, Response, NextFunction } from "express"
-import jwt from "jsonwebtoken"
+import { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
+import type { JwtPayload } from '../modules/auth/auth.type'
 
-interface CustomRequest extends Request {
-  user?: any
-}
-
-export const authMiddleware = (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Unauthorized" })
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  const token = authHeader.split(" ")[1]
+  const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!)
+    const secret = process.env.JWT_SECRET
 
-    if (typeof decoded === 'object' && decoded !== null && 'isActive' in decoded && (decoded as any).isActive === false) {
+    if (!secret) {
+      return res.status(500).json({ message: 'JWT secret is not configured' })
+    }
+
+    const decoded = jwt.verify(token, secret) as JwtPayload | string
+
+    if (typeof decoded === 'string') {
+      return res.status(401).json({ message: 'Invalid token' })
+    }
+
+    if (decoded.isActive === false) {
       return res.status(403).json({ message: 'Account inactive' })
     }
 
-    req.user = decoded as any
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+      isActive: decoded.isActive,
+    }
 
     next()
   } catch {
-    return res.status(401).json({ message: "Token invalid" })
+    return res.status(401).json({ message: 'Invalid token' })
   }
 }
+
