@@ -1,22 +1,18 @@
 import { z } from 'zod'
 
-export const CreateDonationSchema = z.object({
-  donorName: z.string().min(1, 'Nama donatur wajib diisi'),
-  donorEmail: z.string().email('Format email tidak valid').optional(),
-  phone: z.string().optional(),
-  amount: z.number().positive('Jumlah donasi harus lebih dari 0'),
-  category: z.string().min(1, 'Kategori wajib diisi'),
-  proofImageUrl: z.string().url().optional(),
+export const createDonationSchema = z.object({
+  donorName: z.string().min(3, 'Donor name must be at least 3 characters'),
+  phone: z.string().min(7).max(15, 'Invalid phone format').optional(),
+  amount: z.number().positive('Amount must be greater than 0'),
+  category: z.string().min(1).max(100, 'Category must not exceed 100 characters'),
 })
 
-export const VerifyDonationSchema = z.object({
-  status: z.enum(['verified', 'rejected']),
-  donorEmail: z.string().email().optional(),
-  rejectionNote: z.string().optional(),
-}).refine(
-  (data) => data.status !== 'rejected' || !!data.rejectionNote,
-  { message: 'Alasan penolakan wajib diisi', path: ['rejectionNote'] }
-)
+export const rejectDonationSchema = z.object({
+  note: z.string().min(5, 'Rejection note must be at least 5 characters').max(500),
+})
 
-export type CreateDonationInput = z.infer<typeof CreateDonationSchema>
-export type VerifyDonationInput = z.infer<typeof VerifyDonationSchema>
+export const donationQuerySchema = z.object({
+  status: z.enum(['pending', 'verified', 'rejected']).optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(10),
+})

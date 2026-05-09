@@ -1,42 +1,86 @@
 import prisma from '../../database'
-import type { CreateDonationInput } from './donation.validation'
+import type { CreateDonationInput, UpdateDonationInput } from './donation.type'
+import type { DonationStatus } from '../../generated/client'
 
 export const DonationRepository = {
   async create(data: CreateDonationInput) {
-    return prisma.donation.create({
-      data: {
-        donorName: data.donorName,
-        phone: data.phone,
-        amount: data.amount,
-        category: data.category,
-        proofImageUrl: data.proofImageUrl,
+    return prisma.donation.create({ data })
+  },
+
+  async findAll({
+    status,
+    skip,
+    limit,
+  }: {
+    status?: string
+    skip: number
+    limit: number
+  }) {
+    const whereClause: { status?: DonationStatus } = status
+      ? { status: status as DonationStatus }
+      : {}
+
+    const [data, total] = await Promise.all([
+      prisma.donation.findMany({
+        where: whereClause,
+        include: {
+          verifier: {
+            select: {
+              id: true,
+              username: true,
+              role: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.donation.count({
+        where: whereClause,
+      }),
+    ])
+
+    return {
+      data,
+      meta: {
+        total,
+        page: Math.floor(skip / limit) + 1,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    }
+  },
+
+  async findById(id: number) {
+    return prisma.donation.findUnique({
+      where: { id },
+      include: {
+        verifier: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+          },
+        },
       },
     })
   },
 
-  async findById(id: number) {
-    return prisma.donation.findUnique({ where: { id } })
-  },
-
-  async findAll() {
-    return prisma.donation.findMany({
-      orderBy: { createdAt: 'desc' },
-    })
-  },
-
-  async verify(
-    id: number,
-    verifiedBy: number,
-    status: 'verified' | 'rejected',
-    rejectionNote?: string
-  ) {
+  async update(id: number, data: UpdateDonationInput) {
     return prisma.donation.update({
       where: { id },
-      data: {
-        status,
-        verifiedBy,
-        verifiedAt: new Date(),
-        rejectionNote: rejectionNote ?? null,
+      data,
+      include: {
+        verifier: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+          },
+        },
       },
     })
   },

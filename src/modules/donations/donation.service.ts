@@ -1,88 +1,62 @@
 import { DonationRepository } from './donation.repository'
-import type { CreateDonationInput, VerifyDonationInput } from './donation.validation'
-import { transporter } from '../../utils/mailer'
-import {
-  donationReceivedTemplate,
-  donationVerifiedTemplate,
-  donationRejectedTemplate,
-} from '../../utils/email-templates'
-import { format } from 'date-fns'
-import { id } from 'date-fns/locale'
-
-const BENDAHARA_EMAIL = process.env.BENDAHARA_EMAIL!
-
-const formatAmount = (amount: { toString(): string } | number | string) =>
-  Number(amount.toString()).toLocaleString('id-ID')
-
-const formatDate = (date: Date) =>
-  format(date, 'dd MMMM yyyy, HH:mm', { locale: id })
+import type { CreateDonationInput, GetDonationsQuery } from './donation.type'
 
 export const DonationService = {
-  async create(data: CreateDonationInput) {
-    const donation = await DonationRepository.create(data)
+  async getAll({ status, page, limit }: GetDonationsQuery) {
+    const skip = (page - 1) * limit
 
-    const template = donationReceivedTemplate({
-      donorName: donation.donorName,
-      amount: formatAmount(donation.amount),
-      category: donation.category,
-      createdAt: formatDate(donation.createdAt),
+    return DonationRepository.findAll({
+      status,
+      skip,
+      limit,
     })
-
-    await transporter.sendMail({
-      from: `"SIMAS Masjid" <${process.env.GMAIL_USER}>`,
-      to: BENDAHARA_EMAIL,
-      subject: template.subject,
-      html: template.html,
-    })
-
-    return donation
   },
 
-  async verify(id: number, verifiedBy: number, data: VerifyDonationInput) {
-    const donation = await DonationRepository.verify(
-      id,
-      verifiedBy,
-      data.status,
-      data.rejectionNote
-    )
+  async submit(data: CreateDonationInput, file?: Express.Multer.File) {
+    return DonationRepository.create({
+      donorName: data.donorName,
+      phone: data.phone,
+      amount: data.amount,
+      category: data.category,
+      proofImageUrl: file?.filename,
+      status: 'pending',
+    })
+  },
 
-    if (data.donorEmail) {
-      if (data.status === 'verified') {
-        const template = donationVerifiedTemplate({
-          donorName: donation.donorName,
-          amount: formatAmount(donation.amount),
-          category: donation.category,
-          verifiedAt: formatDate(donation.verifiedAt!),
-        })
-        await transporter.sendMail({
-          from: `"SIMAS Masjid" <${process.env.GMAIL_USER}>`,
-          to: data.donorEmail,
-          subject: template.subject,
-          html: template.html,
-        })
-      } else {
-        const template = donationRejectedTemplate({
-          donorName: donation.donorName,
-          amount: formatAmount(donation.amount),
-          rejectionNote: data.rejectionNote!,
-        })
-        await transporter.sendMail({
-          from: `"SIMAS Masjid" <${process.env.GMAIL_USER}>`,
-          to: data.donorEmail,
-          subject: template.subject,
-          html: template.html,
-        })
-      }
+  async verify(id: number, userId: number) {
+    const donation = await DonationRepository.findById(id)
+
+    if (!donation) {
+      throw new Error('DONATION_NOT_FOUND')
     }
 
-    return donation
+    if (donation.status !== 'pending') {
+      throw new Error('DONATION_INVALID_STATUS')
+    }
+
+    return DonationRepository.update(id, {
+      status: 'verified',
+      verifiedBy: userId,
+      verifiedAt: new Date(),
+    })
   },
 
-  async findAll() {
-    return DonationRepository.findAll()
-  },
+  async reject(id: number, userId: number, note: string) {
+    const donation = await DonationRepository.findById(id)
 
-  async findById(id: number) {
-    return DonationRepository.findById(id)
+    if (!donation) {
+      throw new Error('DONATION_NOT_FOUND')
+    }
+
+    if (donation.status !== 'pending') {
+      throw new Error('DONATION_INVALID_STATUS')
+    }
+
+    return DonationRepository.update(id, {
+      status: 'rejected',
+      verifiedBy: userId,
+      verifiedAt: new Date(),
+      rejectionNote: note,
+    })
   },
 }

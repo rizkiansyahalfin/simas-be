@@ -1,14 +1,33 @@
-export interface DonationResponse {
-  id: number
+import { Donation } from '../../generated/client'
+
+export type CreateDonationInput = {
   donorName: string
-  donorEmail?: string
   phone?: string
   amount: number
   category: string
   proofImageUrl?: string
-  status: 'pending' | 'verified' | 'rejected'
+  status?: 'pending' | 'verified' | 'rejected'
+}
+
+export type UpdateDonationInput = {
+  status?: 'pending' | 'verified' | 'rejected'
   verifiedBy?: number
   verifiedAt?: Date
   rejectionNote?: string
-  createdAt: Date
+}
+
+export type DonationResponse = Omit<Donation, 'createdAt' | 'updatedAt'> & {
+  createdAt: string
+  updatedAt: string
+  verifier?: {
+    id: number
+    username: string
+    role: string
+  }
+}
+
+export type GetDonationsQuery = {
+  status?: 'pending' | 'verified' | 'rejected'
+  page: number
+  limit: number
 }

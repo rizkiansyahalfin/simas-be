@@ -1,11 +1,34 @@
 import { Router } from 'express'
-import { DonationController } from './donation.controller'
+import { authMiddleware } from '../../middleware/auth.middleware'
+import { rbacMiddleware } from '../../middleware/rbac.middleware'
+import { uploadDonationProof } from '../../middleware/upload.middleware'
+import * as controller from './donation.controller'
 
 const router = Router()
 
-router.get('/', DonationController.findAll)
-router.get('/:id', DonationController.findById)
-router.post('/', DonationController.create)
-router.patch('/:id/verify', DonationController.verify)
+// PUBLIC
+router.post('/', uploadDonationProof.single('proof'), controller.submitDonation)
+
+// ADMIN
+router.get(
+  '/',
+  authMiddleware,
+  rbacMiddleware('bendahara', 'superadmin'),
+  controller.getDonations
+)
+
+router.put(
+  '/:id/verify',
+  authMiddleware,
+  rbacMiddleware('bendahara', 'superadmin'),
+  controller.verifyDonation
+)
+
+router.put(
+  '/:id/reject',
+  authMiddleware,
+  rbacMiddleware('bendahara', 'superadmin'),
+  controller.rejectDonation
+)
 
 export default router
