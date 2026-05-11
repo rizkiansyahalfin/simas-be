@@ -1,0 +1,7 @@
+model PrayerConfig {
+  id        Int @id @default(1)
+
+  city      String
+
+  updatedAt DateTime @updatedAt
+}

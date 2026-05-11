@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
+import donationRouter from "./modules/donations/donation.route";
 
 dotenv.config();
 
@@ -43,5 +44,7 @@ app.use(
     });
   }
 );
+
+app.use("/api/donations", donationRouter);
 
 export default app;
