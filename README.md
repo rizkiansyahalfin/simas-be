@@ -150,6 +150,54 @@ Kode juga memiliki struktur route tambahan di file `src/routes/index.ts`, yaitu:
 - Multer untuk upload file
 - Helmet dan CORS untuk keamanan
 
+## Update Terbaru
+
+### Modul Prayer (Jadwal Sholat)
+
+Modul baru untuk mengelola jadwal sholat dengan integrasi API eksternal.
+
+#### Fitur:
+- Pengambilan jadwal sholat otomatis dari API eksternal (Kemenag)
+- Penyimpanan jadwal sholat ke database
+- Endpoint untuk mendapatkan jadwal berdasarkan tanggal dan kota
+- Konfigurasi kota dan status sinkronisasi
+- Cron job untuk sinkronisasi harian pukul 5 pagi WIB
+
+#### Endpoint:
+- `GET /prayer` - Mendapatkan jadwal sholat
+  - Query parameters:
+    - `date` (required) - Format: YYYY-MM-DD
+    - `city` (optional) - Default: Jakarta
+- `PUT /prayer/config` - Update konfigurasi prayer
+  - Request body:
+    - `city` (string, optional)
+    - `enabled` (boolean, optional)
+
+#### Variabel Lingkungan:
+- `PRAYER_CITY` - Kota default untuk jadwal sholat (default: "Jakarta")
+- `PRAYER_SYNC_ENABLED` - Aktifkan/nonaktifkan sinkronisasi otomatis (default: false)
+
+### Brute Force Protection
+
+Middleware baru untuk mencegah serangan brute force pada endpoint login.
+
+#### Fitur:
+- Rate limiting menggunakan express-rate-limit
+- Konfigurasi maksimal percobaan login dalam jangka waktu tertentu
+- Skip rate limit untuk request yang berhasil
+- Response khusus untuk rate limit exceeded
+
+#### Konfigurasi:
+File: `src/config/security.config.ts`
+
+Variabel Lingkungan:
+- `BRUTE_FORCE_ENABLED` - Aktifkan brute force protection (default: false)
+- `BRUTE_FORCE_MAX` - Maksimal percobaan dalam window (default: 5, range: 1-50)
+- `BRUTE_FORCE_WINDOW` - Window waktu dalam menit (default: 15, range: 1-1440)
+
+#### Penggunaan:
+Middleware `bruteForceMiddleware` dapat dipasang pada route login atau endpoint sensitif lainnya.
+
 ## Catatan Tambahan
 
 - Database diakses melalui `src/database.ts`
