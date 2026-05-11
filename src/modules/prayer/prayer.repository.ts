@@ -3,15 +3,27 @@ import type { PrayerScheduleInput } from "./prayer.validation"
 
 export const PrayerRepository = {
   async findByDate(date: Date, city: string) {
-    return prisma.prayerSchedule.findFirst({
+    return prisma.prayerSchedule.findUnique({
       where: {
-        prayerDate: date,
-        city
+        prayerDate_city: {
+          prayerDate: date,
+          city
+        }
       }
     })
   },
 
-  async create(data: PrayerScheduleInput) {
-    return prisma.prayerSchedule.create({ data })
+  async upsert(data: PrayerScheduleInput) {
+    return prisma.prayerSchedule.upsert({
+      where: {
+        prayerDate_city: {
+          prayerDate: data.prayerDate,
+          city: data.city
+        }
+      },
+      update: data,
+      create: data
+    })
   }
 }
+

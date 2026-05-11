@@ -1,4 +1,8 @@
-export type { PrayerScheduleInput } from "./prayer.validation"
+export type {
+  PrayerScheduleInput,
+  PrayerQueryInput,
+  PrayerConfigInput
+} from "./prayer.validation"
 
 export interface PrayerData {
   subuh: string | Date
@@ -7,3 +11,4 @@ export interface PrayerData {
   maghrib: string | Date
   isya: string | Date
 }
+

@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit"
+import type { RequestHandler } from "express"
 import { Request, Response, NextFunction } from "express"
 
 import { securityConfig } from "../config/security.config"
@@ -9,24 +10,22 @@ const {
   windowMinutes
 } = securityConfig.bruteForce
 
-export const bruteForceMiddleware = enabled
+const windowMs = Math.max(1, windowMinutes) * 60 * 1000
 
-  ? rateLimit({
-
-      windowMs: windowMinutes * 60 * 1000,
-
-      max: maxAttempts,
-
-      standardHeaders: true,
-
-      legacyHeaders: false,
-
-      message: {
-        success: false,
-        message:
-          "Terlalu banyak percobaan login. Coba lagi nanti."
-      }
-
+const bruteForceOptions = {
+  windowMs,
+  max: maxAttempts,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  handler: (req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      message: "Terlalu banyak percobaan login. Coba lagi nanti."
     })
+  }
+}
 
-  : (req: Request, res: Response, next: NextFunction) => next()
+export const bruteForceMiddleware: RequestHandler = enabled
+  ? rateLimit(bruteForceOptions)
+  : ((req: Request, res: Response, next: NextFunction) => next())
