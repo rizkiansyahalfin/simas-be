@@ -1,3 +1,11 @@
+<<<<<<< HEAD
 node_modules
 generated/
 .env
+=======
+# Keep environment variables out of version control
+.env
+
+node_modules
+generated/
+>>>>>>> parent of d0557e6 (Revert "Feat/be user management page and finance summary")

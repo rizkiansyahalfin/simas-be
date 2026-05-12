@@ -1,47 +1,36 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
+//src/app.ts
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import { v4 as uuidv4 } from "uuid";
 
-import { corsOptions, limiter } from './config/middleware';
-import routes from './routes';
+const app = express();
 
-dotenv.config();
+// Basic security & JSON parser
+app.use(cors());
+app.use(helmet());
+app.use(express.json());
 
-const app: Application = express();
-
-// ✅ MIDDLEWARE GLOBAL (URUTAN BEST PRACTICE)
-app.use(helmet()); // security headers
-app.use(cors(corsOptions)); // CORS config
-app.use(morgan('dev')); // logging
-app.use(express.json()); // parse JSON body
-app.use(express.urlencoded({ extended: true })); // form data
-app.use(limiter); // rate limiting
-
-// ✅ ROUTES
-app.use('/api', routes);
-
-// ✅ 404 HANDLER
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Route tidak ditemukan',
-  });
+// Custom Middleware: X-Request-ID
+app.use((req, res, next) => {
+  const id = uuidv4();
+  req.headers["x-request-id"] = id;
+  res.setHeader("X-Request-ID", id);
+  next();
 });
 
-// ✅ GLOBAL ERROR HANDLER
-interface CustomError extends Error {
-  status?: number;
-}
+// Response Time Middleware
+app.use((_req, res, next) => {//'req' is declared but its value is never read.
+  const start = Date.now();
+  const original = res.json.bind(res);
 
-app.use(
-  (err: CustomError, req: Request, res: Response, _next: NextFunction) => {
-    console.error(err.stack);
+  res.json = (body: any) => {
+    const duration = Date.now() - start;
+    res.setHeader("X-Response-Time", `${duration}ms`);
+    return original(body);
+  };
 
-    res.status(err.status || 500).json({
-      error: err.message || 'Internal Server Error',
-    });
-  }
-);
+  next();
+});
 
 export default app;
