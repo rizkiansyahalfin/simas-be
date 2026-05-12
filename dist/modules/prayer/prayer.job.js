@@ -9,5 +9,7 @@ export const startPrayerJob = () => {
         catch (err) {
             console.error("Cron failed:", err);
         }
+    }, {
+        timezone: "Asia/Jakarta"
     });
 };

@@ -1,28 +1,55 @@
 import { PrayerProvider } from "./prayer.provider";
 import { PrayerRepository } from "./prayer.repository";
+import { prayerConfig, updatePrayerConfig } from "./prayer.config";
 import { prayerScheduleSchema } from "./prayer.validation";
-const DEFAULT_CITY = "Jakarta";
 const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1000;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const parsePrayerDate = (value) => {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+        throw new Error("INVALID_PRAYER_DATE");
+    }
+    parsed.setHours(0, 0, 0, 0);
+    return parsed;
+};
+const convertPrayerTime = (time) => {
+    const clean = time.trim().split(" ")[0];
+    const parsed = new Date(`1970-01-01T${clean}:00`);
+    if (Number.isNaN(parsed.getTime())) {
+        throw new Error("INVALID_PRAYER_TIME");
+    }
+    return parsed;
+};
 const convertToPrayerDate = (value) => {
     if (value instanceof Date)
         return value;
     if (typeof value === "string") {
         const parsed = new Date(value);
-        if (!isNaN(parsed.getTime()))
+        if (!Number.isNaN(parsed.getTime())) {
             return parsed;
+        }
+        return convertPrayerTime(value);
     }
     throw new Error("INVALID_PRAYER_TIME");
 };
+const normalizeCity = (city) => city?.trim() || prayerConfig.city;
 export const PrayerService = {
+    async getPrayer(date, city) {
+        const prayerDate = parsePrayerDate(date);
+        const normalizedCity = normalizeCity(city);
+        return PrayerRepository.findByDate(prayerDate, normalizedCity);
+    },
+    async updateConfig(payload) {
+        return updatePrayerConfig(payload);
+    },
     async syncToday() {
-        const city = DEFAULT_CITY;
+        const city = prayerConfig.city;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const existing = await PrayerRepository.findByDate(today, city);
         if (existing) {
-            console.log(`Prayer data already synced for ${city} on ${today}`);
+            console.log(`Prayer data already synced for ${city} on ${today.toISOString().slice(0, 10)}`);
             return existing;
         }
         const data = await this.fetchWithRetry(city);
@@ -35,7 +62,7 @@ export const PrayerService = {
             maghrib: convertToPrayerDate(data.maghrib),
             isya: convertToPrayerDate(data.isya)
         });
-        return PrayerRepository.create(payload);
+        return PrayerRepository.upsert(payload);
     },
     async fetchWithRetry(city, attempt = 1) {
         try {
