@@ -1,7 +1,9 @@
 {
   "name": "simas-be",
   "version": "1.0.0",
-  "main": "dist/server.js",
+  "description": "Sistem Informasi Manajemen Masjid (Backend)",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "tsc",
@@ -10,8 +12,11 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.1.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-rate-limit": "^8.4.1",
     "helmet": "^8.1.0",
