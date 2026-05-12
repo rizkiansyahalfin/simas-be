@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { v4 as uuidv4 } from "uuid";
 
 import donationRouter from "./modules/donations/donation.route";
+import inventoryRouter from "./modules/inventory/inventory.route";
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.use((_req, res, next) => {//'req' is declared but its value is never read.
 });
 
 app.use("/api/donations", donationRouter);
+app.use("/api/inventory", inventoryRouter);
 
 export default app;
