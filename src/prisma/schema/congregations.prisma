@@ -9,6 +9,9 @@ model Congregation {
   birthDate  DateTime? @map("birth_date") @db.Date
   isMustahik Boolean  @default(false) @map("is_mustahik")
   createdAt  DateTime @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+  isActive  Boolean   @default(true) @map("is_active")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   // Relations
   mustahik Mustahik?
