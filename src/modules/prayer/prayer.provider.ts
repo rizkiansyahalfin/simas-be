@@ -16,9 +16,9 @@ export const PrayerProvider = {
       return res.data
     } catch (err) {
       const axiosErr = err as AxiosError
+      // eslint-disable-next-line preserve-caught-error
       throw new Error(
-        axiosErr.message || `Failed to fetch prayer data for ${city}`,
-        { cause: err }
+        axiosErr.message || `Failed to fetch prayer data for ${city}`
       )
     }
   }

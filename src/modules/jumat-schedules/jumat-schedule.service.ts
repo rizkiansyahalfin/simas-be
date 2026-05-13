@@ -8,7 +8,7 @@ export const getAll = async () => {
 export const getById = async (id: number) => {
   const schedule = await repo.findById(id);
   if (!schedule) {
-    const error: any = new Error('Jadwal Jumat tidak ditemukan');
+    const error = new Error('Jadwal Jumat tidak ditemukan') as Error & { status: number };
     error.status = 404;
     throw error;
   }
