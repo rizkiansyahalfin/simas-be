@@ -1,13 +1,42 @@
 import { Router } from 'express'
 import { InventoryController } from './inventory.controller'
+import { authMiddleware } from '../../middleware/auth.middleware'
+import { rbacMiddleware } from '../../middleware/rbac.middleware'
 
 const router = Router()
+const controller = InventoryController
 
-// GET /inventories?condition=baik&category=elektronik&search=laptop
-router.get('/', InventoryController.findAll)
-router.get('/:id', InventoryController.findById)
-router.post('/', InventoryController.create)
-router.put('/:id', InventoryController.update)
-router.delete('/:id', InventoryController.delete)
+router.get(
+  '/',
+  authMiddleware,
+  controller.getAll
+)
+
+router.get(
+  '/:id',
+  authMiddleware,
+  controller.getById
+)
+
+router.post(
+  '/',
+  authMiddleware,
+  rbacMiddleware('superadmin', 'admin_inventaris'),
+  controller.create
+)
+
+router.put(
+  '/:id',
+  authMiddleware,
+  rbacMiddleware('superadmin', 'admin_inventaris'),
+  controller.update
+)
+
+router.delete(
+  '/:id',
+  authMiddleware,
+  rbacMiddleware('superadmin', 'admin_inventaris'),
+  controller.delete
+)
 
 export default router
