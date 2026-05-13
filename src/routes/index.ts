@@ -7,6 +7,7 @@ import congregationRouter from '../modules/congregation/congregation.route'
 import inventoryRouter from '../modules/inventory/inventory.route'
 import inventoryLoanRouter from '../modules/inventory-loan/inventory-loan.route'
 import eventRouter from '../modules/events/event.route'
+import reportsRouter from '../modules/reports/reports.route'
 
 const router = Router()
 
@@ -23,5 +24,6 @@ router.use('/congregation', congregationRouter)
 router.use('/inventory', inventoryRouter)
 router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/events', eventRouter)
+router.use('/reports', reportsRouter)
 
 export default router
