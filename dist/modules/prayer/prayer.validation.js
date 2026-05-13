@@ -9,3 +9,11 @@ export const prayerScheduleSchema = z.object({
     maghrib: timeSchema,
     isya: timeSchema
 });
+export const prayerQuerySchema = z.object({
+    date: z.string().trim().min(1),
+    city: z.string().trim().min(1).max(100).optional()
+});
+export const prayerConfigSchema = z.object({
+    city: z.string().trim().min(1).max(100).optional(),
+    enabled: z.boolean().optional()
+});

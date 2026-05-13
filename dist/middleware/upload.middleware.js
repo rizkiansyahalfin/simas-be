@@ -2,7 +2,18 @@ import multer from "multer";
 import path from "path";
 const storage = multer.diskStorage({
     destination: (_, __, cb) => {
-        cb(null, "uploads/");
+        cb(null, path.join(__dirname, '..', 'uploads'));
+    },
+    filename: (_, file, cb) => {
+        const unique = Date.now() +
+            "-" +
+            Math.round(Math.random() * 1e9);
+        cb(null, unique + path.extname(file.originalname));
+    }
+});
+const DonationProofStorage = multer.diskStorage({
+    destination: (_, __, cb) => {
+        cb(null, path.join(__dirname, '..', 'uploads', 'donations'));
     },
     filename: (_, file, cb) => {
         const unique = Date.now() +
@@ -27,5 +38,12 @@ export const uploadImage = multer({
     fileFilter,
     limits: {
         fileSize: 2 * 1024 * 1024 // 2MB
+    }
+});
+export const uploadDonationProof = multer({
+    storage: DonationProofStorage,
+    fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB
     }
 });
