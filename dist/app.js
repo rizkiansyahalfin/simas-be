@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { v4 as uuidv4 } from "uuid";
 import donationRouter from "./modules/donations/donation.route";
+import inventoryRouter from "./modules/inventory/inventory.route";
 const app = express();
 // Basic security & JSON parser
 app.use(cors());
@@ -28,4 +29,5 @@ app.use((_req, res, next) => {
     next();
 });
 app.use("/api/donations", donationRouter);
+app.use("/api/inventory", inventoryRouter);
 export default app;

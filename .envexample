@@ -17,4 +17,7 @@ GMAIL_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx
 BENDAHARA_EMAIL=bendahara@gmail.com
 BRUTE_FORCE_ENABLED="true"
 BRUTE_FORCE_MAX=5
-    
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=xxx@gmail.com
+MAIL_PASS=xxxx

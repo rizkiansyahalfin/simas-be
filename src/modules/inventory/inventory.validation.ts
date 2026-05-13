@@ -1,23 +1,35 @@
 import { z } from 'zod'
 
+const parseDate = z.preprocess((value) => {
+  if (typeof value === 'string' || value instanceof Date) {
+    const date = new Date(value)
+    return isNaN(date.getTime()) ? value : date
+  }
+  return value
+}, z.date())
+
+const inventoryConditionEnum = z.enum(['baik', 'rusak_ringan', 'rusak_berat', 'hilang'])
+
 export const CreateInventorySchema = z.object({
-  itemCode: z.string().min(1, 'Kode item wajib diisi'),
-  itemName: z.string().min(1, 'Nama item wajib diisi'),
-  category: z.string().min(1, 'Kategori wajib diisi'),
-  quantity: z.number().int().positive('Jumlah harus lebih dari 0'),
-  condition: z.enum(['baik', 'rusak_ringan', 'rusak_berat', 'hilang']).default('baik'),
-  acquiredDate: z.coerce.date().optional(),
-  acquisitionCost: z.number().positive().optional(),
+  itemCode: z.string().trim().min(1).max(50),
+  itemName: z.string().trim().min(1).max(255),
+  category: z.string().trim().min(1).max(100),
+  quantity: z.coerce.number().int().positive(),
+  condition: inventoryConditionEnum.default('baik'),
+  acquiredDate: parseDate.optional(),
+  acquisitionCost: z.coerce.number().positive().optional(),
   notes: z.string().optional(),
-  managedBy: z.number().int().positive(),
+  managedBy: z.coerce.number().int().positive()
 })
 
 export const UpdateInventorySchema = CreateInventorySchema.partial()
 
 export const FilterInventorySchema = z.object({
-  condition: z.enum(['baik', 'rusak_ringan', 'rusak_berat', 'hilang']).optional(),
-  category: z.string().optional(),
-  search: z.string().optional(),
+  condition: inventoryConditionEnum.optional(),
+  category: z.string().trim().optional(),
+  search: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10)
 })
 
 export type CreateInventoryInput = z.infer<typeof CreateInventorySchema>
