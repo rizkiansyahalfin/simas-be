@@ -2,12 +2,19 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import { corsOptions, limiter } from './config/middleware';
+import routes from './routes';
+import donationRouter from "./modules/donations/donation.route";
+import inventoryRouter from "./modules/inventory/inventory.route";
+dotenv.config();
 const app = express();
 // Basic security & JSON parser
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
+app.use(limiter);
 // Custom Middleware: X-Request-ID
 app.use((req, res, next) => {
     const id = uuidv4();
@@ -26,4 +33,7 @@ app.use((_req, res, next) => {
     };
     next();
 });
+app.use("/api", routes);
+app.use("/api/donations", donationRouter);
+app.use("/api/inventory", inventoryRouter);
 export default app;

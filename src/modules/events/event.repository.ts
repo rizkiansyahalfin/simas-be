@@ -1,5 +1,5 @@
 import prisma from "../../database"
-import { EventStatus } from "../../generated/enums"
+import { EventStatus } from "../../prisma/generated/prisma"
 import type {
   Event,
   CreateEventData,

@@ -3,22 +3,18 @@ Sistem Informasi Manajemen Masjid (Backend)
 
 Backend untuk Sistem Informasi Manajemen Masjid.
 
-## Deskripsi
 
-`SIMAS-BE` adalah backend API yang dibangun menggunakan Node.js, Express, Prisma, dan PostgreSQL. Aplikasi ini menyediakan fitur donasi, otentikasi, manajemen keuangan, dan jadwal Jumat.
+## NEW Users GET/POST/PUT/PATCH endpoint
 
-## Fitur Utama
+Fitus khusus super admin untuk menambah, mengubah, dan mengaktif/nonaktifkan users
 
-- Submit donasi dengan upload bukti pembayaran
-- Verifikasi dan penolakan donasi oleh bendahara / superadmin
-- Manajemen transaksi kas dan ZIS
-- Ringkasan keuangan masjid
-- Otentikasi JWT
-- Middleware RBAC untuk kontrol akses per peran
-- Jadwal Jumat (Jumat Schedule)
+## NEW Finance Summary
 
-## Struktur Folder Utama
+Ringkasan saldo masjid, menckup zis transaction, cash transaction, dan pembagian data perbulan
 
+### Minor changes/updates
+
+<<<<<<< HEAD
 - `src/app.ts` - konfigurasi Express, middleware, dan routing utama
 - `src/server.ts` - entry point server
 - `src/modules/` - modul fitur aplikasi
@@ -207,4 +203,16 @@ Middleware `bruteForceMiddleware` dapat dipasang pada route login atau endpoint 
 
 ---
 
-Dokumentasi ini ditulis ulang berdasarkan kode yang ada dan struktur route saat ini.
+### Minor changes/updates
+
+- `src/app.ts` - konfigurasi Express, middleware, dan routing utama
+- `src/server.ts` - entry point server
+- `src/modules/` - modul fitur aplikasi
+- `src/middleware/` - middleware otentikasi, RBAC, dan upload
+- `src/prisma/` - file schema Prisma dan seed
+- `src/database.ts` - konfigurasi Prisma dengan PostgreSQL
+
+#### > Added pagination and optimization for finance
+#### > Added zis transaction logic for finance
+#### > Updated RBAC middleware for more protection
+

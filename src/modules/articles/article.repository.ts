@@ -1,5 +1,5 @@
 import prisma from "../../database"
-import {Prisma } from "../../generated/client"
+import { Prisma } from "../../prisma/generated/prisma"
 
 export const ArticleRepository = {
   findAll() {

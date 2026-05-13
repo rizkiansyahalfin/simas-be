@@ -1,4 +1,4 @@
-import { Role } from "../../generated/client"
+import { Role } from "../../prisma/generated/prisma"
 
 // ======================
 // REQUEST TYPES

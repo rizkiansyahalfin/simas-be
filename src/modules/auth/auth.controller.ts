@@ -14,11 +14,10 @@ export const AuthController = {
         success: true,
         data: result
       })
-    } catch (error) {
-      const err = error as Error;
+    } catch (error: any) {
       return res.status(401).json({
         success: false,
-        error_code: err.message
+        error_code: error.message
       })
     }
   }

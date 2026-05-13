@@ -13,7 +13,8 @@ export const PrayerProvider = {
         }
         catch (err) {
             const axiosErr = err;
-            throw new Error(axiosErr.message || `Failed to fetch prayer data for ${city}`, { cause: err });
+            // eslint-disable-next-line preserve-caught-error
+            throw new Error(axiosErr.message || `Failed to fetch prayer data for ${city}`);
         }
     }
 };

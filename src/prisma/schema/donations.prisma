@@ -1,0 +1,18 @@
+model Donation {
+  id            Int            @id @default(autoincrement())
+  donorName     String         @map("donor_name") @db.VarChar(100)
+  phone         String?        @db.VarChar(20)
+  amount        Decimal        @db.Decimal(15, 2)
+  category      String         @db.VarChar(100)
+  proofImageUrl String?        @map("proof_image_url") @db.VarChar(255)
+  status        DonationStatus @default(pending)
+  verifiedBy    Int?           @map("verified_by")
+  verifiedAt    DateTime?      @map("verified_at")
+  rejectionNote String?        @map("rejection_note") @db.Text
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  // Relations
+  verifier User? @relation("DonationVerifier", fields: [verifiedBy], references: [id])
+
+  @@map("donations")
+}

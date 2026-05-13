@@ -1,6 +1,6 @@
 import prisma from '../../database'
 import type { CreateDonationInput, UpdateDonationInput } from './donation.type'
-import type { DonationStatus } from '../../generated/client'
+import type { DonationStatus } from '../../prisma/generated/prisma'
 
 export const DonationRepository = {
   async create(data: CreateDonationInput) {

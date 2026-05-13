@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Role } from "../generated/client";
+import { Role } from "./generated/prisma";
 import prisma from "../database";
 async function main() {
     const password = await bcrypt.hash("password123", 10);

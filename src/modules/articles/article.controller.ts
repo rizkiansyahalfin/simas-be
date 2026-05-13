@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express"
+import { Role } from "../../prisma/generated/prisma"
 import { ArticleService } from "./article.service"
 import { createArticleSchema, updateArticleSchema } from "./article.validation"
 
@@ -38,7 +39,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     const user = req.user!
     const payload = updateArticleSchema.parse(req.body)
 
-    const result = await ArticleService.update(id, payload, user)
+    const result = await ArticleService.update(id, payload, user as any)
 
     res.json({ status: "success", data: result })
   } catch (err) {
@@ -51,7 +52,7 @@ export const deleteArticle = async (req: Request, res: Response, next: NextFunct
     const id = parseArticleId(req.params.id)
     const user = req.user!
 
-    const result = await ArticleService.delete(id, user)
+    const result = await ArticleService.delete(id, user as any)
 
     res.json({ status: "success", data: result })
   } catch (err) {
@@ -64,7 +65,7 @@ export const publish = async (req: Request, res: Response, next: NextFunction) =
     const id = parseArticleId(req.params.id)
     const user = req.user!
 
-    const result = await ArticleService.publish(id, user)
+    const result = await ArticleService.publish(id, user as any)
 
     res.json({ status: "success", data: result })
   } catch (err) {

@@ -98,9 +98,7 @@ export const PrayerService = {
           `Failed to fetch prayer data for ${city} after ${MAX_RETRY_ATTEMPTS} attempts:`,
           err
         )
-        console.error(err);
-        // eslint-disable-next-line preserve-caught-error
-        throw new Error("FAILED_FETCH_PRAYER");
+        throw new Error("FAILED_FETCH_PRAYER", { cause: err });
       }
 
       console.warn(

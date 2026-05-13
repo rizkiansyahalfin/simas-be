@@ -1,13 +1,9 @@
-import { PrismaClient } from './generated/client';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './prisma/generated/prisma';
+import { withAccelerate } from '@prisma/extension-accelerate';
 import dotenv from 'dotenv';
 dotenv.config();
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-const adapter = new PrismaPg(pool);
+// Inisialisasi Prisma dengan ekstensi Accelerate sesuai dokumentasi
 const prisma = new PrismaClient({
-    adapter: adapter,
-});
+    accelerateUrl: process.env.DATABASE_URL,
+}).$extends(withAccelerate());
 export default prisma;

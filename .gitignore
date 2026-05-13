@@ -8,4 +8,5 @@ dist
 coverage
 .vscode
 src/prisma/generated/
+generated/
 package-lock.json

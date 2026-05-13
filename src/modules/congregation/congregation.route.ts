@@ -1,0 +1,45 @@
+import { Router } from "express"
+import { CongregationController } from "./congregation.controller"
+import { authMiddleware } from "../../middleware/auth.middleware"
+import { rbacMiddleware } from "../../middleware/rbac.middleware"
+
+const router = Router()
+const controller = CongregationController
+
+
+router.get(
+  "/",
+  authMiddleware,
+  controller.getAll
+)
+
+router.post(
+  "/",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin",
+    "admin_kegiatan"
+  ),
+  controller.create
+)
+
+router.put(
+  "/:id",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin",
+    "admin_kegiatan"
+  ),
+  controller.update
+)
+
+router.patch(
+  "/:id/deactivate",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin"
+  ),
+  controller.delete
+)
+
+export default router
