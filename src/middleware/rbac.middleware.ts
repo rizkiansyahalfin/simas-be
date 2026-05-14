@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { Role } from "../prisma/generated/prisma"
+import { Role } from "../generated/client"
 
 export const rbacMiddleware = (...allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

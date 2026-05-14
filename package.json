@@ -59,7 +59,12 @@
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "date-fns": "^4.1.0",
+<<<<<<< HEAD
     "dotenv": "^17.4.2",
+=======
+    "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
+>>>>>>> feat/be-report-inventory-and-finance-excel
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.1",
     "helmet": "^8.1.0",
