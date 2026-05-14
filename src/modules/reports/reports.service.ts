@@ -1,6 +1,12 @@
 import { ReportsRepository } from "./reports.repository"
 import { generateFinancePdf } from "./reports.pdf"
-import type { MonthlyFinanceQuery, FinancePdfPayload } from "./reports.type"
+import { generateFinanceExcel, generateInventoryExcel } from "./reports.excel"
+import type {
+  MonthlyFinanceQuery,
+  WeeklyFinanceQuery,
+  FinancePdfPayload,
+  InventoryReport
+} from "./reports.type"
 
 export const ReportsService = {
   async generateMonthlyFinancePdf({ month, year }: MonthlyFinanceQuery) {
@@ -27,5 +33,15 @@ export const ReportsService = {
     }
 
     return generateFinancePdf(payload)
+  },
+
+  async generateWeeklyFinanceExcel({ startDate, endDate }: WeeklyFinanceQuery) {
+    const transactions = await ReportsRepository.getWeeklyFinance({ startDate, endDate })
+    return generateFinanceExcel(transactions)
+  },
+
+  async generateInventoryExcel() {
+    const inventories = await ReportsRepository.getInventoryReport()
+    return generateInventoryExcel(inventories as InventoryReport[])
   }
 }

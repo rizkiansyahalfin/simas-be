@@ -1,6 +1,9 @@
 import { Request, Response } from "express"
 import { ReportsService } from "./reports.service"
-import { monthlyFinanceQuerySchema } from "./reports.validation"
+import {
+  monthlyFinanceQuerySchema,
+  weeklyFinanceQuerySchema
+} from "./reports.validation"
 
 export const ReportsController = {
   async monthlyFinance(req: Request, res: Response) {
@@ -23,5 +26,45 @@ export const ReportsController = {
     )
 
     return res.send(pdf)
+  },
+
+  async inventoryExcel(req: Request, res: Response) {
+    const buffer = await ReportsService.generateInventoryExcel()
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=inventory-report.xlsx"
+    )
+
+    return res.send(buffer)
+  },
+
+  async weeklyFinanceExcel(req: Request, res: Response) {
+    const query = weeklyFinanceQuerySchema.safeParse(req.query)
+
+    if (!query.success) {
+      return res.status(400).json({
+        message: "Invalid query parameters",
+        errors: query.error.format()
+      })
+    }
+
+    const { startDate, endDate } = query.data
+    const buffer = await ReportsService.generateWeeklyFinanceExcel({ startDate, endDate })
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=weekly-finance.xlsx"
+    )
+
+    return res.send(buffer)
   }
 }
