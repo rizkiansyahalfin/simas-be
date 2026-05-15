@@ -31,7 +31,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     req.user = {
       id: decoded.id,
       role: decoded.role,
-      isActive: decoded.isActive,
+      isActive: decoded.isActive, 
     }
 
     next()

@@ -394,6 +394,7 @@ export const ModelName = {
   JumatSchedule: 'JumatSchedule',
   MustahikDistribution: 'MustahikDistribution',
   Mustahik: 'Mustahik',
+  PrayerConfig: 'PrayerConfig',
   PrayerSchedule: 'PrayerSchedule',
   User: 'User',
   ZisTransaction: 'ZisTransaction'
@@ -412,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "article" | "cashTransaction" | "congregation" | "donation" | "event" | "inventory" | "inventoryLoan" | "jumatSchedule" | "mustahikDistribution" | "mustahik" | "prayerSchedule" | "user" | "zisTransaction"
+    modelProps: "article" | "cashTransaction" | "congregation" | "donation" | "event" | "inventory" | "inventoryLoan" | "jumatSchedule" | "mustahikDistribution" | "mustahik" | "prayerConfig" | "prayerSchedule" | "user" | "zisTransaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1156,6 +1157,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PrayerConfig: {
+      payload: Prisma.$PrayerConfigPayload<ExtArgs>
+      fields: Prisma.PrayerConfigFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrayerConfigFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrayerConfigFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        findFirst: {
+          args: Prisma.PrayerConfigFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrayerConfigFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        findMany: {
+          args: Prisma.PrayerConfigFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>[]
+        }
+        create: {
+          args: Prisma.PrayerConfigCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        createMany: {
+          args: Prisma.PrayerConfigCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PrayerConfigCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>[]
+        }
+        delete: {
+          args: Prisma.PrayerConfigDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        update: {
+          args: Prisma.PrayerConfigUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrayerConfigDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrayerConfigUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PrayerConfigUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>[]
+        }
+        upsert: {
+          args: Prisma.PrayerConfigUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerConfigPayload>
+        }
+        aggregate: {
+          args: Prisma.PrayerConfigAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrayerConfig>
+        }
+        groupBy: {
+          args: Prisma.PrayerConfigGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerConfigGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrayerConfigCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerConfigCountAggregateOutputType> | number
+        }
+      }
+    }
     PrayerSchedule: {
       payload: Prisma.$PrayerSchedulePayload<ExtArgs>
       fields: Prisma.PrayerScheduleFieldRefs
@@ -1455,7 +1530,10 @@ export const CongregationScalarFieldEnum = {
   gender: 'gender',
   birthDate: 'birthDate',
   isMustahik: 'isMustahik',
-  createdAt: 'createdAt'
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt'
 } as const
 
 export type CongregationScalarFieldEnum = (typeof CongregationScalarFieldEnum)[keyof typeof CongregationScalarFieldEnum]
@@ -1566,6 +1644,15 @@ export const MustahikScalarFieldEnum = {
 } as const
 
 export type MustahikScalarFieldEnum = (typeof MustahikScalarFieldEnum)[keyof typeof MustahikScalarFieldEnum]
+
+
+export const PrayerConfigScalarFieldEnum = {
+  id: 'id',
+  city: 'city',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrayerConfigScalarFieldEnum = (typeof PrayerConfigScalarFieldEnum)[keyof typeof PrayerConfigScalarFieldEnum]
 
 
 export const PrayerScheduleScalarFieldEnum = {
@@ -1965,6 +2052,7 @@ export type GlobalOmitConfig = {
   jumatSchedule?: Prisma.JumatScheduleOmit
   mustahikDistribution?: Prisma.MustahikDistributionOmit
   mustahik?: Prisma.MustahikOmit
+  prayerConfig?: Prisma.PrayerConfigOmit
   prayerSchedule?: Prisma.PrayerScheduleOmit
   user?: Prisma.UserOmit
   zisTransaction?: Prisma.ZisTransactionOmit

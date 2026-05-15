@@ -264,6 +264,7 @@ export type PrayerScheduleOrderByWithRelationInput = {
 
 export type PrayerScheduleWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  prayerDate_city?: Prisma.PrayerSchedulePrayerDate_cityCompoundUniqueInput
   AND?: Prisma.PrayerScheduleWhereInput | Prisma.PrayerScheduleWhereInput[]
   OR?: Prisma.PrayerScheduleWhereInput[]
   NOT?: Prisma.PrayerScheduleWhereInput | Prisma.PrayerScheduleWhereInput[]
@@ -275,7 +276,7 @@ export type PrayerScheduleWhereUniqueInput = Prisma.AtLeast<{
   maghrib?: Prisma.DateTimeNullableFilter<"PrayerSchedule"> | Date | string | null
   isya?: Prisma.DateTimeNullableFilter<"PrayerSchedule"> | Date | string | null
   fetchedAt?: Prisma.DateTimeFilter<"PrayerSchedule"> | Date | string
-}, "id">
+}, "id" | "prayerDate_city">
 
 export type PrayerScheduleOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -388,6 +389,11 @@ export type PrayerScheduleUncheckedUpdateManyInput = {
   maghrib?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isya?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fetchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PrayerSchedulePrayerDate_cityCompoundUniqueInput = {
+  prayerDate: Date | string
+  city: string
 }
 
 export type PrayerScheduleCountOrderByAggregateInput = {

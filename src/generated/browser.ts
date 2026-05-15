@@ -68,6 +68,11 @@ export type MustahikDistribution = Prisma.MustahikDistributionModel
  */
 export type Mustahik = Prisma.MustahikModel
 /**
+ * Model PrayerConfig
+ * 
+ */
+export type PrayerConfig = Prisma.PrayerConfigModel
+/**
  * Model PrayerSchedule
  * 
  */

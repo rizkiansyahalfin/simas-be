@@ -43,7 +43,10 @@ export type CongregationMinAggregateOutputType = {
   gender: $Enums.Gender | null
   birthDate: Date | null
   isMustahik: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
+  isActive: boolean | null
+  updatedAt: Date | null
 }
 
 export type CongregationMaxAggregateOutputType = {
@@ -55,7 +58,10 @@ export type CongregationMaxAggregateOutputType = {
   gender: $Enums.Gender | null
   birthDate: Date | null
   isMustahik: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
+  isActive: boolean | null
+  updatedAt: Date | null
 }
 
 export type CongregationCountAggregateOutputType = {
@@ -67,7 +73,10 @@ export type CongregationCountAggregateOutputType = {
   gender: number
   birthDate: number
   isMustahik: number
+  deletedAt: number
   createdAt: number
+  isActive: number
+  updatedAt: number
   _all: number
 }
 
@@ -89,7 +98,10 @@ export type CongregationMinAggregateInputType = {
   gender?: true
   birthDate?: true
   isMustahik?: true
+  deletedAt?: true
   createdAt?: true
+  isActive?: true
+  updatedAt?: true
 }
 
 export type CongregationMaxAggregateInputType = {
@@ -101,7 +113,10 @@ export type CongregationMaxAggregateInputType = {
   gender?: true
   birthDate?: true
   isMustahik?: true
+  deletedAt?: true
   createdAt?: true
+  isActive?: true
+  updatedAt?: true
 }
 
 export type CongregationCountAggregateInputType = {
@@ -113,7 +128,10 @@ export type CongregationCountAggregateInputType = {
   gender?: true
   birthDate?: true
   isMustahik?: true
+  deletedAt?: true
   createdAt?: true
+  isActive?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -212,7 +230,10 @@ export type CongregationGroupByOutputType = {
   gender: $Enums.Gender | null
   birthDate: Date | null
   isMustahik: boolean
+  deletedAt: Date | null
   createdAt: Date
+  isActive: boolean
+  updatedAt: Date
   _count: CongregationCountAggregateOutputType | null
   _avg: CongregationAvgAggregateOutputType | null
   _sum: CongregationSumAggregateOutputType | null
@@ -247,7 +268,10 @@ export type CongregationWhereInput = {
   gender?: Prisma.EnumGenderNullableFilter<"Congregation"> | $Enums.Gender | null
   birthDate?: Prisma.DateTimeNullableFilter<"Congregation"> | Date | string | null
   isMustahik?: Prisma.BoolFilter<"Congregation"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Congregation"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Congregation"> | Date | string
+  isActive?: Prisma.BoolFilter<"Congregation"> | boolean
+  updatedAt?: Prisma.DateTimeFilter<"Congregation"> | Date | string
   mustahik?: Prisma.XOR<Prisma.MustahikNullableScalarRelationFilter, Prisma.MustahikWhereInput> | null
 }
 
@@ -260,7 +284,10 @@ export type CongregationOrderByWithRelationInput = {
   gender?: Prisma.SortOrderInput | Prisma.SortOrder
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isMustahik?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   mustahik?: Prisma.MustahikOrderByWithRelationInput
 }
 
@@ -276,7 +303,10 @@ export type CongregationWhereUniqueInput = Prisma.AtLeast<{
   gender?: Prisma.EnumGenderNullableFilter<"Congregation"> | $Enums.Gender | null
   birthDate?: Prisma.DateTimeNullableFilter<"Congregation"> | Date | string | null
   isMustahik?: Prisma.BoolFilter<"Congregation"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Congregation"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Congregation"> | Date | string
+  isActive?: Prisma.BoolFilter<"Congregation"> | boolean
+  updatedAt?: Prisma.DateTimeFilter<"Congregation"> | Date | string
   mustahik?: Prisma.XOR<Prisma.MustahikNullableScalarRelationFilter, Prisma.MustahikWhereInput> | null
 }, "id" | "nik">
 
@@ -289,7 +319,10 @@ export type CongregationOrderByWithAggregationInput = {
   gender?: Prisma.SortOrderInput | Prisma.SortOrder
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isMustahik?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.CongregationCountOrderByAggregateInput
   _avg?: Prisma.CongregationAvgOrderByAggregateInput
   _max?: Prisma.CongregationMaxOrderByAggregateInput
@@ -309,7 +342,10 @@ export type CongregationScalarWhereWithAggregatesInput = {
   gender?: Prisma.EnumGenderNullableWithAggregatesFilter<"Congregation"> | $Enums.Gender | null
   birthDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Congregation"> | Date | string | null
   isMustahik?: Prisma.BoolWithAggregatesFilter<"Congregation"> | boolean
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Congregation"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Congregation"> | Date | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Congregation"> | boolean
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Congregation"> | Date | string
 }
 
 export type CongregationCreateInput = {
@@ -320,7 +356,10 @@ export type CongregationCreateInput = {
   gender?: $Enums.Gender | null
   birthDate?: Date | string | null
   isMustahik?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
+  isActive?: boolean
+  updatedAt?: Date | string
   mustahik?: Prisma.MustahikCreateNestedOneWithoutCongregationInput
 }
 
@@ -333,7 +372,10 @@ export type CongregationUncheckedCreateInput = {
   gender?: $Enums.Gender | null
   birthDate?: Date | string | null
   isMustahik?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
+  isActive?: boolean
+  updatedAt?: Date | string
   mustahik?: Prisma.MustahikUncheckedCreateNestedOneWithoutCongregationInput
 }
 
@@ -345,7 +387,10 @@ export type CongregationUpdateInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mustahik?: Prisma.MustahikUpdateOneWithoutCongregationNestedInput
 }
 
@@ -358,7 +403,10 @@ export type CongregationUncheckedUpdateInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mustahik?: Prisma.MustahikUncheckedUpdateOneWithoutCongregationNestedInput
 }
 
@@ -371,7 +419,10 @@ export type CongregationCreateManyInput = {
   gender?: $Enums.Gender | null
   birthDate?: Date | string | null
   isMustahik?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
+  isActive?: boolean
+  updatedAt?: Date | string
 }
 
 export type CongregationUpdateManyMutationInput = {
@@ -382,7 +433,10 @@ export type CongregationUpdateManyMutationInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CongregationUncheckedUpdateManyInput = {
@@ -394,7 +448,10 @@ export type CongregationUncheckedUpdateManyInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CongregationCountOrderByAggregateInput = {
@@ -406,7 +463,10 @@ export type CongregationCountOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   isMustahik?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CongregationAvgOrderByAggregateInput = {
@@ -422,7 +482,10 @@ export type CongregationMaxOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   isMustahik?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CongregationMinOrderByAggregateInput = {
@@ -434,7 +497,10 @@ export type CongregationMinOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   isMustahik?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CongregationSumOrderByAggregateInput = {
@@ -472,7 +538,10 @@ export type CongregationCreateWithoutMustahikInput = {
   gender?: $Enums.Gender | null
   birthDate?: Date | string | null
   isMustahik?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
+  isActive?: boolean
+  updatedAt?: Date | string
 }
 
 export type CongregationUncheckedCreateWithoutMustahikInput = {
@@ -484,7 +553,10 @@ export type CongregationUncheckedCreateWithoutMustahikInput = {
   gender?: $Enums.Gender | null
   birthDate?: Date | string | null
   isMustahik?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
+  isActive?: boolean
+  updatedAt?: Date | string
 }
 
 export type CongregationCreateOrConnectWithoutMustahikInput = {
@@ -511,7 +583,10 @@ export type CongregationUpdateWithoutMustahikInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CongregationUncheckedUpdateWithoutMustahikInput = {
@@ -523,7 +598,10 @@ export type CongregationUncheckedUpdateWithoutMustahikInput = {
   gender?: Prisma.NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isMustahik?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -537,7 +615,10 @@ export type CongregationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   gender?: boolean
   birthDate?: boolean
   isMustahik?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
+  isActive?: boolean
+  updatedAt?: boolean
   mustahik?: boolean | Prisma.Congregation$mustahikArgs<ExtArgs>
 }, ExtArgs["result"]["congregation"]>
 
@@ -550,7 +631,10 @@ export type CongregationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   gender?: boolean
   birthDate?: boolean
   isMustahik?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
+  isActive?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["congregation"]>
 
 export type CongregationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -562,7 +646,10 @@ export type CongregationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   gender?: boolean
   birthDate?: boolean
   isMustahik?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
+  isActive?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["congregation"]>
 
 export type CongregationSelectScalar = {
@@ -574,10 +661,13 @@ export type CongregationSelectScalar = {
   gender?: boolean
   birthDate?: boolean
   isMustahik?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
+  isActive?: boolean
+  updatedAt?: boolean
 }
 
-export type CongregationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "nik" | "address" | "phone" | "gender" | "birthDate" | "isMustahik" | "createdAt", ExtArgs["result"]["congregation"]>
+export type CongregationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "nik" | "address" | "phone" | "gender" | "birthDate" | "isMustahik" | "deletedAt" | "createdAt" | "isActive" | "updatedAt", ExtArgs["result"]["congregation"]>
 export type CongregationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mustahik?: boolean | Prisma.Congregation$mustahikArgs<ExtArgs>
 }
@@ -598,7 +688,10 @@ export type $CongregationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     gender: $Enums.Gender | null
     birthDate: Date | null
     isMustahik: boolean
+    deletedAt: Date | null
     createdAt: Date
+    isActive: boolean
+    updatedAt: Date
   }, ExtArgs["result"]["congregation"]>
   composites: {}
 }
@@ -1031,7 +1124,10 @@ export interface CongregationFieldRefs {
   readonly gender: Prisma.FieldRef<"Congregation", 'Gender'>
   readonly birthDate: Prisma.FieldRef<"Congregation", 'DateTime'>
   readonly isMustahik: Prisma.FieldRef<"Congregation", 'Boolean'>
+  readonly deletedAt: Prisma.FieldRef<"Congregation", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Congregation", 'DateTime'>
+  readonly isActive: Prisma.FieldRef<"Congregation", 'Boolean'>
+  readonly updatedAt: Prisma.FieldRef<"Congregation", 'DateTime'>
 }
     
 

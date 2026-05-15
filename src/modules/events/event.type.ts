@@ -1,4 +1,4 @@
-import { EventStatus } from "../../prisma/generated/prisma"
+import { EventStatus } from "../../generated/enums"
 
 export interface Event {
   id: number

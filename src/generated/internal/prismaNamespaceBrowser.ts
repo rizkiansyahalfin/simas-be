@@ -61,6 +61,7 @@ export const ModelName = {
   JumatSchedule: 'JumatSchedule',
   MustahikDistribution: 'MustahikDistribution',
   Mustahik: 'Mustahik',
+  PrayerConfig: 'PrayerConfig',
   PrayerSchedule: 'PrayerSchedule',
   User: 'User',
   ZisTransaction: 'ZisTransaction'
@@ -120,7 +121,10 @@ export const CongregationScalarFieldEnum = {
   gender: 'gender',
   birthDate: 'birthDate',
   isMustahik: 'isMustahik',
-  createdAt: 'createdAt'
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt'
 } as const
 
 export type CongregationScalarFieldEnum = (typeof CongregationScalarFieldEnum)[keyof typeof CongregationScalarFieldEnum]
@@ -231,6 +235,15 @@ export const MustahikScalarFieldEnum = {
 } as const
 
 export type MustahikScalarFieldEnum = (typeof MustahikScalarFieldEnum)[keyof typeof MustahikScalarFieldEnum]
+
+
+export const PrayerConfigScalarFieldEnum = {
+  id: 'id',
+  city: 'city',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrayerConfigScalarFieldEnum = (typeof PrayerConfigScalarFieldEnum)[keyof typeof PrayerConfigScalarFieldEnum]
 
 
 export const PrayerScheduleScalarFieldEnum = {

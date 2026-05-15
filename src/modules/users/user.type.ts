@@ -1,4 +1,4 @@
-import { Role } from "../../prisma/generated/prisma"
+import { Role } from "../../generated/enums"
 
 export type CreateUserInput = {
   username: string
