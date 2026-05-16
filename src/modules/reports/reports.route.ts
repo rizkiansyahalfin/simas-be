@@ -12,4 +12,18 @@ router.get(
   ReportsController.monthlyFinance
 )
 
+router.get(
+  "/inventory",
+  authMiddleware,
+  rbacMiddleware("superadmin", "admin_inventaris"),
+  ReportsController.inventoryExcel
+)
+
+router.get(
+  "/finance/weekly",
+  authMiddleware,
+  rbacMiddleware("superadmin", "bendahara"),
+  ReportsController.weeklyFinanceExcel
+)
+
 export default router

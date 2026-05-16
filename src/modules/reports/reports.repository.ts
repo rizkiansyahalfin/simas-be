@@ -1,7 +1,32 @@
 import prisma from "../../database"
 
 export const ReportsRepository = {
+  async getWeeklyFinance({
+  startDate,
+  endDate
+}: {
+  startDate: Date
+  endDate: Date
+}) {
 
+  return prisma.cashTransaction.findMany({
+
+    where: {
+
+      deletedAt: null,
+
+      transactionDate: {
+
+        gte: startDate,
+        lte: endDate
+      }
+    },
+
+    orderBy: {
+      transactionDate: "asc"
+    }
+  })
+},
   async getMonthlyFinance({
     month,
     year
@@ -52,5 +77,23 @@ export const ReportsRepository = {
       cashTransactions,
       zisTransactions
     }
+  },
+   async getInventoryReport() {
+
+    return prisma.inventory.findMany({
+
+      include: {
+
+        manager: {
+          select: {
+            username: true
+          }
+        }
+      },
+
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
   }
 }
