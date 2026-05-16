@@ -9,6 +9,11 @@ import inventoryLoanRouter from '../modules/inventory-loan/inventory-loan.route'
 import eventRouter from '../modules/events/event.route'
 import reportsRouter from '../modules/reports/reports.route'
 import articleRiuter from "../modules/articles/article.route"
+import donationRouter from '../modules/donations/donation.route'
+import mustahikRouter from '../modules/mustahik/mustahik.route'
+import distributionRouter from '../modules/mustahik-distribution/distribution.route'
+import prayerRouter from '../modules/prayer/prayer.route'
+import usersRouter from '../modules/users/user.route'
 
 const router = Router()
 
@@ -27,5 +32,10 @@ router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
 router.use("/articles", articleRiuter)
+router.use('/donations', donationRouter)
+router.use('/mustahik', mustahikRouter)
+router.use('/mustahik-distribution', distributionRouter)
+router.use('/prayer', prayerRouter)
+router.use('/users', usersRouter)
 
 export default router
