@@ -10,13 +10,13 @@ export const CongregationService = {
   async getAll(query: CongregationQueryInput): Promise<PaginatedCongregations> {
     const skip = Math.max((query.page - 1) * query.limit, 0)
 
-    return (await CongregationRepository.findAll({
+    return await CongregationRepository.findAll({
       search: query.search,
       gender: query.gender,
       isMustahik: query.isMustahik,
       skip,
       limit: query.limit
-    })) as any
+    })
   },
 
   async create(data: CreateCongregationInput) {

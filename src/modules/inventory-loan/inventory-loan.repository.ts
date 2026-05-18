@@ -46,7 +46,7 @@ export const InventoryLoanRepository = {
     })
   },
 
-  async create(data: Prisma.InventoryLoanCreateInput) {
+  async create(data: Prisma.InventoryLoanUncheckedCreateInput) {
     return prisma.inventoryLoan.create({
       data,
       include: { inventory: true, creator: true }

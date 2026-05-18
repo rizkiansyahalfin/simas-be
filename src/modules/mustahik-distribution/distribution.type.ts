@@ -1,8 +1,10 @@
+import type { Prisma } from "../../generated/client"
+
 export interface MustahikDistribution {
   id: number
   mustahikId: number
   zisTransactionId: number
-  amount: number
+  amount: Prisma.Decimal | number | string
   description?: string | null
   distributionDate: Date
   createdAt: Date
@@ -11,12 +13,12 @@ export interface MustahikDistribution {
     category: string
     congregation: {
       id: number
-      name: string
+      fullName: string
     }
   }
   zisTransaction?: {
     id: number
-    amount: number | string // Prisma Decimal, can be converted to number
+    amount: Prisma.Decimal | number | string // Prisma Decimal, can be converted to number
     type: string
     description?: string | null
     createdBy: number

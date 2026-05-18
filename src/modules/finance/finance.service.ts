@@ -1,4 +1,5 @@
 import * as repo from './finance.repository';
+import type { CashFilters, ZisFilters } from './finance.repository';
 import {
   CreateCashInput,
   CreateZisInput,
@@ -9,21 +10,6 @@ import {
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { calculateSummary } from './finance.domain';
 
-type CashFilters = {
-  type?: string;
-  category?: string;
-  startDate?: Date;
-  endDate?: Date;
-  search?: string;
-};
-
-type ZisFilters = {
-  type?: string;
-  zisCategory?: string;
-  startDate?: Date;
-  endDate?: Date;
-  search?: string;
-};
 
 export const getSummary = async () => {
   const now = new Date();
@@ -31,7 +17,7 @@ export const getSummary = async () => {
   const end = endOfMonth(now);
 
   const { cashSummary, zisSummary } = await repo.findSummaryData(start, end);
-  const summary = calculateSummary(cashSummary as any, zisSummary as any);
+  const summary = calculateSummary(cashSummary, zisSummary);
 
   return {
     ...summary,
@@ -47,7 +33,7 @@ export const getCashTransactions = async ({
   page?: number;
   limit?: number;
   filters?: CashFilters;
-} = {}): Promise<PaginatedResponse<any>> => {
+} = {}): Promise<PaginatedResponse<unknown>> => {
   const [data, total] = await Promise.all([
     repo.findCashTransactions({ page, limit, filters }),
     repo.countCashTransactions(filters),
@@ -85,7 +71,7 @@ export const getZisTransactions = async ({
   page?: number;
   limit?: number;
   filters?: ZisFilters;
-} = {}): Promise<PaginatedResponse<any>> => {
+} = {}): Promise<PaginatedResponse<unknown>> => {
   const [data, total] = await Promise.all([
     repo.findZisTransactions({ page, limit, filters }),
     repo.countZisTransactions(filters),

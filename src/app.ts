@@ -32,7 +32,7 @@ app.use((_req, res, next) => {//'req' is declared but its value is never read.
   const start = Date.now();
   const original = res.json.bind(res);
 
-  res.json = (body: any) => {
+  res.json = (body: unknown) => {
     const duration = Date.now() - start;
     res.setHeader("X-Response-Time", `${duration}ms`);
     return original(body);

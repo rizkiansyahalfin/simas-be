@@ -31,7 +31,7 @@ export const DistributionRepository = {
     ])
 
     return {
-      data: data as unknown as MustahikDistribution[],
+      data,
       meta: {
         total,
         page: Math.floor(skip / limit) + 1,
@@ -55,6 +55,6 @@ export const DistributionRepository = {
         },
         zisTransaction: true
       }
-    }) as unknown as Promise<MustahikDistribution>
+    })
   }
 }

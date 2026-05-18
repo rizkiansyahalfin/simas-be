@@ -1,10 +1,11 @@
 import bcrypt from "bcrypt"
+import { Role } from "../../generated/enums"
 import { UserRepository } from "./user.repository"
 import { CreateUserInput, UpdateUserInput } from "./user.type"
 
 type UserFilters = {
   search?: string
-  role?: string
+  role?: Role
   isActive?: boolean
 }
 
@@ -18,7 +19,7 @@ export const UserService = {
       UserRepository.count(filters)
     ])
 
-    const safeUsers = users.map(({ passwordHash, ...u }) => u)
+    const safeUsers = users.map(({ passwordHash: _, ...u }) => u)
     const totalPages = Math.max(1, Math.ceil(total / limit))
 
     return {
@@ -43,12 +44,13 @@ export const UserService = {
         role: data.role
       })
 
-      const { passwordHash, ...safeUser } = user
+      const { passwordHash: _, ...safeUser } = user
+      console.log(_)
       return safeUser
 
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        throw new Error("EMAIL_ALREADY_USED")
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && 'code' in error && (error as { code: string }).code === "P2002") {
+        throw new Error("EMAIL_ALREADY_USED", { cause: error })
       }
       throw error
     }
@@ -60,7 +62,8 @@ export const UserService = {
 
     const updated = await UserRepository.update(id, data)
 
-    const { passwordHash, ...safeUser } = updated
+    const { passwordHash: _, ...safeUser } = updated
+    console.log(_)
     return safeUser
   },
 

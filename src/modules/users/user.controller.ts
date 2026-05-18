@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express"
+import { Role } from "../../generated/enums"
 import { UserService } from "./user.service"
 import { createUserSchema, updateUserSchema } from "./user.validation"
 
@@ -26,6 +27,15 @@ const parseString = (value: unknown) => {
   return trimmed.length ? trimmed : undefined
 }
 
+const parseRole = (value: unknown): Role | undefined => {
+  const raw = parseString(value)
+  if (!raw) return undefined
+  if (raw === "superadmin" || raw === "bendahara" || raw === "admin_kegiatan" || raw === "admin_inventaris") {
+    return raw as Role
+  }
+  return undefined
+}
+
 export const UserController = {
 
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -34,7 +44,7 @@ export const UserController = {
       const limit = parseLimit(req.query.limit)
       const filters = {
         search: parseString(req.query.search),
-        role: parseString(req.query.role),
+        role: parseRole(req.query.role),
         isActive: parseBoolean(req.query.isActive)
       }
 

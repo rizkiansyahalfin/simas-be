@@ -1,24 +1,26 @@
+import type { Prisma } from '../../generated/client';
+import { TransactionType, ZisCategory } from '../../generated/enums';
 import prisma from '../../database';
 import { CreateCashInput, CreateZisInput, UpdateCashInput, UpdateZisInput } from './finance.type';
 
-type CashFilters = {
-  type?: string;
+export type CashFilters = {
+  type?: TransactionType;
   category?: string;
   startDate?: Date;
   endDate?: Date;
   search?: string;
 };
 
-type ZisFilters = {
-  type?: string;
-  zisCategory?: string;
+export type ZisFilters = {
+  type?: TransactionType;
+  zisCategory?: ZisCategory;
   startDate?: Date;
   endDate?: Date;
   search?: string;
 };
 
 const buildCashWhere = (filters: CashFilters = {}) => {
-  const where: any = { deletedAt: null };
+  const where: Prisma.CashTransactionWhereInput = { deletedAt: null };
 
   if (filters.type) {
     where.type = filters.type;
@@ -49,7 +51,7 @@ const buildCashWhere = (filters: CashFilters = {}) => {
 };
 
 const buildZisWhere = (filters: ZisFilters = {}) => {
-  const where: any = { deletedAt: null };
+  const where: Prisma.ZisTransactionWhereInput = { deletedAt: null };
 
   if (filters.type) {
     where.type = filters.type;
@@ -181,7 +183,17 @@ export const softDeleteZisTransaction = async (id: number) => {
   });
 };
 
-export const findSummaryData = async (start: Date, end: Date) => {
+type GroupedSummaryRow = {
+  type: 'income' | 'expense'
+  _sum: {
+    amount: unknown
+  }
+}
+
+export const findSummaryData = async (
+  start: Date,
+  end: Date
+): Promise<{ cashSummary: GroupedSummaryRow[]; zisSummary: GroupedSummaryRow[] }> => {
   const baseWhere = {
     deletedAt: null,
     transactionDate: {

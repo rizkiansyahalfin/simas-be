@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { TransactionType, ZisCategory } from '../../generated/enums';
 import * as service from './finance.service';
 import {
   createCashSchema,
@@ -30,9 +31,18 @@ const parseString = (value: unknown) => {
   return trimmed.length ? trimmed : undefined;
 };
 
-const parseType = (value: unknown) => {
+const parseTransactionType = (value: unknown): TransactionType | undefined => {
   const raw = parseString(value);
-  return raw ? raw.toLowerCase() : undefined;
+  if (!raw) return undefined;
+  if (raw === 'income' || raw === 'expense') return raw as TransactionType;
+  return undefined;
+};
+
+const parseZisCategory = (value: unknown): ZisCategory | undefined => {
+  const raw = parseString(value);
+  if (!raw) return undefined;
+  if (raw === 'zakat' || raw === 'infaq' || raw === 'shadaqah') return raw as ZisCategory;
+  return undefined;
 };
 
 export const getCash = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,7 +51,7 @@ export const getCash = async (req: Request, res: Response, next: NextFunction) =
     const limit = parseLimit(req.query.limit);
 
     const filters = {
-      type: parseType(req.query.type),
+      type: parseTransactionType(req.query.type),
       category: parseString(req.query.category),
       search: parseString(req.query.search),
       startDate: parseDate(req.query.startDate),
@@ -82,7 +92,7 @@ export const getSummary = async (req: Request, res: Response, next: NextFunction
 export const postCash = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = createCashSchema.parse(req.body);
-    const userId = (req as any).user?.id || 1;
+    const userId = req.user?.id ?? 1;
 
     const result = await service.addCashTransaction(validatedData, userId);
     res.status(201).json({ status: 'success', data: result });
@@ -119,8 +129,8 @@ export const getZis = async (req: Request, res: Response, next: NextFunction) =>
     const limit = parseLimit(req.query.limit);
 
     const filters = {
-      type: parseType(req.query.type),
-      zisCategory: parseType(req.query.zisCategory),
+      type: parseTransactionType(req.query.type),
+      zisCategory: parseZisCategory(req.query.zisCategory),
       search: parseString(req.query.search),
       startDate: parseDate(req.query.startDate),
       endDate: parseDate(req.query.endDate),
@@ -151,7 +161,7 @@ export const getZisById = async (req: Request, res: Response, next: NextFunction
 export const postZis = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = createZisSchema.parse(req.body);
-    const userId = (req as any).user?.id || 1;
+    const userId = req.user?.id ?? 1;
 
     const result = await service.addZisTransaction(validatedData, userId);
     res.status(201).json({ status: 'success', data: result });

@@ -1,14 +1,31 @@
-export type {
-  PrayerScheduleInput,
-  PrayerQueryInput,
-  PrayerConfigInput
-} from "./prayer.validation"
-
-export interface PrayerData {
-  subuh: string | Date
-  dzuhur: string | Date
-  ashar: string | Date
-  maghrib: string | Date
-  isya: string | Date
+export interface PrayerApiResponse {
+  code: number
+  message: string
+  data: {
+    provinsi: string
+    kabkota: string
+    bulan: number
+    tahun: number
+    bulan_nama: string
+    jadwal: PrayerScheduleItem[]
+  }
 }
 
+export interface PrayerScheduleItem {
+  tanggal: number
+  tanggal_lengkap: string
+  hari: string
+  imsak: string
+  subuh: string
+  terbit: string
+  dhuha: string
+  dzuhur: string
+  ashar: string
+  maghrib: string
+  isya: string
+}
+
+export interface PrayerConfig {
+  province: string
+  city: string
+}

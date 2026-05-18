@@ -14,10 +14,11 @@ export const AuthController = {
         success: true,
         data: result
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorCode = error instanceof Error ? error.message : String(error)
       return res.status(401).json({
         success: false,
-        error_code: error.message
+        error_code: errorCode
       })
     }
   }

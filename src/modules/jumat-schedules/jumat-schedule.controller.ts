@@ -23,7 +23,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = createJumatScheduleSchema.parse(req.body);
-    const userId = (req as Request & { user?: { id: string | number } }).user?.id;
+    const userId = req.user?.id;
     const data = await service.create(validatedData, Number(userId));
     res.status(201).json({ status: 'success', data });
   } catch (error) {
