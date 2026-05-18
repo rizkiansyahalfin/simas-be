@@ -1,18 +1,25 @@
 import { ArticleRepository } from "./article.repository"
 import type { CreateArticleInput, UpdateArticleInput } from "./article.type"
 import type { AuthUser } from "../../modules/auth/auth.type"
+import { sanitizeInput } from "../../utils/sanitize"
+
 
 export const ArticleService = {
   async findAll() {
     return ArticleRepository.findAll()
   },
 
-  async create(data: CreateArticleInput, userId: number) {
-    return ArticleRepository.create({
-      ...data,
-      author: { connect: { id: userId } }
-    })
-  },
+async create(data: CreateArticleInput, userId: number) {
+  return ArticleRepository.create({
+    title: sanitizeInput(data.title),
+    content: sanitizeInput(data.content),
+    imageUrl: data.imageUrl
+      ? sanitizeInput(data.imageUrl)
+      : undefined,
+
+    author: { connect: { id: userId } }
+  })
+},
 
   async update(id: number, data: UpdateArticleInput, user: AuthUser) {
     const article = await ArticleRepository.findById(id)
@@ -22,7 +29,19 @@ export const ArticleService = {
       throw new Error("FORBIDDEN")
     }
 
-    return ArticleRepository.update(id, data)
+    return ArticleRepository.update(id, {
+      title:data.title
+      ? sanitizeInput(data.title)
+      : undefined,
+
+      content: data.content
+      ? sanitizeInput(data.content)
+      :undefined,
+
+      imageUrl: data.imageUrl
+      ? sanitizeInput(data.imageUrl)
+      : undefined
+    })
   },
 
   async publish(id: number, user: AuthUser) {

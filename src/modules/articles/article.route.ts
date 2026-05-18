@@ -33,3 +33,5 @@ router.patch(
   rbacMiddleware("superadmin"),
   controller.publish
 )
+
+export default router

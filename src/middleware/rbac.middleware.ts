@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from "express"
+<<<<<<< HEAD
 import { Role } from "../generated/client"
+=======
+import { Role } from "../generated/enums"
+>>>>>>> 19880711ffbfebfe49f4efc80befac3289497d2f
 
 export const rbacMiddleware = (...allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,5 @@
 import prisma from "../../database"
+import { MustahikCategory } from "../../generated/enums"
 import type {
   Mustahik,
   CreateMustahikData,
@@ -6,7 +7,6 @@ import type {
   MustahikRepositoryParams,
   PaginatedMustahiks
 } from "./mustahik.type"
-import { MustahikCategory } from "../../prisma/generated/prisma"
 
 export const MustahikRepository = {
   async findAll({

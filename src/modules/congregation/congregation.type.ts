@@ -1,4 +1,5 @@
-import type { Prisma, Gender } from "../../prisma/generated/prisma"
+import type { Gender } from "../../generated/enums"
+import { Prisma } from "../../generated/client"
 
 export type CongregationWithMustahik = Prisma.CongregationGetPayload<{
   include: { mustahik: true }

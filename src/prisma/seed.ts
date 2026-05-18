@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {  Role } from "./generated/prisma";
+import {  Role } from "../generated/enums";
 import prisma from "../database";
 
 
