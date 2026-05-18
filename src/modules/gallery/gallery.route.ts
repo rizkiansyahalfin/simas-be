@@ -1,17 +1,14 @@
 import { Router } from "express"
-import { CongregationController } from "./congregation.controller"
+import { GalleryController } from "./gallery.controller"
+
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 
+import { uploadImage } from "../../middlewares/upload.middleware"
+
 const router = Router()
-const controller = CongregationController
 
-
-router.get(
-  "/",
-  authMiddleware,
-  controller.getAll
-)
+router.get("/", GalleryController.findAll)
 
 router.post(
   "/",
@@ -20,26 +17,18 @@ router.post(
     "superadmin",
     "admin_kegiatan"
   ),
-  controller.create
+  uploadImage.array("images", 10),
+  GalleryController.create
 )
 
-router.put(
+router.delete(
   "/:id",
   authMiddleware,
   rbacMiddleware(
     "superadmin",
     "admin_kegiatan"
   ),
-  controller.update
-)
-
-router.patch(
-  "/:id/deactivate",
-  authMiddleware,
-  rbacMiddleware(
-    "superadmin"
-  ),
-  controller.delete
+  GalleryController.delete
 )
 
 export default router

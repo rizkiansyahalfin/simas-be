@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { PrayerController } from "./prayer.controller"
-import { authMiddleware } from "../../middleware/auth.middleware"
-import { rbacMiddleware } from "../../middleware/rbac.middleware"
+import { authMiddleware } from "../../middlewares/auth.middleware"
+import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 
 const router = Router()
 

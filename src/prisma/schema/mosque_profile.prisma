@@ -1,0 +1,29 @@
+model MosqueProfile {
+  id            Int      @id @default(1)
+
+  name          String   @db.VarChar(255)
+  address       String?  @db.Text
+
+  description   String?  @db.Text
+  history       String?  @db.Text
+
+  vision        String?  @db.Text
+  mission       String?  @db.Text
+
+  contactPhone  String?  @map("contact_phone") @db.VarChar(20)
+  contactEmail  String?  @map("contact_email") @db.VarChar(100)
+
+  instagramUrl  String?  @map("instagram_url") @db.VarChar(255)
+  youtubeUrl    String?  @map("youtube_url") @db.VarChar(255)
+  facebookUrl   String?  @map("facebook_url") @db.VarChar(255)
+
+  bankName      String?  @map("bank_name") @db.VarChar(100)
+  bankAccount   String?  @map("bank_account") @db.VarChar(100)
+  bankHolder    String?  @map("bank_holder") @db.VarChar(100)
+
+  qrisImageUrl  String?  @map("qris_image_url") @db.VarChar(255)
+
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("mosque_profiles")
+}
