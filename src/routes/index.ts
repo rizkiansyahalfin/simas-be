@@ -2,6 +2,10 @@ import { Router, Request, Response } from 'express'
 
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
+<<<<<<< Updated upstream
+=======
+import userRoutes from '../modules/auth/user.route'
+>>>>>>> Stashed changes
 import jumatScheduleRouter from '../modules/jumat-schedules/jumat-schedules.route'
 import congregationRouter from '../modules/congregation/congregation.route'
 import inventoryRouter from '../modules/inventory/inventory.route'
@@ -25,6 +29,7 @@ router.get('/test', (req: Request, res: Response) => {
 
 router.use('/finance', financeRouter)
 router.use('/auth', authRoutes)
+router.use('/auth', userRoutes)
 router.use('/jumat-schedules', jumatScheduleRouter)
 router.use('/congregation', congregationRouter)
 router.use('/inventory', inventoryRouter)
