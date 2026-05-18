@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express"
-import { Role } from "../../prisma/generated/prisma"
 import { ArticleService } from "./article.service"
 import { createArticleSchema, updateArticleSchema } from "./article.validation"
 

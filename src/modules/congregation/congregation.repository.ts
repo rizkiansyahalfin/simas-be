@@ -1,5 +1,6 @@
-import type { Prisma, Gender } from "../../prisma/generated/prisma"
+import type {  Gender } from "../../generated/enums"
 import prisma from "../../database"
+import { Prisma } from "../../generated/client"
 
 type CongregationFindAllParams = {
   search?: string

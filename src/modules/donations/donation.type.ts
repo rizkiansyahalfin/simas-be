@@ -1,4 +1,4 @@
-import { Donation } from '../../prisma/generated/prisma'
+import { Donation } from "../../generated/client"
 
 export type CreateDonationInput = {
   donorName: string

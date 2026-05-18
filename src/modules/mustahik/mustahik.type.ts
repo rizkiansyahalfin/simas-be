@@ -1,4 +1,4 @@
-import { MustahikCategory } from "../../prisma/generated/prisma"
+import { MustahikCategory } from "../../generated/enums"
 
 export interface Mustahik {
   id: number
