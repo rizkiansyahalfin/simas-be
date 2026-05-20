@@ -1,13 +1,15 @@
+import type { Prisma } from "../../generated/client"
+import { Role } from "../../generated/enums"
 import prisma from "../../database"
 
 type UserFilters = {
   search?: string
-  role?: string
+  role?: Role
   isActive?: boolean
 }
 
 const buildWhere = (filters: UserFilters = {}) => {
-  const where: any = {}
+  const where: Prisma.UserWhereInput = {}
 
   if (filters.role) {
     where.role = filters.role
@@ -49,11 +51,11 @@ export const UserRepository = {
     })
   },
 
-  async create(data: any) {
+  async create(data: Prisma.UserCreateInput) {
     return prisma.user.create({ data })
   },
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Prisma.UserUpdateInput) {
     return prisma.user.update({
       where: { id },
       data

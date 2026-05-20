@@ -13,7 +13,7 @@ export const prayerScheduleSchema = z.object({
 })
 
 export const prayerQuerySchema = z.object({
-  date: z.string().trim().min(1),
+  date: z.string().trim().optional(),
   city: z.string().trim().min(1).max(100).optional()
 })
 

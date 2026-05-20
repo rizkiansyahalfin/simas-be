@@ -46,9 +46,7 @@ export const InventoryLoanService = {
       throw new Error("INVALID_LOAN_DATES")
     }
 
-    return InventoryLoanRepository.create(
-      data as unknown as Prisma.InventoryLoanCreateInput
-    )
+    return InventoryLoanRepository.create(data)
   },
 
   async update(id: number, data: UpdateInventoryLoanData) {

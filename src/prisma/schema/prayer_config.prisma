@@ -1,7 +1,6 @@
 model PrayerConfig {
   id        Int @id @default(1)
-
+  province  String
   city      String
-
   updatedAt DateTime @updatedAt
 }

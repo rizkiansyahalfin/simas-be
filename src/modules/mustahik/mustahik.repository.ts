@@ -34,7 +34,7 @@ export const MustahikRepository = {
     ])
 
     return {
-      data: data as unknown as Mustahik[],
+      data,
       meta: {
         total,
         page: Math.floor(skip / limit) + 1,
@@ -50,7 +50,7 @@ export const MustahikRepository = {
       include: {
         congregation: true
       }
-    }) as unknown as Promise<Mustahik | null>
+    })
   },
 
   async create(data: CreateMustahikData): Promise<Mustahik> {
@@ -59,7 +59,7 @@ export const MustahikRepository = {
       include: {
         congregation: true
       }
-    }) as unknown as Promise<Mustahik>
+    })
   },
 
   async update(id: number, data: UpdateMustahikData): Promise<Mustahik> {
@@ -69,6 +69,6 @@ export const MustahikRepository = {
       include: {
         congregation: true
       }
-    }) as unknown as Promise<Mustahik>
+    })
   }
 }

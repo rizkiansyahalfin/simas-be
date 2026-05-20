@@ -1,47 +1,35 @@
-import { Request, Response, NextFunction } from "express"
-
+import type { Request, Response } from "express"
 import { PrayerService } from "./prayer.service"
-import {
-  prayerConfigSchema,
-  prayerQuerySchema
-} from "./prayer.validation"
+import { prayerQuerySchema } from "./prayer.validation"
 
 export const PrayerController = {
-  async getPrayer(req: Request, res: Response, next: NextFunction) {
-    try {
-      const query = prayerQuerySchema.parse(
-        req.query as Record<string, unknown>
-      )
+  async getSchedule(req: Request, res: Response) {
+    const query = prayerQuerySchema.safeParse(req.query)
 
-      const data = await PrayerService.getPrayer(query.date, query.city)
-
-      if (!data) {
-        return res.status(404).json({
-          status: "error",
-          message: "Prayer schedule not found"
-        })
-      }
-
-      res.json({
-        status: "success",
-        data
+    if (!query.success) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid query parameters",
+        errors: query.error.format()
       })
-    } catch (err) {
-      next(err)
     }
+
+    const date = query.data.date ?? new Date().toISOString().split("T")[0]
+    const city = query.data.city
+    const data = await PrayerService.getSchedule({ date, city })
+
+    return res.json({
+      success: true,
+      data
+    })
   },
 
-  async updateConfig(req: Request, res: Response, next: NextFunction) {
-    try {
-      const payload = prayerConfigSchema.parse(req.body)
-      const config = await PrayerService.updateConfig(payload)
+  async sync(req: Request, res: Response) {
+    const result = await PrayerService.syncMonthly()
 
-      res.json({
-        status: "success",
-        data: config
-      })
-    } catch (err) {
-      next(err)
-    }
+    return res.json({
+      success: true,
+      result
+    })
   }
 }

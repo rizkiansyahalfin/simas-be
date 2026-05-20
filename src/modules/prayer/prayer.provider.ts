@@ -1,25 +1,42 @@
-import axios, { AxiosError } from "axios"
-import type { PrayerData } from "./prayer.type"
+import axios from "axios"
+import type { PrayerApiResponse } from "./prayer.type"
+
+const BASE_URL = "https://equran.id/api/v2/shalat"
 
 export const PrayerProvider = {
-  async fetch(city: string): Promise<PrayerData> {
-    try {
-      const res = await axios.get("API_URL", {
-        params: { city },
-        timeout: 5000
-      })
+  async getProvinces(): Promise<string[]> {
+    const res = await axios.get(`${BASE_URL}/provinsi`)
+    return res.data.data
+  },
 
-      if (!res.data) {
-        throw new Error("INVALID_RESPONSE")
+  async getCities(province: string): Promise<string[]> {
+    const res = await axios.post(`${BASE_URL}/kabkota`, {
+      provinsi: province
+    })
+
+    return res.data.data
+  },
+
+  async fetchMonthlySchedule(
+    province: string,
+    city: string,
+    month: number,
+    year: number
+  ): Promise<PrayerApiResponse["data"]> {
+
+    const res = await axios.post<PrayerApiResponse>(
+      BASE_URL,
+      {
+        provinsi: province,
+        kabkota: city,
+        bulan: month,
+        tahun: year
+      },
+      {
+        timeout: 10000
       }
+    )
 
-      return res.data
-    } catch (err) {
-      const axiosErr = err as AxiosError
-      // eslint-disable-next-line preserve-caught-error
-      throw new Error(
-        axiosErr.message || `Failed to fetch prayer data for ${city}`
-      )
-    }
+    return res.data.data
   }
 }

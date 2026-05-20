@@ -6,10 +6,9 @@ export interface Mustahik {
   category: MustahikCategory
   notes?: string | null
   createdAt: Date
-  updatedAt: Date
   congregation?: {
     id: number
-    name: string
+    fullName: string
     phone?: string | null
     nik?: string | null
     address?: string | null

@@ -38,7 +38,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     const user = req.user!
     const payload = updateArticleSchema.parse(req.body)
 
-    const result = await ArticleService.update(id, payload, user as any)
+    const result = await ArticleService.update(id, payload, user)
 
     res.json({ status: "success", data: result })
   } catch (err) {
@@ -51,7 +51,7 @@ export const deleteArticle = async (req: Request, res: Response, next: NextFunct
     const id = parseArticleId(req.params.id)
     const user = req.user!
 
-    const result = await ArticleService.delete(id, user as any)
+    const result = await ArticleService.delete(id, user)
 
     res.json({ status: "success", data: result })
   } catch (err) {
@@ -64,7 +64,7 @@ export const publish = async (req: Request, res: Response, next: NextFunction) =
     const id = parseArticleId(req.params.id)
     const user = req.user!
 
-    const result = await ArticleService.publish(id, user as any)
+    const result = await ArticleService.publish(id, user)
 
     res.json({ status: "success", data: result })
   } catch (err) {
