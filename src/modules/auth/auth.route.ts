@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { AuthController } from "./auth.controller"
-import { bruteForceMiddleware } from "../../middleware/brute-force.middleware"
+import { bruteForceMiddleware } from "../../middlewares/brute-force.middleware"
 
 const router = Router()
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as jumatScheduleController from './jumat-schedule.controller';
-import { authMiddleware } from '../../middleware/auth.middleware';
+import { authMiddleware } from '../../middlewares/auth.middleware';
 
 const router = Router();
 

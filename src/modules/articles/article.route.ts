@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as controller from "./article.controller"
-import { rbacMiddleware } from "../../middleware/rbac.middleware";
-import { authMiddleware } from "../../middleware/auth.middleware";
+import { rbacMiddleware } from "../../middlewares/rbac.middleware";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 const router = Router()
 

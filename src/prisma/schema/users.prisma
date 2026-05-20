@@ -17,6 +17,7 @@ model User {
   jumatSchedules    JumatSchedule[]
   inventories       Inventory[]
   inventoryLoans    InventoryLoan[]
+  galleries         Gallery[]
 
   @@map("users")
 }

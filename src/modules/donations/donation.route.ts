@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { authMiddleware } from '../../middleware/auth.middleware'
-import { rbacMiddleware } from '../../middleware/rbac.middleware'
-import { uploadDonationProof } from '../../middleware/upload.middleware'
+import { authMiddleware } from '../../middlewares/auth.middleware'
+import { rbacMiddleware } from '../../middlewares/rbac.middleware'
+import { uploadDonationProof } from '../../middlewares/upload.middleware'
 import * as controller from './donation.controller'
 
 const router = Router()

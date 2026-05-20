@@ -2,10 +2,7 @@ import { Router, Request, Response } from 'express'
 
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
-<<<<<<< Updated upstream
-=======
 import userRoutes from '../modules/auth/user.route'
->>>>>>> Stashed changes
 import jumatScheduleRouter from '../modules/jumat-schedules/jumat-schedules.route'
 import congregationRouter from '../modules/congregation/congregation.route'
 import inventoryRouter from '../modules/inventory/inventory.route'
@@ -18,6 +15,8 @@ import mustahikRouter from '../modules/mustahik/mustahik.route'
 import distributionRouter from '../modules/mustahik-distribution/distribution.route'
 import prayerRouter from '../modules/prayer/prayer.route'
 import usersRouter from '../modules/users/user.route'
+import dashboardRouter from '../modules/dashboard/dashboard.route'
+import mosqueprofileRouter from '../modules/mosque-profile/mosque-profile.route'
 
 const router = Router()
 
@@ -42,5 +41,6 @@ router.use('/mustahik', mustahikRouter)
 router.use('/mustahik-distribution', distributionRouter)
 router.use('/prayer', prayerRouter)
 router.use('/users', usersRouter)
-
+router.use('/dashboard', dashboardRouter)
+router.use('/mosque-profile', mosqueprofileRouter)
 export default router
