@@ -18,6 +18,7 @@ model User {
   inventories       Inventory[]
   inventoryLoans    InventoryLoan[]
   galleries         Gallery[]
+  campaigns         Campaign[]
 
   @@map("users")
 }
