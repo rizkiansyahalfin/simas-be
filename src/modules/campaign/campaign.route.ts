@@ -1,6 +1,7 @@
 // campaign.route.ts
 
 import { Router } from 'express'
+import { AuditAction } from '../../generated/client'
 
 import * as campaignController from './campaign.controller'
 
@@ -11,6 +12,8 @@ import {
 import {
   rbacMiddleware,
 } from '../../middlewares/rbac.middleware'
+
+import { auditMiddleware } from '../audit/audit.middleware'
 
 import {
   Role,
@@ -42,6 +45,10 @@ router.post(
     Role.superadmin,
     Role.bendahara
   ),
+  auditMiddleware({
+    action: AuditAction.create,
+    module: 'campaigns',
+  }),
   campaignController.createCampaign
 )
 
@@ -52,6 +59,10 @@ router.put(
     Role.superadmin,
     Role.bendahara
   ),
+  auditMiddleware({
+    action: AuditAction.update,
+    module: 'campaigns',
+  }),
   campaignController.updateCampaign
 )
 
@@ -61,6 +72,10 @@ router.delete(
   rbacMiddleware(
     Role.superadmin
   ),
+  auditMiddleware({
+    action: AuditAction.delete,
+    module: 'campaigns',
+  }),
   campaignController.deleteCampaign
 )
 

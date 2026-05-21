@@ -1,8 +1,10 @@
 import { Router } from "express"
+import { AuditAction } from '../../generated/client'
 import { GalleryController } from "./gallery.controller"
 
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
+import { auditMiddleware } from '../audit/audit.middleware'
 
 import { uploadImage } from "../../middlewares/upload.middleware"
 
@@ -17,6 +19,10 @@ router.post(
     "superadmin",
     "admin_kegiatan"
   ),
+  auditMiddleware({
+    action: AuditAction.create,
+    module: 'gallery',
+  }),
   uploadImage.array("images", 10),
   GalleryController.create
 )
@@ -28,6 +34,10 @@ router.delete(
     "superadmin",
     "admin_kegiatan"
   ),
+  auditMiddleware({
+    action: AuditAction.delete,
+    module: 'gallery',
+  }),
   GalleryController.delete
 )
 

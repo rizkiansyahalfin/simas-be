@@ -78,3 +78,9 @@ enum CampaignStatus {
   cancelled
   draft
 }
+
+enum AuditAction {
+  create
+  update
+  delete
+}
