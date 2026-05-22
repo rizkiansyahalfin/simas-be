@@ -17,6 +17,8 @@ import prayerRouter from '../modules/prayer/prayer.route'
 import usersRouter from '../modules/users/user.route'
 import dashboardRouter from '../modules/dashboard/dashboard.route'
 import mosqueprofileRouter from '../modules/mosque-profile/mosque-profile.route'
+import auditRouter from '../modules/audit/audit.route'
+import campaignRouter from '../modules/campaign/campaign.route'
 
 const router = Router()
 
@@ -43,4 +45,6 @@ router.use('/prayer', prayerRouter)
 router.use('/users', usersRouter)
 router.use('/dashboard', dashboardRouter)
 router.use('/mosque-profile', mosqueprofileRouter)
+router.use('/campaigns', campaignRouter)
+router.use('/audit', auditRouter)
 export default router

@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import { AuditAction } from '../../generated/client'
 import { authMiddleware } from '../../middlewares/auth.middleware'
 import { rbacMiddleware } from '../../middlewares/rbac.middleware'
+import { auditMiddleware } from '../audit/audit.middleware'
 import { uploadDonationProof } from '../../middlewares/upload.middleware'
 import * as controller from './donation.controller'
 
@@ -21,6 +23,10 @@ router.put(
   '/:id/verify',
   authMiddleware,
   rbacMiddleware('bendahara', 'superadmin'),
+  auditMiddleware({
+    action: AuditAction.update,
+    module: 'donations',
+  }),
   controller.verifyDonation
 )
 
@@ -28,6 +34,10 @@ router.put(
   '/:id/reject',
   authMiddleware,
   rbacMiddleware('bendahara', 'superadmin'),
+  auditMiddleware({
+    action: AuditAction.update,
+    module: 'donations',
+  }),
   controller.rejectDonation
 )
 

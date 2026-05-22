@@ -71,3 +71,16 @@ enum MustahikCategory {
   fisabilillah
   ibnu_sabil
 }
+
+enum CampaignStatus {
+  active
+  completed
+  cancelled
+  draft
+}
+
+enum AuditAction {
+  create
+  update
+  delete
+}

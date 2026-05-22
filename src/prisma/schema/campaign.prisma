@@ -1,0 +1,20 @@
+model Campaign {
+  id          Int            @id @default(autoincrement())
+  title       String         @db.VarChar(255)
+  description String?        @db.Text
+  targetAmount Decimal       @map("target_amount") @db.Decimal(15, 2)
+  thumbnailUrl String?       @map("thumbnail_url") @db.VarChar(255)
+  deadline    DateTime?      @db.Date
+  status      CampaignStatus @default(draft)
+
+  createdBy   Int            @map("created_by")
+
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  creator     User           @relation(fields: [createdBy], references: [id])
+  donations   Donation[]
+
+  @@map("campaigns")
+}
