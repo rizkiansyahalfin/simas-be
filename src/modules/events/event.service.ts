@@ -7,6 +7,17 @@ import type {
   EventQueryParams,
   PaginatedEvents
 } from "./event.type"
+import {
+  addDays,
+  startOfDay,
+  endOfDay,
+} from 'date-fns'
+
+import prisma from '../../database'
+
+import {
+  NotificationTrigger,
+} from '../notification/notification.trigger'
 
 export const EventService = {
   async getAll({
@@ -75,6 +86,38 @@ export const EventService = {
 
     return EventRepository.update(id, { status: status as EventStatus })
   },
+async sendTomorrowReminders() {
+
+  const tomorrow =
+    addDays(new Date(), 1)
+
+  const events =
+    await prisma.event.findMany({
+      where: {
+        startTime: {
+          gte: startOfDay(
+            tomorrow
+          ),
+
+          lte: endOfDay(
+            tomorrow
+          ),
+        },
+
+        status: 'upcoming',
+      },
+    })
+
+  for (const event of events) {
+
+    await NotificationTrigger.eventReminder({
+      eventId: event.id,
+      eventTitle: event.title,
+    })
+  }
+
+  return events.length
+},
 
   async delete(id: number): Promise<Event> {
     const existing = await EventRepository.findById(id)

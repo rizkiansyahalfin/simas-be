@@ -1,4 +1,3 @@
-import type { Prisma } from "../../generated/client"
 import type {
   CreateInventoryLoanData,
   UpdateInventoryLoanData,
@@ -8,6 +7,9 @@ import type {
 } from "./inventory-loan.type"
 import { InventoryLoanRepository } from "./inventory-loan.repository"
 import prisma from "../../database"
+import {
+  NotificationTrigger,
+} from '../notification/notification.trigger'
 
 export const InventoryLoanService = {
   async getAll(query: LoanQueryParams): Promise<PaginatedInventoryLoans> {
@@ -101,6 +103,40 @@ export const InventoryLoanService = {
 
     return updatedLoan
   },
+  async markOverdueLoans() {
+
+  const overdueLoans =
+    await prisma.inventoryLoan.findMany({
+      where: {
+        status: 'borrowed',
+
+        expectedReturnDate: {
+          lt: new Date(),
+        },
+      },
+    })
+
+  for (const loan of overdueLoans) {
+
+    await prisma.inventoryLoan.update({
+      where: {
+        id: loan.id,
+      },
+
+      data: {
+        status: 'overdue',
+      },
+    })
+
+    await NotificationTrigger.inventoryOverdue({
+      loanId: loan.id,
+      borrowerName:
+        loan.borrowerName,
+    })
+  }
+
+  return overdueLoans.length
+},
 
   async delete(id: number) {
     const loan = await InventoryLoanRepository.findById(id)

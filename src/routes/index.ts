@@ -19,6 +19,7 @@ import dashboardRouter from '../modules/dashboard/dashboard.route'
 import mosqueprofileRouter from '../modules/mosque-profile/mosque-profile.route'
 import auditRouter from '../modules/audit/audit.route'
 import campaignRouter from '../modules/campaign/campaign.route'
+import notificationRouter from '../modules/notification/notification.route'
 
 const router = Router()
 
@@ -47,4 +48,5 @@ router.use('/dashboard', dashboardRouter)
 router.use('/mosque-profile', mosqueprofileRouter)
 router.use('/campaigns', campaignRouter)
 router.use('/audit', auditRouter)
+router.use('/notifications', notificationRouter)
 export default router

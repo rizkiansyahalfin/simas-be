@@ -84,3 +84,10 @@ enum AuditAction {
   update
   delete
 }
+enum NotificationType {
+  donation
+  event
+  inventory
+  campaign
+  system
+}
