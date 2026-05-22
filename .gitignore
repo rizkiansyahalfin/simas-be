@@ -10,3 +10,5 @@ coverage
 src/prisma/generated/
 generated/
 package-lock.json
+
+/src/generated/prisma
