@@ -24,6 +24,7 @@ model User {
   galleries         Gallery[]
   campaigns         Campaign[]
   auditLogs         AuditLog[]
+  refreshTokens     RefreshToken[]
 
   @@map("users")
 }
