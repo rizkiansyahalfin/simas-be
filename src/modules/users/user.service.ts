@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { Role } from "../../generated/enums"
 import { UserRepository } from "./user.repository"
-import { CreateUserInput, UpdateUserInput } from "./user.type"
+import { CreateUserInput, UpdateUserInput, UpdateUserProfileInput } from "./user.type"
 
 type UserFilters = {
   search?: string
@@ -9,8 +9,20 @@ type UserFilters = {
   isActive?: boolean
 }
 
-export const UserService = {
+const excludePasswordHash = <T extends { passwordHash: string }>(user: T) => {
+  const { passwordHash, ...safeUser } = user
+  return safeUser
+}
 
+const getUserOrThrow = async (userId: number) => {
+  const user = await UserRepository.findById(userId)
+  if (!user) {
+    throw new Error("USER_NOT_FOUND")
+  }
+  return user
+}
+
+export const UserService = {
   async getAll(page = 1, limit = 10, filters: UserFilters = {}) {
     const skip = (page - 1) * limit
 
@@ -19,7 +31,7 @@ export const UserService = {
       UserRepository.count(filters)
     ])
 
-    const safeUsers = users.map(({ passwordHash: _, ...u }) => u)
+    const safeUsers = users.map(excludePasswordHash)
     const totalPages = Math.max(1, Math.ceil(total / limit))
 
     return {
@@ -44,12 +56,9 @@ export const UserService = {
         role: data.role
       })
 
-      const { passwordHash: _, ...safeUser } = user
-      console.log(_)
-      return safeUser
-
+      return excludePasswordHash(user)
     } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && 'code' in error && (error as { code: string }).code === "P2002") {
+      if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "P2002") {
         throw new Error("EMAIL_ALREADY_USED", { cause: error })
       }
       throw error
@@ -57,65 +66,23 @@ export const UserService = {
   },
 
   async update(id: number, data: UpdateUserInput) {
-    const user = await UserRepository.findById(id)
-    if (!user) throw new Error("USER_NOT_FOUND")
+    await getUserOrThrow(id)
 
     const updated = await UserRepository.update(id, data)
-
-    const { passwordHash: _, ...safeUser } = updated
-    console.log(_)
-    return safeUser
+    return excludePasswordHash(updated)
   },
 
   async getProfile(userId: number) {
-  const user =
-    await UserRepository.findById(userId)
+    const user = await getUserOrThrow(userId)
+    return excludePasswordHash(user)
+  },
 
-  if (!user) {
-    throw new Error("USER_NOT_FOUND")
-  }
+  async updateProfile(userId: number, data: UpdateUserProfileInput) {
+    await getUserOrThrow(userId)
 
-  const {
-    passwordHash: _,
-    ...safeUser
-  } = user;
-
-  console.log(_);
-
-  return safeUser
-},
-
-async updateProfile(
-  userId: number,
-  data: {
-    username?: string
-    email?: string
-    profileImage?: string
-  }
-) {
-
-  const user =
-    await UserRepository.findById(userId)
-
-  if (!user) {
-    throw new Error("USER_NOT_FOUND")
-  }
-
-  const updated =
-    await UserRepository.update(
-      userId,
-      data
-    )
-
-  const {
-    passwordHash: _,
-    ...safeUser
-  } = updated;
-
-  console.log(_);
-
-  return safeUser
-},
+    const updated = await UserRepository.update(userId, data)
+    return excludePasswordHash(updated)
+  },
 
   async activate(id: number, currentUserId: number) {
     if (id === currentUserId) {
