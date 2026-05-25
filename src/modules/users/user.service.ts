@@ -67,6 +67,56 @@ export const UserService = {
     return safeUser
   },
 
+  async getProfile(userId: number) {
+  const user =
+    await UserRepository.findById(userId)
+
+  if (!user) {
+    throw new Error("USER_NOT_FOUND")
+  }
+
+  const {
+    passwordHash: _,
+    ...safeUser
+  } = user;
+
+  console.log(_);
+
+  return safeUser
+},
+
+async updateProfile(
+  userId: number,
+  data: {
+    username?: string
+    email?: string
+    profileImage?: string
+  }
+) {
+
+  const user =
+    await UserRepository.findById(userId)
+
+  if (!user) {
+    throw new Error("USER_NOT_FOUND")
+  }
+
+  const updated =
+    await UserRepository.update(
+      userId,
+      data
+    )
+
+  const {
+    passwordHash: _,
+    ...safeUser
+  } = updated;
+
+  console.log(_);
+
+  return safeUser
+},
+
   async activate(id: number, currentUserId: number) {
     if (id === currentUserId) {
       throw new Error("CANNOT_MODIFY_SELF")

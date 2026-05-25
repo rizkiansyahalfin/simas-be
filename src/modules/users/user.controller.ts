@@ -81,6 +81,68 @@ export const UserController = {
     }
   },
 
+  async getProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+
+  try {
+
+    const userId =
+      req.user!.id
+
+    const result =
+      await UserService.getProfile(
+        userId
+      )
+
+    res.json({
+      status: "success",
+      data: result
+    })
+
+  } catch (err) {
+    next(err)
+  }
+  },
+
+  async updateProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+
+  try {
+
+    const userId =
+      req.user!.id
+
+    const result =
+      await UserService.updateProfile(
+        userId,
+        {
+          username:
+            req.body.username,
+
+          email:
+            req.body.email,
+
+          profileImage:
+            req.file?.filename
+        }
+      )
+
+    res.json({
+      status: "success",
+      data: result
+    })
+
+  } catch (err) {
+    next(err)
+  }
+},
+
   async activate(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id)

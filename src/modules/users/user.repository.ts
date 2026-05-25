@@ -51,6 +51,12 @@ export const UserRepository = {
     })
   },
 
+  async findProfile(id: number) {
+  return prisma.user.findUnique({
+    where: { id }
+  })
+},
+
   async create(data: Prisma.UserCreateInput) {
     return prisma.user.create({ data })
   },

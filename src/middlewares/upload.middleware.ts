@@ -21,6 +21,43 @@ const storage = multer.diskStorage({
   }
 })
 
+const ProfileStorage =
+  multer.diskStorage({
+
+    destination:
+      (_, __, cb) => {
+
+        cb(
+          null,
+          path.join(
+            __dirname,
+            '..',
+            'uploads',
+            'profiles'
+          )
+        )
+      },
+
+    filename:
+      (_, file, cb) => {
+
+        const unique =
+          Date.now() +
+          '-' +
+          Math.round(
+            Math.random() * 1e9
+          )
+
+        cb(
+          null,
+          unique +
+          path.extname(
+            file.originalname
+          )
+        )
+      }
+  })
+
 const DonationProofStorage = multer.diskStorage({
 
   destination: (_, __, cb) => {
@@ -81,3 +118,13 @@ export const uploadDonationProof = multer({
     fileSize: 5 * 1024 * 1024 // 5MB
   }
 })
+
+export const uploadProfileImage =
+  multer({
+    storage: ProfileStorage,
+    fileFilter,
+    limits: {
+      fileSize:
+        2 * 1024 * 1024
+    }
+  })
