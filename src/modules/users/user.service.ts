@@ -10,7 +10,8 @@ type UserFilters = {
 }
 
 const excludePasswordHash = <T extends { passwordHash: string }>(user: T) => {
-  const { passwordHash, ...safeUser } = user
+  const { passwordHash, ...safeUser } = user;
+  console.log("Excluding passwordHash from user:", pas)
   return safeUser
 }
 
