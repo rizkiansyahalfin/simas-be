@@ -4,6 +4,7 @@ import { UserController } from "./user.controller"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
+import { uploadProfileImage } from "../../middlewares/upload.middleware"
 
 const router = Router()
 
@@ -25,6 +26,19 @@ router.put(
     module: 'users',
   }),
   UserController.update
+)
+
+router.get(
+  "/profile",
+  authMiddleware,
+  UserController.getProfile
+)
+
+router.put(
+  "/profile",
+  authMiddleware,
+  uploadProfileImage.single("photo"),
+  UserController.updateProfile
 )
 
 router.patch("/:id/activate", UserController.activate)
