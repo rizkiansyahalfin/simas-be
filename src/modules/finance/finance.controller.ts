@@ -101,17 +101,57 @@ export const postCash = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export const putCash = async (req: Request, res: Response, next: NextFunction) => {
+export const putCash = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const id = Number(req.params.id);
-    const validatedData = updateCashSchema.parse(req.body);
+    const id = Number(req.params.id)
 
-    const result = await service.updateCashTransaction(id, validatedData);
-    res.json({ status: 'success', data: result });
+    const validatedData =
+      updateCashSchema.parse(req.body)
+
+    const result =
+      await service.updateCashTransaction(
+        id,
+        validatedData
+      )
+
+    res.json({
+      status: "success",
+      data: result
+    })
+
   } catch (error) {
-    next(error);
+
+    if (
+      error instanceof Error &&
+      error.message ===
+        "ONLY_CURRENT_PERIOD_CAN_BE_EDITED"
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "Hanya transaksi periode bulan berjalan yang dapat diedit"
+      })
+    }
+
+    if (
+      error instanceof Error &&
+      error.message ===
+        "CASH_TRANSACTION_NOT_FOUND"
+    ) {
+      return res.status(404).json({
+        status: "error",
+        message:
+          "Cash transaction not found"
+      })
+    }
+
+    next(error)
   }
-};
+}
 
 export const deleteCash = async (req: Request, res: Response, next: NextFunction) => {
   try {

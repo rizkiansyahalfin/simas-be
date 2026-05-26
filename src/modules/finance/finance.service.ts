@@ -55,9 +55,43 @@ export const addCashTransaction = async (data: CreateCashInput, userId: number) 
   });
 };
 
-export const updateCashTransaction = async (id: number, data: UpdateCashInput) => {
-  return await repo.updateCashTransaction(id, data);
-};
+export const updateCashTransaction = async (
+  id: number,
+  data: UpdateCashInput
+) => {
+  const transaction =
+    await repo.findCashTransactionById(id)
+
+  if (!transaction) {
+    throw new Error("CASH_TRANSACTION_NOT_FOUND")
+  }
+
+  const now = new Date()
+
+  const startCurrentMonth =
+    startOfMonth(now)
+
+  const endCurrentMonth =
+    endOfMonth(now)
+
+  const transactionDate =
+    transaction.transactionDate
+
+  const isCurrentPeriod =
+    transactionDate >= startCurrentMonth &&
+    transactionDate <= endCurrentMonth
+
+  if (!isCurrentPeriod) {
+    throw new Error(
+      "ONLY_CURRENT_PERIOD_CAN_BE_EDITED"
+    )
+  }
+
+  return await repo.updateCashTransaction(
+    id,
+    data
+  )
+}
 
 export const removeCashTransaction = async (id: number) => {
   return await repo.softDeleteCashTransaction(id);
