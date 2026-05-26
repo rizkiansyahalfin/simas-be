@@ -22,18 +22,42 @@ export const AuthService = {
       throw new Error("INVALID_CREDENTIALS")
     }
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-        isActive: user.isActive
-      },
-      process.env.JWT_SECRET!,
-      { expiresIn: "8h" }
-    )
+const accessToken =
+  jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+      isActive: user.isActive
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "8h"
+    }
+  )
+
+  const refreshToken =
+  jwt.sign(
+    {
+      id: user.id
+    },
+    process.env.JWT_REFRESH_SECRET!,
+    {
+      expiresIn: "7d"
+    }
+  )
+
+  await AuthRepository.createRefreshToken(
+  refreshToken,
+  user.id,
+  new Date(
+    Date.now() +
+    7 * 24 * 60 * 60 * 1000
+  )
+)
 
     return {
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user.id,
         username: user.username,
@@ -42,5 +66,62 @@ export const AuthService = {
         email: user.email
       }
     }
+  },
+
+  async refresh(
+  refreshToken: string
+) {
+
+  const secret =
+    process.env.JWT_REFRESH_SECRET
+
+  if (!secret) {
+    throw new Error(
+      "REFRESH_SECRET_MISSING"
+    )
   }
+
+  const decoded =
+    jwt.verify(
+      refreshToken,
+      secret
+    ) as {
+      id: number
+    }
+
+  const tokenRecord =
+    await AuthRepository
+      .findRefreshToken(
+        refreshToken
+      )
+
+  if (!tokenRecord) {
+    throw new Error(
+      "INVALID_REFRESH_TOKEN"
+    )
+  }
+
+  const accessToken =
+    jwt.sign(
+      {
+        id:
+          tokenRecord.user.id,
+
+        role:
+          tokenRecord.user.role,
+
+        isActive:
+          tokenRecord.user.isActive
+      },
+
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: "8h"
+      }
+    )
+
+  return {
+    accessToken
+  }
+}
 }
