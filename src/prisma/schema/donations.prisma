@@ -3,7 +3,7 @@ model Donation {
   donorName     String         @map("donor_name") @db.VarChar(100)
   phone         String?        @db.VarChar(20)
   amount        Decimal        @db.Decimal(15, 2)
-  category      String         @db.VarChar(100)
+  categoryId Int @map("category_id")
   proofImageUrl String?        @map("proof_image_url") @db.VarChar(255)
   status        DonationStatus @default(pending)
   verifiedBy    Int?           @map("verified_by")
@@ -15,6 +15,7 @@ model Donation {
   verifier User? @relation("DonationVerifier", fields: [verifiedBy], references: [id])
   campaignId Int? @map("campaign_id")
   campaign Campaign? @relation(fields: [campaignId], references: [id])
+  category DonationCategory? @relation(fields: [categoryId], references: [id])
 
   @@map("donations")
 }

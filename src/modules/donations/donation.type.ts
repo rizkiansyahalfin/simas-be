@@ -4,7 +4,7 @@ export type CreateDonationInput = {
   donorName: string
   phone?: string
   amount: number
-  category: string
+  categoryId: number
   proofImageUrl?: string
   status?: 'pending' | 'verified' | 'rejected'
 }
@@ -28,6 +28,7 @@ export type DonationResponse = Omit<Donation, 'createdAt' | 'updatedAt'> & {
 
 export type GetDonationsQuery = {
   status?: 'pending' | 'verified' | 'rejected'
+  categoryId?: number
   page: number
   limit: number
 }

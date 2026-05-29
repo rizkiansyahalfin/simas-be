@@ -9,16 +9,29 @@ export const DonationRepository = {
 
   async findAll({
     status,
+    categoryId,
     skip,
     limit,
   }: {
     status?: string
+    categoryId?: number
     skip: number
     limit: number
   }) {
-    const whereClause: { status?: DonationStatus } = status
-      ? { status: status as DonationStatus }
-      : {}
+    const whereClause: {
+  status?: DonationStatus
+  categoryId?: number
+} = {}
+
+if (status) {
+  whereClause.status =
+    status as DonationStatus
+}
+
+if (categoryId) {
+  whereClause.categoryId =
+    categoryId
+}
 
     const [data, total] = await Promise.all([
       prisma.donation.findMany({
@@ -29,6 +42,7 @@ export const DonationRepository = {
               id: true,
               username: true,
               role: true,
+              category: true,
             },
           },
         },
@@ -54,6 +68,67 @@ export const DonationRepository = {
     }
   },
 
+  async getPublicStats() {
+
+  const now = new Date()
+
+  const startOfMonth =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    )
+
+  const [
+    totalDonors,
+    totalCollected,
+    monthlyCollected
+  ] = await Promise.all([
+
+    prisma.donation.count({
+      where: {
+        status: "verified"
+      }
+    }),
+
+    prisma.donation.aggregate({
+      where: {
+        status: "verified"
+      },
+
+      _sum: {
+        amount: true
+      }
+    }),
+
+    prisma.donation.aggregate({
+      where: {
+        status: "verified",
+
+        createdAt: {
+          gte: startOfMonth
+        }
+      },
+
+      _sum: {
+        amount: true
+      }
+    })
+  ])
+
+  return {
+    totalDonors,
+
+    totalCollected:
+      totalCollected._sum.amount
+        ?.toNumber() ?? 0,
+
+    monthlyCollected:
+      monthlyCollected._sum.amount
+        ?.toNumber() ?? 0,
+  }
+},
+
   async findById(id: number) {
     return prisma.donation.findUnique({
       where: { id },
@@ -63,6 +138,7 @@ export const DonationRepository = {
             id: true,
             username: true,
             role: true,
+            category: true,
           },
         },
       },

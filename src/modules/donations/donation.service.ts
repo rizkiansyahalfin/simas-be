@@ -17,10 +17,11 @@ import {
 
 export const DonationService = {
   async getAll({
-    status,
-    page,
-    limit,
-  }: GetDonationsQuery) {
+  status,
+  categoryId,
+  page,
+  limit,
+}: GetDonationsQuery) {
 
     const skip =
       (page - 1) * limit
@@ -29,6 +30,7 @@ export const DonationService = {
       status,
       skip,
       limit,
+      categoryId,
     })
   },
 
@@ -42,7 +44,7 @@ export const DonationService = {
         donorName: data.donorName,
         phone: data.phone,
         amount: data.amount,
-        category: data.category,
+        categoryId: data.categoryId,
         proofImageUrl: file?.filename,
         status: 'pending',
       })
@@ -54,6 +56,10 @@ export const DonationService = {
     })
 
     return donation
+  },
+
+  async getPublicStats() {
+  return DonationRepository.getPublicStats()
   },
 
   async verify(

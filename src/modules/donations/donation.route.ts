@@ -19,6 +19,11 @@ router.get(
   controller.getDonations
 )
 
+router.get(
+  "/stats",
+  controller.getDonationStats
+)
+
 router.put(
   '/:id/verify',
   authMiddleware,
