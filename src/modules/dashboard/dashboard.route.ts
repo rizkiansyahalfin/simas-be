@@ -29,4 +29,13 @@ router.get(
   dashboardController.getFinanceChart
 )
 
+router.get(
+  '/charts/congregations',
+  rbacMiddleware(
+    Role.superadmin,
+    Role.bendahara
+  ),
+  dashboardController.getCongregationChart
+)
+
 export default router;

@@ -6,6 +6,8 @@ import { toZonedTime } from 'date-fns-tz';
 import * as repo from './dashboard.repository';
 
 import type {
+  CongregationChartItem,
+  CongregationChartResponse,
   DashboardRange,
   DashboardStats,
   FinanceChartItem,
@@ -87,6 +89,56 @@ export const getFinanceChart = async (
     } else if (transaction.type === 'expense') {
       existing.expense += amount;
     }
+  }
+
+  const data = Array.from(monthlyMap.values()).reverse();
+
+  return {
+    range,
+    data,
+  };
+};
+export const getCongregationChart = async (
+  range: DashboardRange = '1year'
+): Promise<CongregationChartResponse> => {
+  const monthsBack = getRangeMonths(range);
+  const now = new Date();
+
+  const startDate = startOfMonth(subMonths(now, monthsBack - 1));
+  const endDate = endOfMonth(now);
+
+  const congregations = await repo.findCongregationsByRange(
+    startDate,
+    endDate
+  );
+
+  // Initialize months
+  const monthlyMap = new Map<string, CongregationChartItem>();
+
+  for (let i = 0; i < monthsBack; i++) {
+    const currentMonth = subMonths(now, i);
+    const label = format(currentMonth, 'MMM yyyy');
+
+    monthlyMap.set(label, {
+      month: label,
+      total: 0,
+    });
+  }
+
+  // Aggregate congregation data
+  for (const congregation of congregations) {
+    const zonedDate = toZonedTime(
+      congregation.createdAt,
+      TIMEZONE
+    );
+
+    const monthLabel = format(zonedDate, 'MMM yyyy');
+
+    const existing = monthlyMap.get(monthLabel);
+
+    if (!existing) continue;
+
+    existing.total += 1;
   }
 
   const data = Array.from(monthlyMap.values()).reverse();
