@@ -9,6 +9,7 @@ const sanitizeOptionalUrl = z.preprocess((value) => {
 export const createArticleSchema = z.object({
   title: z.string().trim().min(3).max(255),
   content: z.string().trim().min(1),
+  categoryId: z.number().int().positive().optional(),
   imageUrl: sanitizeOptionalUrl
 })
 

@@ -20,6 +20,7 @@ import mosqueprofileRouter from '../modules/mosque-profile/mosque-profile.route'
 import auditRouter from '../modules/audit/audit.route'
 import campaignRouter from '../modules/campaign/campaign.route'
 import notificationRouter from '../modules/notification/notification.route'
+import articleCategoryRoute from '../modules/articles/article-category.route'
 
 const router = Router()
 
@@ -39,6 +40,7 @@ router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
 router.use("/articles", articleRiuter)
+router.use("/article-categories", articleCategoryRoute)
 router.use('/donations', donationRouter)
 router.use('/mustahik', mustahikRouter)
 router.use('/mustahik-distribution', distributionRouter)

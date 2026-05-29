@@ -3,13 +3,30 @@ import { Prisma } from "../../generated/client"
 
 
 export const ArticleRepository = {
-  findAll() {
-    return prisma.article.findMany({
-      where: { isPublished: true },
-      include: { author: true },
-      orderBy: { createdAt: "desc" }
-    })
-  },
+  findAll(categorySlug?: string) {
+
+  return prisma.article.findMany({
+
+    where: {
+      isPublished: true,
+
+      ...(categorySlug && {
+        category: {
+          slug: categorySlug
+        }
+      })
+    },
+
+    include: {
+      author: true,
+      category: true
+    },
+
+    orderBy: {
+      createdAt: "desc"
+    }
+  })
+},
 
   findById(id: number) {
     return prisma.article.findUnique({

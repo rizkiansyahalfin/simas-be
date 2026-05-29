@@ -3,6 +3,9 @@ model Article {
   title       String    @db.VarChar(255)
   content     String    @db.Text
   imageUrl    String?   @map("image_url") @db.VarChar(255)
+
+  categoryId  Int?      @map("category_id")
+
   authorId    Int       @map("author_id")
   isPublished Boolean   @default(false) @map("is_published")
   publishedAt DateTime? @map("published_at")
@@ -10,6 +13,8 @@ model Article {
 
   // Relations
   author User @relation(fields: [authorId], references: [id])
+
+  category ArticleCategory? @relation( fields: [categoryId], references: [id])
 
   @@map("articles")
 }
