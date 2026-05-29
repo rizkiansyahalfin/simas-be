@@ -23,6 +23,22 @@ export const findById = async (id: number) => {
   });
 };
 
+export const findByDate = async (date: Date) => {
+  return await prisma.jumatSchedule.findFirst({
+    where: {
+      jumatDate: date,
+    },
+    include: {
+      creator: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
+  })
+};
+
 export const create = async (data: CreateJumatScheduleInput, createdBy: number) => {
   return await prisma.jumatSchedule.create({
     data: {

@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express'
 
+import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
+
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'
@@ -23,6 +25,8 @@ import notificationRouter from '../modules/notification/notification.route'
 import articleCategoryRoute from '../modules/articles/article-category.route'
 
 const router = Router()
+
+startJumatReminderJob()
 
 router.get('/test', (req: Request, res: Response) => {
   res.json({

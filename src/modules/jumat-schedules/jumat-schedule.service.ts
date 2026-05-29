@@ -15,6 +15,19 @@ export const getById = async (id: number) => {
   return schedule;
 };
 
+export const getByDate = async (
+  date: Date
+) => {
+
+  const parsedDate = new Date(date)
+
+  parsedDate.setHours(0, 0, 0, 0)
+
+  return await repo.findByDate(
+    parsedDate
+  )
+}
+
 export const create = async (data: CreateJumatScheduleInput, createdBy: number) => {
   return await repo.create(data, createdBy);
 };
