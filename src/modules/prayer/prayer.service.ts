@@ -2,6 +2,10 @@ import { PrayerProvider } from "./prayer.provider"
 import { PrayerRepository } from "./prayer.repository"
 import { createPrayerTime } from "./prayer.util"
 import { prayerConfig } from "./prayer.config"
+import {
+  addDays,
+  startOfDay
+} from "date-fns"
 
 export const PrayerService = {
   async syncMonthly() {
@@ -38,5 +42,19 @@ export const PrayerService = {
       parsedDate,
       city ?? prayerConfig.city
     )
-  }
+  },
+  async getWeeklySchedule(city?: string) {
+
+  const startDate =
+    startOfDay(new Date())
+
+  const endDate =
+    addDays(startDate, 6)
+
+  return PrayerRepository.findWeeklySchedules(
+    startDate,
+    endDate,
+    city ?? prayerConfig.city
+  )
+}
 }

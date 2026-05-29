@@ -1,3 +1,5 @@
+// prayer.repository.ts
+
 import prisma from "../../database"
 import type { PrayerScheduleInput } from "./prayer.validation"
 
@@ -14,6 +16,26 @@ export const PrayerRepository = {
       where: {
         prayerDate: date,
         city
+      }
+    })
+  },
+
+  async findWeeklySchedules(
+    startDate: Date,
+    endDate: Date,
+    city: string
+  ) {
+    return prisma.prayerSchedule.findMany({
+      where: {
+        city,
+        prayerDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
+
+      orderBy: {
+        prayerDate: "asc"
       }
     })
   }

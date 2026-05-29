@@ -7,6 +7,11 @@ const router = Router()
 
 router.get("/", PrayerController.getSchedule)
 
+router.get(
+  "/weekly",
+  PrayerController.getWeeklySchedule
+)
+
 router.post(
   "/sync",
   authMiddleware,
