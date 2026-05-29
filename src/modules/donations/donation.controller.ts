@@ -10,6 +10,10 @@ export const getDonations = async (
   try {
     const validated = donationQuerySchema.parse({
       status: req.query.status,
+      categoryId:
+      req.query.categoryId
+      ? Number(req.query.categoryId)
+      : undefined,
       page: Number(req.query.page) || 1,
       limit: Number(req.query.limit) || 10,
     })
@@ -24,6 +28,28 @@ export const getDonations = async (
     next(err)
   }
 }
+
+export const getDonationStats =
+  async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+
+    try {
+
+      const data =
+        await DonationService.getPublicStats()
+
+      res.json({
+        status: "success",
+        data
+      })
+
+    } catch (err) {
+      next(err)
+    }
+  }
 
 export const submitDonation = async (
   req: Request,

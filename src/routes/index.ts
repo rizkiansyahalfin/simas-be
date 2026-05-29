@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express'
 
+import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
+
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'
@@ -20,8 +22,11 @@ import mosqueprofileRouter from '../modules/mosque-profile/mosque-profile.route'
 import auditRouter from '../modules/audit/audit.route'
 import campaignRouter from '../modules/campaign/campaign.route'
 import notificationRouter from '../modules/notification/notification.route'
+import articleCategoryRoute from '../modules/articles/article-category.route'
 
 const router = Router()
+
+startJumatReminderJob()
 
 router.get('/test', (req: Request, res: Response) => {
   res.json({
@@ -39,6 +44,7 @@ router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
 router.use("/articles", articleRiuter)
+router.use("/article-categories", articleCategoryRoute)
 router.use('/donations', donationRouter)
 router.use('/mustahik', mustahikRouter)
 router.use('/mustahik-distribution', distributionRouter)

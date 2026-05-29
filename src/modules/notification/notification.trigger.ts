@@ -1,5 +1,11 @@
 // notification.trigger.ts
 
+import prisma from '../../database'
+
+import {
+  NotificationType,
+} from '../../generated/enums'
+
 import {
   NotificationService,
 } from './notification.service'
@@ -121,6 +127,43 @@ export const NotificationTrigger = {
 
       uniqueKey:
         `event-reminder-${eventId}`,
+    })
+  },
+
+  async jumatReminder(data: {
+    jumatDate: Date
+    imam?: string | null
+    khatib?: string | null
+    muadzin?: string | null
+  }) {
+
+    const admins = await prisma.user.findMany({
+      where: {
+        isActive: true,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    if (!admins.length) {
+      return
+    }
+
+    await prisma.notification.createMany({
+      data: admins.map((admin) => ({
+        userId: admin.id,
+
+        title: "Reminder Jadwal Jumat",
+
+        message:
+          `Jadwal Jumat besok:\n` +
+          `Imam: ${data.imam ?? "-"}\n` +
+          `Khatib: ${data.khatib ?? "-"}\n` +
+          `Muadzin: ${data.muadzin ?? "-"}`,
+
+        type: NotificationType.system,
+      })),
     })
   },
 }

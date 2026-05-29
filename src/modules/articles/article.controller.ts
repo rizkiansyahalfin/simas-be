@@ -10,10 +10,29 @@ const parseArticleId = (value: unknown): number => {
   return id
 }
 
-export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+export const getAll = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
   try {
-    const data = await ArticleService.findAll()
-    res.json({ status: "success", data })
+
+    const category =
+      typeof req.query.category === "string"
+        ? req.query.category
+        : undefined
+
+    const data =
+      await ArticleService.findAll(
+        category
+      )
+
+    res.json({
+      status: "success",
+      data
+    })
+
   } catch (err) {
     next(err)
   }
