@@ -7,7 +7,7 @@ export const InventoryService = {
 
     return InventoryRepository.findAll({
       condition: filter.condition,
-      category: filter.category,
+      categoryId: filter.categoryId,
       search: filter.search,
       skip,
       limit: filter.limit

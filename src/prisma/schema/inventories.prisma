@@ -3,7 +3,8 @@ model Inventory {
   id              Int                @id @default(autoincrement())
   itemCode        String             @map("item_code") @db.VarChar(50)
   itemName        String             @map("item_name") @db.VarChar(255)
-  category        String             @db.VarChar(100)
+  category        inventoryCategory  @relation(fields: [categoryId], references: [id])
+  categoryId      Int               @map("category_id")
   quantity        Int
   condition       InventoryCondition @default(baik)
   acquiredDate    DateTime?          @map("acquired_date") @db.Date
@@ -16,6 +17,7 @@ model Inventory {
   // Relations
   manager       User            @relation(fields: [managedBy], references: [id])
   inventoryLoans InventoryLoan[]
+
 
   @@map("inventories")
 }

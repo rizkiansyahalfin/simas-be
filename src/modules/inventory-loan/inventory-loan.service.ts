@@ -130,8 +130,9 @@ export const InventoryLoanService = {
 
     await NotificationTrigger.inventoryOverdue({
       loanId: loan.id,
-      borrowerName:
-        loan.borrowerName,
+      borrowerName: loan.borrowerName,
+      borrowerPhone: loan.borrowerPhone,
+      expectedReturnDate: loan.expectedReturnDate,
     })
   }
 

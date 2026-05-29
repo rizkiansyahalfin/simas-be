@@ -83,26 +83,45 @@ export const NotificationTrigger = {
   async inventoryOverdue({
     loanId,
     borrowerName,
+    borrowerPhone,
+    expectedReturnDate,
   }: {
     loanId: number
     borrowerName: string
+    borrowerPhone?: string | null
+    expectedReturnDate?: Date
   }) {
 
-    await NotificationService.push({
-      title:
-        'Peminjaman Overdue',
+    if (expectedReturnDate) {
+      const dueDateText = expectedReturnDate.toLocaleDateString('id-ID')
 
-      message:
-        `Peminjaman oleh ${borrowerName} telah melewati batas pengembalian.`,
+      await NotificationService.push({
+        title: 'Peminjaman Overdue',
+        message: `Halo ${borrowerName}, peminjaman Anda telah melewati batas pengembalian pada ${dueDateText}. Mohon segera kembalikan barang yang dipinjam.`,
+        type: 'inventory',
+        entityId: String(loanId),
+        entityType: 'inventory-loan',
+        uniqueKey: `inventory-overdue-borrower-${loanId}`,
+      })
 
-      type: 'inventory',
-
-      entityId: String(loanId),
-      entityType: 'inventory-loan',
-
-      uniqueKey:
-        `inventory-overdue-${loanId}`,
-    })
+      await NotificationService.push({
+        title: 'Peminjaman Overdue',
+        message: `Peminjaman oleh ${borrowerName}${borrowerPhone ? ` (${borrowerPhone})` : ''} telah melewati batas pengembalian pada ${dueDateText}.`,
+        type: 'system',
+        entityId: String(loanId),
+        entityType: 'inventory-loan',
+        uniqueKey: `inventory-overdue-admin-${loanId}`,
+      })
+    } else {
+      await NotificationService.push({
+        title: 'Peminjaman Overdue',
+        message: `Peminjaman oleh ${borrowerName} telah melewati batas pengembalian.`,
+        type: 'system',
+        entityId: String(loanId),
+        entityType: 'inventory-loan',
+        uniqueKey: `inventory-overdue-admin-${loanId}`,
+      })
+    }
   },
 
   async eventReminder({

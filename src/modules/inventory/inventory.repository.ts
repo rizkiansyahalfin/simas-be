@@ -11,11 +11,8 @@ export const InventoryRepository = {
       whereClause.condition = filter.condition
     }
 
-    if (filter.category) {
-      whereClause.category = {
-        contains: filter.category,
-        mode: 'insensitive'
-      }
+    if (filter.categoryId) {
+      whereClause.categoryId = filter.categoryId
     }
 
     if (filter.search) {
@@ -85,7 +82,7 @@ export const InventoryRepository = {
       data: {
         itemCode: data.itemCode,
         itemName: data.itemName,
-        category: data.category,
+        categoryId: data.categoryId,
         quantity: data.quantity,
         condition: data.condition,
         acquiredDate: data.acquiredDate,

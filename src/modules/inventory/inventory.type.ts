@@ -9,7 +9,7 @@ export interface InventoryResponse {
   id: number
   itemCode: string
   itemName: string
-  category: string
+  categoryId: number
   quantity: number
   condition: InventoryCondition
   acquiredDate?: Date
@@ -35,7 +35,7 @@ export interface InventoryResponse {
 
 export interface FilterInventoryParams {
   condition?: InventoryCondition
-  category?: string
+  categoryId?: number
   search?: string
   page: number
   limit: number

@@ -13,7 +13,7 @@ const inventoryConditionEnum = z.enum(['baik', 'rusak_ringan', 'rusak_berat', 'h
 export const CreateInventorySchema = z.object({
   itemCode: z.string().trim().min(1).max(50),
   itemName: z.string().trim().min(1).max(255),
-  category: z.string().trim().min(1).max(100),
+  categoryId: z.coerce.number().int().positive(),
   quantity: z.coerce.number().int().positive(),
   condition: inventoryConditionEnum.default('baik'),
   acquiredDate: parseDate.optional(),
@@ -26,7 +26,7 @@ export const UpdateInventorySchema = CreateInventorySchema.partial()
 
 export const FilterInventorySchema = z.object({
   condition: inventoryConditionEnum.optional(),
-  category: z.string().trim().optional(),
+  categoryId: z.coerce.number().int().positive().optional(),
   search: z.string().trim().optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(10)
