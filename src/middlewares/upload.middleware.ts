@@ -128,3 +128,8 @@ export const uploadProfileImage =
         2 * 1024 * 1024
     }
   })
+
+  export const uploadCongregationImport =
+  multer({
+    storage
+  })

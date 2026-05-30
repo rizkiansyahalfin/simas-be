@@ -77,6 +77,29 @@ export const CongregationRepository = {
     }
   },
 
+  async findAllForExport() {
+  return prisma.congregation.findMany({
+    where: {
+      deletedAt: null
+    },
+    include: {
+      mustahik: true
+    },
+    orderBy: {
+      fullName: "asc"
+    }
+  })
+},
+
+async createMany(
+  data: Prisma.CongregationCreateManyInput[]
+) {
+  return prisma.congregation.createMany({
+    data,
+    skipDuplicates: true
+  })
+},
+
   async findById(id: number) {
     return prisma.congregation.findFirst({
       where: {
