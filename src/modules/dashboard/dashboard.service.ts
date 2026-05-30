@@ -130,7 +130,7 @@ export const getDonationChart = async (
     const zonedDate = toZonedTime(donation.createdAt, TIMEZONE);
     const monthLabel = format(zonedDate, 'MMM yyyy');
     const monthly = monthlyMap.get(monthLabel);
-    const amount = Number(donation.amount) || 0;
+    const amount = toNumber(donation.amount);
 
     if (monthly) {
       monthly.amount += amount;
