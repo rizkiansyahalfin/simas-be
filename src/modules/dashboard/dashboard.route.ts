@@ -29,4 +29,16 @@ router.get(
   dashboardController.getFinanceChart
 )
 
+router.get(
+  '/charts/congregations',
+  rbacMiddleware(
+    Role.superadmin,
+    Role.bendahara
+  ),
+  dashboardController.getCongregationChart
+)
+router.get(
+  '/charts/zis',
+  dashboardController.getZisChart
+);
 export default router;

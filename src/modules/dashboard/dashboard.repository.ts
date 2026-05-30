@@ -32,10 +32,6 @@ export const findCashTransactionsByRange = async (
 
 export const countActiveCongregations = async () => {
   return await prisma.congregation.count({
-    where: {
-      deletedAt: null,
-      isActive: true,
-    },
   });
 };
 
@@ -106,3 +102,41 @@ export const countBorrowedInventories = async () => {
     },
   });
 };
+export const findCongregationsByRange = async (
+  startDate: Date,
+  endDate: Date
+) => {
+  return await prisma.congregation.findMany({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    select: {
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+};
+export const findZisTransactionByRange = (
+  startDate: Date,
+  endDate: Date,
+) => {
+  return prisma.zisTransaction.findMany({
+    where: {
+      deletedAt: null,
+      transactionDate:{
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    select: {
+      transactionDate: true,
+      type: true,
+      amount: true
+    }
+  })
+}

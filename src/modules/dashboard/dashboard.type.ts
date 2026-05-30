@@ -24,3 +24,23 @@ export type FinanceChartResponse = {
   range: DashboardRange;
   data: FinanceChartItem[];
 };
+export interface CongregationChartItem {
+  month: string;
+  total: number;
+}
+
+export interface CongregationChartResponse {
+  range: DashboardRange;
+  data: CongregationChartItem[];
+};
+
+export type ZisChartItem = {
+  month: string;
+  received: number;
+  distribution: number;
+};
+
+export type ZisChartResponse = {
+  range: DashboardRange;
+  data: ZisChartItem[];
+}
