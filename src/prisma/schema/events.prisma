@@ -4,13 +4,15 @@ model Event {
   description String?     @db.Text
   speaker     String?     @db.VarChar(100)
   location    String?     @db.VarChar(255)
+
+  posterUrl   String?     @map("poster_url") @db.VarChar(255)
+
   startTime   DateTime    @map("start_time")
   endTime     DateTime    @map("end_time")
   status      EventStatus @default(upcoming)
   createdBy   Int         @map("created_by")
   createdAt   DateTime    @default(now()) @map("created_at")
 
-  // Relations
   creator User @relation(fields: [createdBy], references: [id])
 
   @@map("events")
