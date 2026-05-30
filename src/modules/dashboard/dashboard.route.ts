@@ -37,5 +37,8 @@ router.get(
   ),
   dashboardController.getCongregationChart
 )
-
+router.get(
+  '/charts/zis',
+  dashboardController.getZisChart
+);
 export default router;

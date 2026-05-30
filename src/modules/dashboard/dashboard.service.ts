@@ -1,6 +1,6 @@
 // dashboard.service.ts
 
-import { subMonths, startOfMonth, endOfMonth, format } from 'date-fns';
+import { subMonths, startOfMonth, endOfMonth, format, } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 import * as repo from './dashboard.repository';
@@ -12,6 +12,8 @@ import type {
   DashboardStats,
   FinanceChartItem,
   FinanceChartResponse,
+  ZisChartItem,
+  ZisChartResponse,
 } from './dashboard.type';
 
 const TIMEZONE = 'Asia/Jakarta';
@@ -178,5 +180,79 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
     donationsThisMonth: donationsAmount,
     upcomingEvents,
     borrowedInventories,
+  };
+};
+
+export const getZisChart = async (
+  range: DashboardRange = '6months'
+): Promise<ZisChartResponse> => {
+  const monthsBack = getRangeMonths(range);
+
+  const now = new Date();
+
+  const startDate = startOfMonth(
+    subMonths(now, monthsBack - 1)
+  );
+
+  const endDate = endOfMonth(now);
+
+  const transactions =
+    await repo.findZisTransactionByRange(
+      startDate,
+      endDate
+    );
+
+  // Initialize months
+  const monthlyMap = new Map<string, ZisChartItem>();
+
+  for (let i = 0; i < monthsBack; i++) {
+    const currentMonth = subMonths(now, i);
+
+    const label = format(currentMonth, 'MMM yyyy');
+
+    monthlyMap.set(label, {
+      month: label,
+      received: 0,
+      distribution: 0,
+    });
+  }
+
+  // Aggregate ZIS transactions
+  for (const transaction of transactions) {
+    const zonedDate = toZonedTime(
+      transaction.transactionDate,
+      TIMEZONE
+    );
+
+    const monthLabel = format(
+      zonedDate,
+      'MMM yyyy'
+    );
+
+    const existing =
+      monthlyMap.get(monthLabel);
+
+    if (!existing) continue;
+
+    const amount = toNumber(
+      transaction.amount
+    );
+
+    if (transaction.type === 'income') {
+      existing.received += amount;
+    }
+
+    if (transaction.type === 'expense') {
+      existing.distribution += amount;
+    }
+  }
+
+  const data = Array.from(
+    monthlyMap.values()
+  ).reverse();
+
+  return {
+    range,
+    data
   };
 };

@@ -121,3 +121,22 @@ export const findCongregationsByRange = async (
     },
   });
 };
+export const findZisTransactionByRange = (
+  startDate: Date,
+  endDate: Date,
+) => {
+  return prisma.zisTransaction.findMany({
+    where: {
+      deletedAt: null,
+      transactionDate:{
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    select: {
+      transactionDate: true,
+      type: true,
+      amount: true
+    }
+  })
+}

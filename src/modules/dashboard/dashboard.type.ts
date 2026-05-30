@@ -32,4 +32,15 @@ export interface CongregationChartItem {
 export interface CongregationChartResponse {
   range: DashboardRange;
   data: CongregationChartItem[];
+};
+
+export type ZisChartItem = {
+  month: string;
+  received: number;
+  distribution: number;
+};
+
+export type ZisChartResponse = {
+  range: DashboardRange;
+  data: ZisChartItem[];
 }
