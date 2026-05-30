@@ -26,4 +26,11 @@ router.get(
   ReportsController.weeklyFinanceExcel
 )
 
+router.get(
+  "/zis/monthly",
+  authMiddleware,
+  rbacMiddleware("superadmin", "bendahara"),
+  ReportsController.monthlyZis
+)
+
 export default router

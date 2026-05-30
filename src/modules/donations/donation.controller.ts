@@ -51,6 +51,35 @@ export const getDonationStats =
     }
   }
 
+export const getDonationCertificate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.params.id)
+
+    if (Number.isNaN(id) || id < 1) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid donation ID'
+      })
+    }
+
+    const pdf = await DonationService.generateDonationCertificate(id)
+
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="donation-certificate-${id}.pdf"`
+    )
+
+    return res.send(pdf)
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const submitDonation = async (
   req: Request,
   res: Response,

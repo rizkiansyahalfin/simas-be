@@ -1,6 +1,8 @@
 // donation.service.ts
 
 import { DonationRepository } from './donation.repository'
+import { MosqueProfileService } from '../mosque-profile/mosque-profile.service'
+import { generateDonationCertificatePdf } from './donation.pdf'
 
 import type {
   CreateDonationInput,
@@ -162,5 +164,17 @@ export const DonationService = {
         rejectionNote: note,
       }
     )
+  },
+
+  async generateDonationCertificate(id: number) {
+    const donation = await DonationRepository.findById(id)
+
+    if (!donation) {
+      throw new Error('DONATION_NOT_FOUND')
+    }
+
+    const mosqueProfile = await MosqueProfileService.getProfile()
+
+    return generateDonationCertificatePdf(donation, mosqueProfile)
   },
 }

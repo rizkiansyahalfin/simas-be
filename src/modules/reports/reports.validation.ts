@@ -16,5 +16,12 @@ export const weeklyFinanceQuerySchema = z.object({
   )
 })
 
+export const monthlyZisQuerySchema = z.object({
+  month: z.coerce.number().int().min(1).max(12),
+  year: z.coerce.number().int().min(2000),
+  format: z.enum(["pdf"]).optional(),
+})
+
 export type MonthlyFinanceQuery = z.infer<typeof monthlyFinanceQuerySchema>
 export type WeeklyFinanceQuery = z.infer<typeof weeklyFinanceQuerySchema>
+export type MonthlyZisQuery = z.infer<typeof monthlyZisQuerySchema>

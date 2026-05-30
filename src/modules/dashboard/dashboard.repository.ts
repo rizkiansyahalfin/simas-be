@@ -88,6 +88,31 @@ export const getDonationsThisMonth = async (
   return result._sum.amount ?? 0;
 };
 
+export const findVerifiedDonationsByRange = async (
+  startDate: Date,
+  endDate: Date
+) => {
+  return await prisma.donation.findMany({
+    where: {
+      status: DonationStatus.verified,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    include: {
+      category: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+};
+
 export const countUpcomingEvents = async () => {
   return await prisma.event.count({
     where: {
