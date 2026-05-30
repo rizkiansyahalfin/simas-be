@@ -20,6 +20,11 @@ router.get(
 )
 
 router.get(
+  '/:id/certificate',
+  controller.getDonationCertificate
+)
+
+router.get(
   "/stats",
   controller.getDonationStats
 )

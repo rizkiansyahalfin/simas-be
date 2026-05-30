@@ -30,15 +30,12 @@ router.get(
 )
 
 router.get(
-  '/charts/congregations',
+  '/charts/donations',
   rbacMiddleware(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getCongregationChart
+  dashboardController.getDonationChart
 )
-router.get(
-  '/charts/zis',
-  dashboardController.getZisChart
-);
+
 export default router;

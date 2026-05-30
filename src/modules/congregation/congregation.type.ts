@@ -22,3 +22,14 @@ export interface PaginatedCongregations {
     totalPages: number
   }
 }
+
+
+export type CongregationImportRow = {
+  fullName?: string
+  nik?: string | null
+  address?: string | null
+  phone?: string | null
+  gender?: Gender | string | null
+  isMustahik?: boolean | string | null
+  birthDate?: string | Date | null
+}

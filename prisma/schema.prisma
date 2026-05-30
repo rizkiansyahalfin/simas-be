@@ -269,6 +269,15 @@ model Inventory {
   @@map("inventories")
 }
 
+model InventoryCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("inventory_categories")
+}
+
 model InventoryLoan {
   id                 Int        @id @default(autoincrement())
   inventoryId        Int        @map("inventory_id")

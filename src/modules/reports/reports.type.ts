@@ -27,3 +27,20 @@ export type InventoryReport = Inventory & {
     username: string | null
   }
 }
+
+export type MonthlyZisQuery = {
+  month: number
+  year: number
+}
+
+export type ZisCategoryDistribution = {
+  category: string
+  amount: number
+}
+
+export type ZisReportPdfPayload = MonthlyZisQuery & {
+  totalReceipts: number
+  totalDistributions: number
+  zisTransactions: ZisTransaction[]
+  categoryDistributions: ZisCategoryDistribution[]
+}

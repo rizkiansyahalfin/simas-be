@@ -6,11 +6,15 @@ export interface Event {
   description?: string
   speaker?: string
   location?: string
+
+  posterUrl?: string
+
   startTime: Date
   endTime: Date
   status: EventStatus
   createdBy: number
   createdAt: Date
+
   creator?: {
     id: number
     username: string
@@ -23,6 +27,9 @@ export interface CreateEventData {
   description?: string
   speaker?: string
   location?: string
+
+  posterUrl?: string
+
   startTime: string
   endTime: string
 }
@@ -32,6 +39,9 @@ export interface UpdateEventData {
   description?: string
   speaker?: string
   location?: string
+
+  posterUrl?: string
+
   startTime?: string
   endTime?: string
   status?: EventStatus

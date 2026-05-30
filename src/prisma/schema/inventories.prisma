@@ -1,21 +1,27 @@
-
 model Inventory {
   id              Int                @id @default(autoincrement())
   itemCode        String             @map("item_code") @db.VarChar(50)
   itemName        String             @map("item_name") @db.VarChar(255)
-  category        String             @db.VarChar(100)
+
+  photoUrl        String?            @map("photo_url") @db.VarChar(255)
+
+  category        inventoryCategory  @relation(fields: [categoryId], references: [id])
+  categoryId      Int                @map("category_id")
+
   quantity        Int
   condition       InventoryCondition @default(baik)
+
   acquiredDate    DateTime?          @map("acquired_date") @db.Date
   acquisitionCost Decimal?           @map("acquisition_cost") @db.Decimal(15, 2)
+
   notes           String?            @db.Text
   managedBy       Int                @map("managed_by")
+
   createdAt       DateTime           @default(now()) @map("created_at")
   updatedAt       DateTime           @updatedAt @map("updated_at")
 
-  // Relations
-  manager       User            @relation(fields: [managedBy], references: [id])
-  inventoryLoans InventoryLoan[]
+  manager         User            @relation(fields: [managedBy], references: [id])
+  inventoryLoans  InventoryLoan[]
 
   @@map("inventories")
 }

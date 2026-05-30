@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 
 import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
+import { startInventoryOverdueJob } from "../modules/inventory-loan/inventory-overdue.job"
 
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
@@ -9,6 +10,7 @@ import jumatScheduleRouter from '../modules/jumat-schedules/jumat-schedules.rout
 import congregationRouter from '../modules/congregation/congregation.route'
 import inventoryRouter from '../modules/inventory/inventory.route'
 import inventoryLoanRouter from '../modules/inventory-loan/inventory-loan.route'
+import inventoryCategoryRouter from '../modules/inventory-categories/inventory-category.route'
 import eventRouter from '../modules/events/event.route'
 import reportsRouter from '../modules/reports/reports.route'
 import articleRiuter from "../modules/articles/article.route"
@@ -27,6 +29,7 @@ import articleCategoryRoute from '../modules/articles/article-category.route'
 const router = Router()
 
 startJumatReminderJob()
+startInventoryOverdueJob()
 
 router.get('/test', (req: Request, res: Response) => {
   res.json({
@@ -41,6 +44,7 @@ router.use('/jumat-schedules', jumatScheduleRouter)
 router.use('/congregation', congregationRouter)
 router.use('/inventory', inventoryRouter)
 router.use('/inventory-loan', inventoryLoanRouter)
+router.use('/inventory-categories', inventoryCategoryRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
 router.use("/articles", articleRiuter)

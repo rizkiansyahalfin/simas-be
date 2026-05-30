@@ -78,7 +78,78 @@ export const ReportsRepository = {
       zisTransactions
     }
   },
-   async getInventoryReport() {
+
+  async getMonthlyZisTransactions({ month, year }: { month: number; year: number }) {
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0)
+
+    return prisma.zisTransaction.findMany({
+      where: {
+        deletedAt: null,
+        transactionDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      orderBy: {
+        transactionDate: 'asc',
+      },
+    })
+  },
+
+  async getMonthlyZisTotalDistributions({ month, year }: { month: number; year: number }) {
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0)
+
+    const result = await prisma.mustahikDistribution.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        distributionDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    })
+
+    return Number(result._sum.amount ?? 0)
+  },
+
+  async getMonthlyZisCategoryDistributions({ month, year }: { month: number; year: number }) {
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0)
+
+    const distributions = await prisma.mustahikDistribution.findMany({
+      where: {
+        distributionDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        amount: true,
+        mustahik: {
+          select: {
+            category: true,
+          },
+        },
+      },
+    })
+
+    const grouped = distributions.reduce<Record<string, number>>((acc, distribution) => {
+      const category = distribution.mustahik.category
+      acc[category] = (acc[category] ?? 0) + Number(distribution.amount)
+      return acc
+    }, {})
+
+    return Object.entries(grouped).map(([category, amount]) => ({
+      category,
+      amount,
+    }))
+  },
+
+  async getInventoryReport() {
 
     return prisma.inventory.findMany({
 

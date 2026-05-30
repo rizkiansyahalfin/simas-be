@@ -45,8 +45,16 @@ export const InventoryController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const validated = CreateInventorySchema.parse(req.body)
-      const data = await InventoryService.create(validated)
+      const validated =
+        CreateInventorySchema.parse(
+          req.body
+        )
+      
+      const data =
+        await InventoryService.create(
+          validated,
+          req.file
+        )
 
       res.status(201).json({
         status: 'success',
@@ -68,9 +76,18 @@ export const InventoryController = {
         })
       }
 
-      const validated = UpdateInventorySchema.parse(req.body)
-      const data = await InventoryService.update(id, validated)
-
+      const validated =
+        UpdateInventorySchema.parse(
+          req.body
+        )
+      
+      const data =
+        await InventoryService.update(
+          id,
+          validated,
+          req.file
+        )
+        
       res.json({
         status: 'success',
         data

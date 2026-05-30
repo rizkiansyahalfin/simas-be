@@ -42,10 +42,8 @@ export const EventController = {
         })
       }
 
-      const result = await EventService.create(
-        validated,
-        req.user.id
-      )
+      const result =
+  await EventService.create( validated, req.user.id, req.file?.filename )
 
       res.status(201).json({
         status: "success",
@@ -69,7 +67,7 @@ export const EventController = {
 
       const validated = updateEventSchema.parse(req.body)
 
-      const result = await EventService.update(id, validated)
+      const result = await EventService.update(id, validated, req.file?.filename)
 
       res.json({
         status: "success",
