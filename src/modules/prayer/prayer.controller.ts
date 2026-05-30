@@ -31,5 +31,26 @@ export const PrayerController = {
       success: true,
       result
     })
-  }
+  },
+
+  async getWeeklySchedule(
+  req: Request,
+  res: Response
+) {
+
+  const city =
+    typeof req.query.city === "string"
+      ? req.query.city
+      : undefined
+
+  const data =
+    await PrayerService.getWeeklySchedule(
+      city
+    )
+
+  return res.json({
+    success: true,
+    data
+  })
+}
 }

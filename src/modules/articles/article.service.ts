@@ -5,14 +5,21 @@ import { sanitizeInput } from "../../utils/sanitize"
 
 
 export const ArticleService = {
-  async findAll() {
-    return ArticleRepository.findAll()
-  },
+  async findAll(category?: string) {
+  return ArticleRepository.findAll(category)
+},
 
 async create(data: CreateArticleInput, userId: number) {
   return ArticleRepository.create({
     title: sanitizeInput(data.title),
     content: sanitizeInput(data.content),
+    category: data.categoryId
+  ? {
+      connect: {
+        id: data.categoryId
+      }
+    }
+  : undefined,
     imageUrl: data.imageUrl
       ? sanitizeInput(data.imageUrl)
       : undefined,
@@ -37,6 +44,14 @@ async create(data: CreateArticleInput, userId: number) {
       content: data.content
       ? sanitizeInput(data.content)
       :undefined,
+
+      category: data.categoryId
+  ? {
+      connect: {
+        id: data.categoryId
+      }
+    }
+  : undefined,
 
       imageUrl: data.imageUrl
       ? sanitizeInput(data.imageUrl)

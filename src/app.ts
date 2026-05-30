@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import cookieParser from "cookie-parser";
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
@@ -17,6 +18,7 @@ app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json({ limit: "10kb" }));
 app.use(limiter);
+app.use(cookieParser());
 
 
 // Custom Middleware: X-Request-ID

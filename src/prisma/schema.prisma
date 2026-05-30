@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated"
+  output   = "../../src/generated"
 }
 
 datasource db {
@@ -70,4 +70,24 @@ enum MustahikCategory {
   gharim
   fisabilillah
   ibnu_sabil
+}
+
+enum CampaignStatus {
+  active
+  completed
+  cancelled
+  draft
+}
+
+enum AuditAction {
+  create
+  update
+  delete
+}
+enum NotificationType {
+  donation
+  event
+  inventory
+  campaign
+  system
 }

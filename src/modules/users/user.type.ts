@@ -12,3 +12,9 @@ export type UpdateUserInput = {
   email?: string
   role?: Role
 }
+
+export type UpdateUserProfileInput = {
+  username?: string
+  email?: string
+  profileImage?: string
+}

@@ -1,0 +1,12 @@
+model ArticleCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(120)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  articles    Article[]
+
+  @@map("article_categories")
+}

@@ -1,4 +1,5 @@
 import { Router } from "express"
+import { AuditAction } from '../../generated/client'
 
 import { MosqueProfileController }
 from "./mosque-profile.controller"
@@ -8,6 +9,7 @@ from "../../middlewares/auth.middleware"
 
 import { rbacMiddleware }
 from "../../middlewares/rbac.middleware"
+import { auditMiddleware } from '../audit/audit.middleware'
 
 import { uploadImage }
 from "../../middlewares/upload.middleware"
@@ -26,6 +28,10 @@ router.put(
     "superadmin",
     "admin_kegiatan"
   ),
+  auditMiddleware({
+    action: AuditAction.update,
+    module: 'mosque-profile',
+  }),
   uploadImage.single("qris"),
   MosqueProfileController.update
 )

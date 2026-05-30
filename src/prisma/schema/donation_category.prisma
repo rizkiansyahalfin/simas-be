@@ -1,0 +1,11 @@
+model DonationCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  donations Donation[]
+
+  @@map("donation_categories")
+}
