@@ -108,6 +108,33 @@ const DonationProofStorage = multer.diskStorage({
     }
   })
 
+  const InventoryStorage =
+  multer.diskStorage({
+    destination: (_, __, cb) => {
+      cb(
+        null,
+        path.join(
+          __dirname,
+          "..",
+          "uploads",
+          "inventories"
+        )
+      )
+    },
+
+    filename: (_, file, cb) => {
+      const unique =
+        Date.now() +
+        "-" +
+        Math.round(Math.random() * 1e9)
+
+      cb(
+        null,
+        unique +
+        path.extname(file.originalname)
+      )
+    }
+  })
 
 const allowedMimeTypes = [
   "image/jpeg",
@@ -169,6 +196,15 @@ export const uploadProfileImage =
   export const uploadEventPoster =
   multer({
     storage: EventPosterStorage,
+    fileFilter,
+    limits: {
+      fileSize: 5 * 1024 * 1024
+    }
+  })
+
+  export const uploadInventoryPhoto =
+  multer({
+    storage: InventoryStorage,
     fileFilter,
     limits: {
       fileSize: 5 * 1024 * 1024

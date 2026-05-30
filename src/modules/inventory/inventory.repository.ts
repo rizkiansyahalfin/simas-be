@@ -82,6 +82,7 @@ export const InventoryRepository = {
       data: {
         itemCode: data.itemCode,
         itemName: data.itemName,
+        photoUrl: data.photoUrl,
         categoryId: data.categoryId,
         quantity: data.quantity,
         condition: data.condition,

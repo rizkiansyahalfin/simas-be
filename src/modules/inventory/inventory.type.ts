@@ -9,6 +9,7 @@ export interface InventoryResponse {
   id: number
   itemCode: string
   itemName: string
+  photoUrl?: string
   categoryId: number
   quantity: number
   condition: InventoryCondition
