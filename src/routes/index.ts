@@ -25,6 +25,7 @@ import auditRouter from '../modules/audit/audit.route'
 import campaignRouter from '../modules/campaign/campaign.route'
 import notificationRouter from '../modules/notification/notification.route'
 import articleCategoryRoute from '../modules/articles/article-category.route'
+import paymentRoute from '../modules/payment/payment.route'
 
 const router = Router()
 
@@ -59,4 +60,5 @@ router.use('/mosque-profile', mosqueprofileRouter)
 router.use('/campaigns', campaignRouter)
 router.use('/audit', auditRouter)
 router.use('/notifications', notificationRouter)
+router.use("/payments", paymentRoute)
 export default router
