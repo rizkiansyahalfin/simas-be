@@ -11,13 +11,23 @@
 
 JWT_SECRET="your_jwt_secret_key_here"
 JWT_EXPIRES_IN="8h"
+
 DATABASE_URL="postgres://2eaca25cd6e9ae9b0b50b6fba9452a98ef3848f009c739ae429f2d211938a8ec:sk_HDSVDPMsr4dNCPQhixj3t@db.prisma.io:5432/postgres?sslmode=require"
+
 GMAIL_USER=emailmasjid@gmail.com
 GMAIL_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx
+
 BENDAHARA_EMAIL=bendahara@gmail.com
+
 BRUTE_FORCE_ENABLED="true"
 BRUTE_FORCE_MAX=5
+
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USER=xxx@gmail.com
 MAIL_PASS=xxxx
+
+MIDTRANS_SERVER_KEY=SB-Mid-server-xxxxxxxx
+MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxxxxxx
+MIDTRANS_IS_PRODUCTION=false
+MIDTRANS_WEBHOOK_SECRET=my-super-secret
