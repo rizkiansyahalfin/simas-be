@@ -1,25 +1,42 @@
-import { Request, Response } from "express"
+import type {
+  Request,
+  Response,
+  NextFunction,
+} from "express"
 
-import {
-  midtransConfig,
-} from "../../config/midtrans.config"
+import { createTransactionSchema } from "./payment.validation"
+import { PaymentService } from "./payment.service"
 
-export const getMidtransConfig =
-  (
+export const PaymentController = {
+  async createTransaction(
     req: Request,
-    res: Response
-  ) => {
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const validated = createTransactionSchema.parse(req.body)
+      const result = await PaymentService.createTransaction(validated)
 
-    res.json({
-      status: "success",
-      data: {
-        environment:
-          midtransConfig.isProduction
-            ? "production"
-            : "sandbox",
+      res.status(201).json({
+        status: "success",
+        data: result,
+      })
+    } catch (err) {
+      next(err)
+    }
+  },
 
-        clientKey:
-          midtransConfig.clientKey,
-      },
-    })
-  }
+  async notification(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      await PaymentService.handleNotification(req.body)
+
+      res.status(200).json({ received: true })
+    } catch (err) {
+      next(err)
+    }
+  },
+}
