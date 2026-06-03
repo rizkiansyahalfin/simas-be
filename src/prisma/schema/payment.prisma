@@ -15,13 +15,18 @@ model Payment {
   snapToken         String?  @map("snap_token")
 
   paymentType       String?  @map("payment_type")
-  transactionStatus String   @default("pending") @map("transaction_status")
-  fraudStatus       String?  @map("fraud_status")
 
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  transactionStatus String   @default("pending")
+  fraudStatus       String?
 
-  donation Donation @relation(fields: [donationId], references: [id])
+  refundAmount      Decimal? @db.Decimal(15,2)
+  refundedAt        DateTime?
+  refundReason      String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  donation Donation  @relation(fields: [donationId], references: [id])
   campaign Campaign? @relation(fields: [campaignId], references: [id])
 
   @@map("payments")

@@ -9,6 +9,25 @@ export const createTransactionSchema = z.object({
   campaignId: z.number().int().positive().optional(),
 })
 
+
+export const refundSchema =
+  z.object({
+    reason:
+      z.string()
+       .min(5)
+       .max(255),
+
+    amount:
+      z.number()
+       .positive()
+       .optional()
+  })
+
+export type RefundInput =
+  z.infer<
+    typeof refundSchema
+  >
+
 export type CreateTransactionInput = z.infer<
   typeof createTransactionSchema
 >

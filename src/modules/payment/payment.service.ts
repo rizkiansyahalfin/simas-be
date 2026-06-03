@@ -12,6 +12,7 @@ import type {
 
 import { MailService } from "../mail/mail.service"
 import { donationVerifiedTemplate } from "../mail/templates/donation-verified.template"
+import { processRefund } from "./payment.utils"
 
 const isSuccessTransactionStatus = (status: string) =>
   status === "settlement" || status === "capture"
@@ -138,4 +139,54 @@ export const PaymentService = {
 
     return true
   },
+  async refund(
+    orderId: string,
+    reason: string,
+    amount?: number
+  ) {
+    const payment = await PaymentRepository.findByOrderId(orderId)
+    if (!payment) {
+      throw new Error("PAYMENT_NOT_FOUND")
+    }
+
+    if (payment.transactionStatus !== "settlement") {
+      throw new Error("PAYMENT_NOT_SETTLED")
+    }
+
+    const paymentAmount = Number(payment.amount)
+    const refundAmount = amount ?? paymentAmount
+
+    // Validate refund amount does not exceed payment amount
+    if (refundAmount > paymentAmount) {
+      throw new Error(
+        `REFUND_AMOUNT_EXCEEDS_PAYMENT_AMOUNT: Refund ${refundAmount} > Payment ${paymentAmount}`
+      )
+    }
+
+    const refundKey = `refund-${Date.now()}`
+
+    await processRefund(orderId, {
+      refund_key: refundKey,
+      amount: refundAmount,
+      reason,
+    })
+
+    await PaymentRepository.markRefunded(orderId, {
+      refundAmount,
+      refundReason: reason,
+    })
+
+    if (payment.donationId) {
+      await prisma.donation.update({
+        where: { id: payment.donationId },
+        data: { status: "rejected" },
+      })
+    }
+
+    return {
+      orderId,
+      refundAmount,
+      reason,
+    }
+  }
 }

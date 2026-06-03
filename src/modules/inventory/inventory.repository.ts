@@ -1,7 +1,7 @@
-import type { Prisma } from '../../generated/client'
 import type { FilterInventoryParams } from './inventory.type'
 import type { CreateInventoryInput, UpdateInventoryInput } from './inventory.validation'
 import prisma from '../../database'
+import { Prisma } from '../../generated/client';
 
 export const InventoryRepository = {
   async findAll(filter: Omit<FilterInventoryParams, 'page'> & { skip: number; limit: number }) {

@@ -4,7 +4,7 @@ import type {
   NextFunction,
 } from "express"
 
-import { createTransactionSchema } from "./payment.validation"
+import { createTransactionSchema, refundSchema } from "./payment.validation"
 import { PaymentService } from "./payment.service"
 
 export const PaymentController = {
@@ -18,6 +18,30 @@ export const PaymentController = {
       const result = await PaymentService.createTransaction(validated)
 
       res.status(201).json({
+        status: "success",
+        data: result,
+      })
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async refund(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const orderId = req.params.orderId
+      const body = refundSchema.parse(req.body)
+
+      const result = await PaymentService.refund(
+        orderId as string,
+        body.reason,
+        body.amount
+      )
+
+      res.json({
         status: "success",
         data: result,
       })

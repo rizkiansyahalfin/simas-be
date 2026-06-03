@@ -19,4 +19,22 @@ export const PaymentRepository = {
       data,
     })
   },
+
+  markRefunded(
+    orderId: string,
+    data: {
+      refundAmount: number,
+      refundReason: string
+    }
+  ) {
+    return prisma.payment.update({
+      where: { orderId },
+      data: {
+        transactionStatus: "refunded",
+        refundAmount: data.refundAmount,
+        refundReason: data.refundReason,
+        refundedAt: new Date(),
+      },
+    })
+  },
 }
