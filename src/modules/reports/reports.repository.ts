@@ -137,7 +137,7 @@ export const ReportsRepository = {
       },
     })
 
-    const grouped = distributions.reduce<Record<string, number>>((acc, distribution) => {
+    const grouped = distributions.reduce<Record<string, number>>((acc: Record<string, number>, distribution: { mustahik: { category: string }; amount: unknown }) => {
       const category = distribution.mustahik.category
       acc[category] = (acc[category] ?? 0) + Number(distribution.amount)
       return acc
