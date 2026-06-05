@@ -60,3 +60,18 @@ export type ZisChartResponse = {
   range: DashboardRange;
   data: ZisChartItem[];
 }
+
+export interface DonationTrendItem {
+  month: string;
+  amount: number;
+}
+export interface DonationCategoryItem{
+  category: string,
+  amount: number;
+}
+
+export interface DonationChartResponse {
+  range: DashboardRange;
+  trend: DonationTrendItem[];
+  categories: DonationCategoryItem[]
+}

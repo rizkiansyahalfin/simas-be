@@ -164,4 +164,24 @@ export const findZisTransactionByRange = (
       amount: true
     }
   })
-}
+};
+export const findDonationsByRange = (
+  startDate: Date,
+  endDate: Date
+) => {
+  return prisma.donation.findMany({
+    where: {
+      status: DonationStatus.verified,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+};

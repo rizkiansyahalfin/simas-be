@@ -37,5 +37,13 @@ router.get(
   ),
   dashboardController.getDonationChart
 )
+router.get(
+  '/charts/zis',
+  dashboardController.getZisChart
+);
+router.get(
+  '/charts/donations',
+  dashboardController.getDonationChart
+);
 
 export default router;
