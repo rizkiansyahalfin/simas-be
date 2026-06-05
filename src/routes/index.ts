@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express'
 
 import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
 import { startInventoryOverdueJob } from "../modules/inventory-loan/inventory-overdue.job"
+import { startPaymentRetryJob } from "../modules/payment/payment.cron"
 
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
@@ -31,6 +32,7 @@ const router = Router()
 
 startJumatReminderJob()
 startInventoryOverdueJob()
+startPaymentRetryJob()
 
 router.get('/test', (req: Request, res: Response) => {
   res.json({
