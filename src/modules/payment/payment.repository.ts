@@ -37,4 +37,45 @@ export const PaymentRepository = {
       },
     })
   },
+
+  findPendingPayments() {
+    return prisma.payment.findMany({
+      where: {
+        transactionStatus: "pending",
+      },
+    })
+  },
+
+  updateStatus(orderId: string, status: string) {
+    return prisma.payment.update({
+      where: { orderId },
+      data: { transactionStatus: status },
+    })
+  },
+
+  incrementRetry(paymentId: number) {
+    return prisma.payment.update({
+      where: {
+        id: paymentId,
+      },
+      data: {
+        retryCount: {
+          increment: 1,
+        },
+        lastCheckedAt: new Date(),
+      },
+    })
+  },
+
+  markAlerted(paymentId: number) {
+    return prisma.payment.update({
+      where: {
+        id: paymentId,
+      },
+      data: {
+        alertedAt: new Date(),
+      },
+    })
+  },
+
 }

@@ -8,6 +8,9 @@ import type {
   MidtransWebhookPayload,
 } from "./payment.type"
 
+import { NotificationTrigger } from "../notification/notification.trigger"
+import { DonationRepository } from "../donations/donation.repository"
+
 import { MailService } from "../mail/mail.service"
 import { donationVerifiedTemplate } from "../mail/templates/donation-verified.template"
 import { processRefund } from "./payment.utils"
@@ -237,5 +240,89 @@ export const PaymentService = {
       refundAmount,
       reason,
     }
+  },
+  async retryPendingTransactions() {
+    const pendingPayments = await PaymentRepository.findPendingPayments()
+
+    let processed = 0
+    let alerted = 0
+
+    for (const payment of pendingPayments) {
+      try {
+        const { midtrans } = await this.getTransactionStatus(
+          payment.orderId
+        )
+
+        const status = midtrans.transaction_status
+
+        if (isSuccessTransactionStatus(status)) {
+          await this.handleSettlement(payment.orderId)
+          processed++
+          continue
+        }
+
+        if (status === "deny" || status === "cancel" || status === "expire") {
+          processed++
+          continue
+        }
+
+        await PaymentRepository.incrementRetry(payment.id)
+
+        const ageInHours =
+          (Date.now() - payment.createdAt.getTime()) /
+          (1000 * 60 * 60)
+
+        const stuck = ageInHours >= 24
+
+        if (stuck && !payment.alertedAt) {
+          await NotificationTrigger.paymentStuck({
+            orderId: payment.orderId,
+            amount: Number(payment.amount),
+          })
+
+          await PaymentRepository.markAlerted(payment.id)
+          alerted++
+        }
+      } catch (error) {
+        console.error(`Retry failed for ${payment.orderId}`, error)
+      }
+    }
+
+    return {
+      processed,
+      alerted,
+      checked: pendingPayments.length,
+    }
+  },
+async handleSettlement(
+  orderId: string
+) {
+
+  const payment =
+    await PaymentRepository.findByOrderId(
+      orderId
+    )
+
+  if (!payment) {
+    throw new Error(
+      "PAYMENT_NOT_FOUND"
+    )
   }
+
+  if (payment.transactionStatus === "settlement") {
+    return payment
+  }
+
+  await PaymentRepository.updateStatus(orderId, "settlement")
+
+  await DonationRepository.update(
+    payment.donationId!,
+    {
+      status: "verified",
+      verifiedAt: new Date(),
+    }
+  )
+
+  return payment
+}
 }
