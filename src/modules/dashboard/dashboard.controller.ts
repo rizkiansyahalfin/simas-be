@@ -65,3 +65,21 @@ export const getZisChart = async (
     data,
   });
 };
+export const getDonationChart = async (
+  req: Request,
+  res: Response
+) => {
+  const range =
+    (req.query.range as DashboardRange | undefined) ??
+    '6months';
+
+  const data =
+    await dashboardService.getDonationChart(
+      range
+    );
+
+  return res.status(200).json({
+    success: true,
+    data,
+  });
+};
