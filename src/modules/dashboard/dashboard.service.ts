@@ -18,6 +18,10 @@ import type {
   DonationTrendItem,
   DonationCategoryItem,
 } from './dashboard.type';
+import {
+  DonationChartResponse,
+} from './dashboard.type';
+
 
 const TIMEZONE = 'Asia/Jakarta';
 
@@ -151,6 +155,60 @@ export const getCongregationChart = async (
   return {
     range,
     data,
+  };
+};
+
+export const getDonationChart = async (
+  range: DashboardRange = '6months'
+): Promise<DonationChartResponse> => {
+  const monthsBack = getRangeMonths(range);
+  const now = new Date();
+  const startDate = startOfMonth(subMonths(now, monthsBack - 1));
+  const endDate = endOfMonth(now);
+
+  const donations = await repo.findVerifiedDonationsByRange(
+    startDate,
+    endDate
+  );
+
+  const monthlyMap = new Map<string, { month: string; amount: number }>();
+  for (let i = 0; i < monthsBack; i++) {
+    const currentMonth = subMonths(now, i);
+    const label = format(currentMonth, 'MMM yyyy');
+    monthlyMap.set(label, {
+      month: label,
+      amount: 0,
+    });
+  }
+
+  const categoryMap = new Map<string, number>();
+
+  for (const donation of donations) {
+    const zonedDate = toZonedTime(donation.createdAt, TIMEZONE);
+    const monthLabel = format(zonedDate, 'MMM yyyy');
+    const monthly = monthlyMap.get(monthLabel);
+    const amount = toNumber(donation.amount);
+
+    if (monthly) {
+      monthly.amount += amount;
+    }
+
+    const categoryName = donation.category?.name ?? 'Uncategorized';
+    categoryMap.set(
+      categoryName,
+      (categoryMap.get(categoryName) ?? 0) + amount
+    );
+  }
+
+  const trend = Array.from(monthlyMap.values()).reverse();
+  const categories = Array.from(categoryMap.entries()).map(
+    ([category, amount]) => ({ category, amount })
+  );
+
+  return {
+    range,
+    trend,
+    categories,
   };
 };
 

@@ -4,6 +4,7 @@ import { InventoryController } from './inventory.controller'
 import { authMiddleware } from '../../middlewares/auth.middleware'
 import { rbacMiddleware } from '../../middlewares/rbac.middleware'
 import { auditMiddleware } from '../audit/audit.middleware'
+import { uploadInventoryPhoto } from '../../middlewares/upload.middleware'
 
 const router = Router()
 const controller = InventoryController
@@ -24,6 +25,7 @@ router.post(
   '/',
   authMiddleware,
   rbacMiddleware('superadmin', 'admin_inventaris'),
+  uploadInventoryPhoto.single('photo'),
   auditMiddleware({
     action: AuditAction.create,
     module: 'inventory',
@@ -35,6 +37,7 @@ router.put(
   '/:id',
   authMiddleware,
   rbacMiddleware('superadmin', 'admin_inventaris'),
+  uploadInventoryPhoto.single('photo'),
   auditMiddleware({
     action: AuditAction.update,
     module: 'inventory',

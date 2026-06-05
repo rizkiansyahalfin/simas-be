@@ -7,7 +7,7 @@ export const InventoryService = {
 
     return InventoryRepository.findAll({
       condition: filter.condition,
-      category: filter.category,
+      categoryId: filter.categoryId,
       search: filter.search,
       skip,
       limit: filter.limit
@@ -24,18 +24,31 @@ export const InventoryService = {
     return item
   },
 
-  async create(data: CreateInventoryInput) {
-    return InventoryRepository.create(data)
+  async create(data: CreateInventoryInput, file?: Express.Multer.File) {
+    if (file) {
+      data.photoUrl = file.path
+    }
+    return InventoryRepository.create({
+      ...data, 
+      photoUrl: data.photoUrl
+    })
   },
 
-  async update(id: number, data: UpdateInventoryInput) {
+  async update(id: number, data: UpdateInventoryInput, file?: Express.Multer.File) {
     const item = await InventoryRepository.findById(id)
 
     if (!item) {
       throw new Error('INVENTORY_NOT_FOUND')
     }
 
-    return InventoryRepository.update(id, data)
+    if (file) {
+      data.photoUrl = file.path
+    }
+
+    return InventoryRepository.update(id, {
+      ...data,
+      ...(file && { photoUrl: file.filename })
+    })
   },
 
   async delete(id: number) {

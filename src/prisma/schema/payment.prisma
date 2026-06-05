@@ -1,0 +1,33 @@
+model Payment {
+  id                Int      @id @default(autoincrement())
+
+  donationId        Int      @map("donation_id")
+  campaignId        Int?     @map("campaign_id")
+
+  orderId           String   @unique @map("order_id")
+  transactionId     String?  @map("transaction_id")
+
+  donorName         String   @map("donor_name")
+  donorEmail        String   @map("donor_email")
+
+  amount            Decimal  @db.Decimal(15,2)
+
+  snapToken         String?  @map("snap_token")
+
+  paymentType       String?  @map("payment_type")
+
+  transactionStatus String   @default("pending")
+  fraudStatus       String?
+
+  refundAmount      Decimal? @db.Decimal(15,2)
+  refundedAt        DateTime?
+  refundReason      String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  donation Donation  @relation(fields: [donationId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@map("payments")
+}

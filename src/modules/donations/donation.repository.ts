@@ -138,7 +138,11 @@ if (categoryId) {
             id: true,
             username: true,
             role: true,
-            category: true,
+          },
+        },
+        categoryId: {
+          select: {
+            name: true,
           },
         },
       },

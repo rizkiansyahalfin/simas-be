@@ -1,7 +1,7 @@
-import type { Prisma } from '../../generated/client'
 import type { FilterInventoryParams } from './inventory.type'
 import type { CreateInventoryInput, UpdateInventoryInput } from './inventory.validation'
 import prisma from '../../database'
+import { Prisma } from '../../generated/client';
 
 export const InventoryRepository = {
   async findAll(filter: Omit<FilterInventoryParams, 'page'> & { skip: number; limit: number }) {
@@ -11,11 +11,8 @@ export const InventoryRepository = {
       whereClause.condition = filter.condition
     }
 
-    if (filter.category) {
-      whereClause.category = {
-        contains: filter.category,
-        mode: 'insensitive'
-      }
+    if (filter.categoryId) {
+      whereClause.categoryId = filter.categoryId
     }
 
     if (filter.search) {
@@ -85,7 +82,8 @@ export const InventoryRepository = {
       data: {
         itemCode: data.itemCode,
         itemName: data.itemName,
-        category: data.category,
+        photoUrl: data.photoUrl,
+        categoryId: data.categoryId,
         quantity: data.quantity,
         condition: data.condition,
         acquiredDate: data.acquiredDate,

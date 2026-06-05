@@ -4,7 +4,9 @@ import type { Request, Response } from 'express';
 
 import * as dashboardService from './dashboard.service';
 
-import type { DashboardRange } from './dashboard.type';
+import type {
+  DashboardRange,
+} from './dashboard.type';
 
 export const getFinanceChart = async (
   req: Request,
@@ -15,6 +17,22 @@ export const getFinanceChart = async (
     '6months';
 
   const data = await dashboardService.getFinanceChart(range);
+
+  return res.status(200).json({
+    success: true,
+    data,
+  });
+};
+
+export const getDonationChart = async (
+  req: Request,
+  res: Response
+) => {
+  const range =
+    (req.query.range as DashboardRange | undefined) ??
+    '6months';
+
+  const data = await dashboardService.getDonationChart(range);
 
   return res.status(200).json({
     success: true,

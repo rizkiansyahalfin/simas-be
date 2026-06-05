@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { ReportsService } from "./reports.service"
 import {
   monthlyFinanceQuerySchema,
+  monthlyZisQuerySchema,
   weeklyFinanceQuerySchema
 } from "./reports.validation"
 
@@ -66,5 +67,32 @@ export const ReportsController = {
     )
 
     return res.send(buffer)
-  }
+  },
+
+  async monthlyZis(req: Request, res: Response) {
+    const query = monthlyZisQuerySchema.safeParse(req.query)
+
+    if (!query.success) {
+      return res.status(400).json({
+        message: "Invalid query parameters",
+        errors: query.error.format(),
+      })
+    }
+
+    const { month, year, format } = query.data
+
+    if (format === 'pdf') {
+      const pdf = await ReportsService.generateMonthlyZisPdf({ month, year })
+
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="zis-${month}-${year}.pdf"`
+      )
+
+      return res.send(pdf)
+    }
+
+    return res.status(400).json({ message: 'Invalid format, only pdf is supported' })
+  },
 }

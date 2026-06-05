@@ -34,7 +34,7 @@ export const EventService = {
     })
   },
 
-  async create(data: CreateEventData, userId: number): Promise<Event> {
+  async create(data: CreateEventData, userId: number, posterUrl?: string): Promise<Event> {
     const start = new Date(data.startTime)
     const end = new Date(data.endTime)
 
@@ -49,15 +49,20 @@ export const EventService = {
 
     return EventRepository.create({
       ...data,
+      posterUrl,
       createdBy: userId
     })
   },
 
-  async update(id: number, data: UpdateEventData): Promise<Event> {
+  async update(id: number, data: UpdateEventData, posterUrl?: string): Promise<Event> {
     const existing = await EventRepository.findById(id)
 
     if (!existing) {
       throw new Error("EVENT_NOT_FOUND")
+    }
+
+    if (posterUrl) {
+      data.posterUrl = posterUrl
     }
 
     // If updating times, validate them
@@ -74,7 +79,7 @@ export const EventService = {
       }
     }
 
-    return EventRepository.update(id, data)
+    return EventRepository.update(id, { ...data, posterUrl })
   },
 
   async updateStatus(id: number, status: string): Promise<Event> {

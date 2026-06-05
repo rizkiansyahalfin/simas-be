@@ -15,6 +15,7 @@ model Campaign {
   // Relations
   creator     User           @relation(fields: [createdBy], references: [id])
   donations   Donation[]
+  payments    Payment[]
 
   @@map("campaigns")
 }

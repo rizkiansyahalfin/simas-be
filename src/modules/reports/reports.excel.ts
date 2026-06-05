@@ -26,7 +26,7 @@ export const generateInventoryExcel = async (inventories: InventoryReport[]) => 
       id: item.id,
       itemCode: item.itemCode,
       itemName: item.itemName,
-      category: item.category,
+      category: item.categoryId,
       quantity: item.quantity,
       condition: item.condition,
       manager: item.manager?.username ?? "-"

@@ -16,6 +16,7 @@ model Donation {
   campaignId Int? @map("campaign_id")
   campaign Campaign? @relation(fields: [campaignId], references: [id])
   category DonationCategory? @relation(fields: [categoryId], references: [id])
+  payments Payment[]
 
   @@map("donations")
 }

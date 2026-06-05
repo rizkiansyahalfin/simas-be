@@ -1,11 +1,14 @@
 import { ReportsRepository } from "./reports.repository"
 import { generateFinancePdf } from "./reports.pdf"
 import { generateFinanceExcel, generateInventoryExcel } from "./reports.excel"
+import { generateZisMonthlyPdf } from "./reports.zis.pdf"
 import type {
   MonthlyFinanceQuery,
+  MonthlyZisQuery,
   WeeklyFinanceQuery,
   FinancePdfPayload,
-  InventoryReport
+  InventoryReport,
+  ZisReportPdfPayload,
 } from "./reports.type"
 
 export const ReportsService = {
@@ -43,5 +46,29 @@ export const ReportsService = {
   async generateInventoryExcel() {
     const inventories = await ReportsRepository.getInventoryReport()
     return generateInventoryExcel(inventories as InventoryReport[])
-  }
+  },
+
+  async generateMonthlyZisPdf({ month, year }: MonthlyZisQuery) {
+    const [zisTransactions, totalDistributions, categoryDistributions] = await Promise.all([
+      ReportsRepository.getMonthlyZisTransactions({ month, year }),
+      ReportsRepository.getMonthlyZisTotalDistributions({ month, year }),
+      ReportsRepository.getMonthlyZisCategoryDistributions({ month, year }),
+    ])
+
+    const totalReceipts = zisTransactions.reduce(
+      (sum, tx) => sum + Number(tx.amount),
+      0
+    )
+
+    const payload: ZisReportPdfPayload = {
+      month,
+      year,
+      totalReceipts,
+      totalDistributions,
+      zisTransactions,
+      categoryDistributions,
+    }
+
+    return generateZisMonthlyPdf(payload)
+  },
 }

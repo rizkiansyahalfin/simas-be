@@ -58,6 +58,62 @@ export const CongregationController = {
     }
   },
 
+  async export(req: Request, res: Response, next: NextFunction) {
+  try {
+    const format = req.query.format
+
+    if (format !== "excel") {
+      return res.status(400).json({
+        status: "error",
+        message: "Format must be excel"
+      })
+    }
+
+    const file =
+      await CongregationService.exportExcel()
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=congregations.xlsx"
+    )
+
+    return res.send(file)
+
+  } catch (err) {
+    next(err)
+  }
+},
+
+async import(req: Request, res: Response, next: NextFunction) {
+  try {
+
+    if (!req.file) {
+      return res.status(400).json({
+        status: "error",
+        message: "File required"
+      })
+    }
+
+    const result =
+      await CongregationService.importFile(
+        req.file.path
+      )
+
+    res.json({
+      status: "success",
+      data: result
+    })
+
+  } catch (err) {
+    next(err)
+  }
+},
+
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id)

@@ -5,6 +5,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
@@ -19,6 +20,13 @@ app.use(helmet());
 app.use(express.json({ limit: "10kb" }));
 app.use(limiter);
 app.use(cookieParser());
+
+app.use(
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+)
 
 
 // Custom Middleware: X-Request-ID

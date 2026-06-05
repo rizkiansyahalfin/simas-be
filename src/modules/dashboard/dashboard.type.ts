@@ -12,6 +12,22 @@ export type FinanceChartItem = {
   expense: number;
 };
 
+export type DonationTrendItem = {
+  month: string;
+  amount: number;
+};
+
+export type DonationCategoryBreakdownItem = {
+  category: string;
+  amount: number;
+};
+
+export type DonationChartResponse = {
+  range: DashboardRange;
+  trend: DonationTrendItem[];
+  categories: DonationCategoryBreakdownItem[];
+};
+
 export type DashboardStats = {
   totalCongregations: number;
   currentCashBalance: number;

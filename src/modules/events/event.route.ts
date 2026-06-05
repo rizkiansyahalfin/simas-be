@@ -3,6 +3,8 @@ import { AuditAction } from '../../generated/client'
 
 import { EventController } from "./event.controller"
 
+
+import { uploadEventPoster } from "../../middlewares/upload.middleware"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -20,9 +22,10 @@ router.post(
     "superadmin",
     "admin_kegiatan"
   ),
+  uploadEventPoster.single("poster"),
   auditMiddleware({
     action: AuditAction.create,
-    module: 'events',
+    module: "events",
   }),
   EventController.create
 )
@@ -34,9 +37,10 @@ router.put(
     "superadmin",
     "admin_kegiatan"
   ),
+  uploadEventPoster.single("poster"),
   auditMiddleware({
     action: AuditAction.update,
-    module: 'events',
+    module: "events",
   }),
   EventController.update
 )
