@@ -14,6 +14,11 @@ router.post(
   PaymentController.createTransaction
 )
 
+router.get(
+  "/:orderId/status",
+  PaymentController.getStatus
+)
+
 router.post(
   "/:orderId/refund",
   authMiddleware,

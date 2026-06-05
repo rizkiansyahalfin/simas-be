@@ -26,6 +26,24 @@ export const PaymentController = {
     }
   },
 
+  async getStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const orderId = req.params.orderId as string
+      const result = await PaymentService.getTransactionStatus(orderId)
+
+      res.json({
+        status: "success",
+        data: result,
+      })
+    } catch (err) {
+      next(err)
+    }
+  },
+
   async refund(
     req: Request,
     res: Response,
