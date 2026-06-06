@@ -5,6 +5,7 @@ import prisma from '../../database'
 import {
   NotificationType,
 } from '../../generated/enums'
+import { NotificationRepository } from './notification.repository'
 
 import {
   NotificationService,
@@ -185,4 +186,19 @@ export const NotificationTrigger = {
       })),
     })
   },
+  async paymentStuck(data: {
+  orderId: string
+  amount: number
+}) {
+
+  return NotificationRepository.create({
+    title: "Transaksi Pending Terlalu Lama",
+
+    message:
+      `Order ${data.orderId}
+       masih pending dan perlu dicek.`,
+
+    type: "warning",
+  })
+}
 }
