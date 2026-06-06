@@ -14,6 +14,19 @@ export interface CreateTransactionInput {
   campaignId?: number
 }
 
+export interface SnapTransactionInput {
+  orderId: string
+  amount: number
+  donorName: string
+  donorEmail: string
+  phone?: string
+}
+
+export interface SnapTransactionResult {
+  snapToken: string
+  redirectUrl?: string
+}
+
 export interface CreatePaymentInput {
   donationId: number
   campaignId?: number

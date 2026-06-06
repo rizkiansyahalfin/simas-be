@@ -1,9 +1,7 @@
 import crypto from "crypto"
 
 import prisma from "../../database"
-import { snap, midtransConfig } from "../../config/midtrans.config"
-
-import type { SnapTransactionParameters } from "midtrans-client"
+import { midtransConfig } from "../../config/midtrans.config"
 import { PaymentRepository } from "./payment.repository"
 import type {
   CreateTransactionInput,
@@ -13,6 +11,7 @@ import type {
 import { MailService } from "../mail/mail.service"
 import { donationVerifiedTemplate } from "../mail/templates/donation-verified.template"
 import { processRefund } from "./payment.utils"
+import { requestMidtransSnapToken } from "./payment.tokenizer"
 
 const isSuccessTransactionStatus = (status: string) =>
   status === "settlement" || status === "capture"
@@ -61,23 +60,14 @@ export const PaymentService = {
 
     const orderId = `SIMAS-${donation.id}-${Date.now()}`
 
-    const customerDetails = {
-      first_name: data.donorName,
-      email: data.donorEmail,
-      ...(data.phone ? { phone: data.phone } : {}),
-    }
-
-    const transactionPayload: SnapTransactionParameters & {
-      customer_details: typeof customerDetails
-    } = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount: data.amount,
-      },
-      customer_details: customerDetails,
-    }
-
-    const transaction = await snap.createTransaction(transactionPayload)
+    const { snapToken, redirectUrl } =
+      await requestMidtransSnapToken({
+        orderId,
+        amount: data.amount,
+        donorName: data.donorName,
+        donorEmail: data.donorEmail,
+        phone: data.phone,
+      })
 
     try {
       await PaymentRepository.create({
@@ -87,7 +77,7 @@ export const PaymentService = {
         donorName: data.donorName,
         donorEmail: data.donorEmail,
         amount: data.amount,
-        snapToken: transaction.token,
+        snapToken,
       })
     } catch (error) {
       await prisma.donation.delete({ where: { id: donation.id } })
@@ -97,8 +87,67 @@ export const PaymentService = {
     return {
       donationId: donation.id,
       orderId,
-      snapToken: transaction.token,
-      redirectUrl: transaction.redirect_url,
+      snapToken,
+      redirectUrl,
+    }
+  },
+
+  async getTransactionStatus(orderId: string) {
+    const payment = await PaymentRepository.findByOrderId(orderId)
+    if (!payment) {
+      throw new Error("PAYMENT_NOT_FOUND")
+    }
+
+    const baseUrl = midtransConfig.isProduction
+      ? "https://app.midtrans.com/api/v2"
+      : "https://app.sandbox.midtrans.com/api/v2"
+
+    const statusUrl = `${baseUrl}/${orderId}/status`
+    const authString = Buffer.from(
+      `${midtransConfig.serverKey}:`
+    ).toString("base64")
+
+    const statusResp = await fetch(statusUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${authString}`,
+      },
+    })
+
+    if (!statusResp.ok) {
+      const body = await statusResp.text()
+      throw new Error(
+        `MIDTRANS_STATUS_FAILED: ${statusResp.status} - ${body}`
+      )
+    }
+
+    const midtransStatus = await statusResp.json()
+
+    const updatedPayment = await PaymentRepository.updateByOrderId(
+      orderId,
+      {
+        transactionId: midtransStatus.transaction_id,
+        paymentType: midtransStatus.payment_type,
+        transactionStatus: midtransStatus.transaction_status,
+        fraudStatus: midtransStatus.fraud_status,
+      }
+    )
+
+    if (isSuccessTransactionStatus(midtransStatus.transaction_status)) {
+      await prisma.donation.update({
+        where: { id: payment.donationId },
+        data: { status: "verified", verifiedAt: new Date() },
+      })
+    } else if (isFailedTransactionStatus(midtransStatus.transaction_status)) {
+      await prisma.donation.update({
+        where: { id: payment.donationId },
+        data: { status: "rejected" },
+      })
+    }
+
+    return {
+      payment: updatedPayment,
+      midtrans: midtransStatus,
     }
   },
 
