@@ -22,8 +22,22 @@ model MosqueProfile {
   bankHolder    String?  @map("bank_holder") @db.VarChar(100)
 
   qrisImageUrl  String?  @map("qris_image_url") @db.VarChar(255)
+  defaultLanguage String @default("id")  @map("default_language")
 
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  timezone String @default("Asia/Jakarta")
+
+  donationEnabled Boolean @default(true) @map("donation_enabled")
+
+  campaignEnabled Boolean @default(true) @map("campaign_enabled")
+
+  eventEnabled Boolean @default(true) @map("event_enabled")
+
+  inventoryEnabled Boolean @default(true) @map("inventory_enabled")
+
+  prayerEnabled Boolean @default(true) @map("prayer_enabled")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("mosque_profiles")
+
 }

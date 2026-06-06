@@ -12,6 +12,20 @@ export const MosqueProfileController = {
     })
   },
 
+  async getPublicConfig(
+  req: Request,
+  res: Response
+) {
+
+  const data =
+    await MosqueProfileService.getPublicConfig()
+
+  return res.json({
+    success: true,
+    data,
+  })
+},
+
   async update(req: Request, res: Response) {
     const parsed = updateMosqueProfileSchema.safeParse(req.body)
 

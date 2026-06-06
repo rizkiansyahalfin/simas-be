@@ -21,6 +21,11 @@ router.get(
   MosqueProfileController.get
 )
 
+router.get(
+  "/public-config",
+  MosqueProfileController.getPublicConfig
+)
+
 router.put(
   "/",
   authMiddleware,
