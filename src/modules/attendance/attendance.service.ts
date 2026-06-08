@@ -1,9 +1,13 @@
 import { AttendanceRepository } from "./attendance.repository";
 import prisma from "../../database";
-import { CheckInInput, CreateSessionInput   } from "./attendance.type";
+import { CheckInInput, CreateSessionInput  } from "./attendance.type";
+import { AttendanceReportInput } from "./attendance.validation";
 import type { AttendanceSessionWhereInput } from "../../generated/models";
 
 export const AttendanceService = {
+
+  
+
     async checkIn({
   sessionId,
   nik,
@@ -115,7 +119,7 @@ export const AttendanceService = {
     return prisma.attendanceSession.findMany({
       where: {
         ...(search && {
-          name: {
+          title: {
             contains: search,
             mode: "insensitive",
           },
@@ -127,5 +131,74 @@ export const AttendanceService = {
       skip,
       take: limit,
     })
+  },
+  async report(
+    query: AttendanceReportInput
+  ) {
+    const dateFrom =
+      query.date_from
+        ? new Date(query.date_from)
+        : undefined
+
+    const dateTo =
+      query.date_to
+        ? new Date(query.date_to)
+        : undefined
+
+    const [records, totalSessions] =
+      await Promise.all([
+        AttendanceRepository.getReport(
+          query.session_id,
+          dateFrom,
+          dateTo
+        ),
+
+        AttendanceRepository.countSessions(
+          query.session_id,
+          dateFrom,
+          dateTo
+        )
+      ])
+
+    const attendanceMap = new Map<
+      number,
+      {
+        congregationId: number
+        fullName: string
+        attendanceCount: number
+      }
+    >()
+
+    for (const record of records) {
+      const congregation = record.congregation
+
+      if (!congregation) continue
+
+      const existing = attendanceMap.get(congregation.id)
+
+      if (existing) {
+        existing.attendanceCount += 1
+      } else {
+        attendanceMap.set(congregation.id, {
+          congregationId: congregation.id,
+          fullName: congregation.fullName,
+          attendanceCount: 1
+        })
+      }
+    }
+
+    const report = Array.from(attendanceMap.values()).map((item) => ({
+      ...item,
+      attendancePercentage:
+        totalSessions === 0
+          ? 0
+          : Number(((item.attendanceCount / totalSessions) * 100).toFixed(2))
+    }))
+
+    return {
+      totalSessions,
+      totalAttendanceRecords: records.length,
+      report
+    }
   }
 }

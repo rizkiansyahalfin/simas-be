@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import { AttendanceService } from "./attendance.service"
 import { createSessionSchema, checkInSchema } from "./attendance.validation"
+import { attendanceReportSchema } from "./attendance.validation"
 
 const parsePage = (value: unknown) => {
 	const page = Number(value)
@@ -97,5 +98,30 @@ export const AttendanceController = {
 		} catch (err) {
 			next(err)
 		}
-	}
+	},
+
+	async report(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const query =
+        attendanceReportSchema.parse(
+          req.query
+        )
+
+      const result =
+        await AttendanceService.report(
+          query
+        )
+
+      res.json({
+        status: "success",
+        data: result
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
 }

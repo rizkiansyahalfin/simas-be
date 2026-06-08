@@ -2,6 +2,65 @@ import prisma from "../../database"
 
 export const AttendanceRepository = {
 
+    async getReport(
+    sessionId?: number,
+    dateFrom?: Date,
+    dateTo?: Date
+  ) {
+    return prisma.attendanceRecord.findMany({
+      where: {
+        ...(sessionId && {
+          sessionId
+        }),
+
+        session: {
+          ...(dateFrom && {
+            sessionDate: {
+              gte: dateFrom
+            }
+          }),
+
+          ...(dateTo && {
+            sessionDate: {
+              lte: dateTo
+            }
+          })
+        }
+      },
+
+      include: {
+        congregation: true,
+        session: true
+      }
+    })
+  },
+
+  async countSessions(
+    sessionId?: number,
+    dateFrom?: Date,
+    dateTo?: Date
+  ) {
+    return prisma.attendanceSession.count({
+      where: {
+        ...(sessionId && {
+          id: sessionId
+        }),
+
+        ...(dateFrom && {
+          sessionDate: {
+            gte: dateFrom
+          }
+        }),
+
+        ...(dateTo && {
+          sessionDate: {
+            lte: dateTo
+          }
+        })
+      }
+    })
+  },
+
   async createSession(data: {
     title: string
     type: "prayer" | "event"

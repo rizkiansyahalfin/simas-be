@@ -46,3 +46,18 @@ export const checkInSchema =
         "qr_code"
       ]),
   })
+
+  export const attendanceReportSchema = z.object({
+  session_id: z.coerce.number().optional(),
+
+  date_from: z
+    .string()
+    .optional(),
+
+  date_to: z
+    .string()
+    .optional()
+})
+
+export type AttendanceReportInput =
+  z.infer<typeof attendanceReportSchema>

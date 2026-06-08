@@ -9,10 +9,15 @@ const router = Router()
 
 // Public
 router.get("/", AttendanceController.getAll)
+router.get(
+  "/report",
+  authMiddleware,
+  rbacMiddleware("superadmin", "admin_kegiatan"),
+  AttendanceController.report
+)
 router.get("/:id", AttendanceController.getById)
 router.post("/checkin", AttendanceController.checkIn)
 
-// Admin: create/update/delete
 router.post(
 	"/",
 	authMiddleware,
