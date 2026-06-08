@@ -39,10 +39,18 @@ router.get(
 )
 router.get(
   '/charts/zis',
+  rbacMiddleware(
+    Role.superadmin,
+    Role.bendahara
+  ),
   dashboardController.getZisChart
 );
 router.get(
   '/charts/donations',
+  rbacMiddleware(
+    Role.superadmin,
+    Role.bendahara
+  ),
   dashboardController.getDonationChart
 );
 
