@@ -15,6 +15,7 @@ model Congregation {
 
   // Relations
   mustahik Mustahik?
+  attendanceRecords AttendanceRecord[]
 
   @@map("congregations")
 }

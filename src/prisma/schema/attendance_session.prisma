@@ -1,0 +1,25 @@
+model AttendanceSession {
+  id Int @id @default(autoincrement())
+
+  title String @db.VarChar(255)
+
+  type AttendanceSessionType
+
+  sessionDate DateTime @map("session_date") @db.Date
+
+  startTime DateTime @map("start_time")
+
+  endTime DateTime? @map("end_time")
+
+  notes String?  @db.Text
+
+  createdBy Int @map("created_by")
+
+  createdAt DateTime @default(now())  @map("created_at")
+
+  creator User @relation( fields: [createdBy], references: [id] )
+
+  records AttendanceRecord[]
+
+  @@map("attendance_sessions")
+}

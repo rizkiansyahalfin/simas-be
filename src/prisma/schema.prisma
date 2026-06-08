@@ -92,3 +92,13 @@ enum NotificationType {
   system
   warning
 }
+
+enum AttendanceSessionType {
+  prayer
+  event
+}
+
+enum CheckInMethod {
+  qr_code
+  manual
+}

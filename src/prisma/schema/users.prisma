@@ -25,6 +25,7 @@ model User {
   campaigns         Campaign[]
   auditLogs         AuditLog[]
   refreshTokens     RefreshToken[]
+  AttendanceSessions AttendanceSession[]
 
   @@map("users")
 }

@@ -1,0 +1,19 @@
+model AttendanceRecord {
+  id Int @id @default(autoincrement())
+
+  congregationId Int  @map("congregation_id")
+
+  sessionId Int @map("session_id")
+
+  checkInAt DateTime @default(now()) @map("check_in_at")
+
+  method CheckInMethod
+
+  congregation Congregation @relation( fields: [congregationId], references: [id] )
+
+  session AttendanceSession @relation( fields: [sessionId], references: [id] )
+
+  @@unique([ congregationId, sessionId ])
+
+  @@map("attendance_records")
+}

@@ -6,6 +6,21 @@ export const MosqueProfileRepository = {
     return prisma.mosqueProfile.findFirst()
   },
 
+  async findPublicConfig() {
+  return prisma.mosqueProfile.findFirst({
+    select: {
+      defaultLanguage: true,
+      timezone: true,
+
+      donationEnabled: true,
+      campaignEnabled: true,
+      eventEnabled: true,
+      inventoryEnabled: true,
+      prayerEnabled: true,
+    },
+  })
+},
+
   async upsert(data: UpdateMosqueProfileData) {
     return prisma.mosqueProfile.upsert({
       where: { id: 1 },

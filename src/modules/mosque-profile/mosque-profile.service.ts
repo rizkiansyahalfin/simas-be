@@ -6,6 +6,53 @@ export const MosqueProfileService = {
     return MosqueProfileRepository.find()
   },
 
+  async getPublicConfig() {
+
+  const profile =
+    await MosqueProfileRepository.findPublicConfig()
+
+  if (!profile) {
+
+    return {
+      defaultLanguage: "id",
+      timezone: "Asia/Jakarta",
+
+      features: {
+        donation: true,
+        campaign: true,
+        events: true,
+        inventory: true,
+        prayerSchedule: true,
+      },
+    }
+  }
+
+  return {
+    defaultLanguage:
+      profile.defaultLanguage,
+
+    timezone:
+      profile.timezone,
+
+    features: {
+      donation:
+        profile.donationEnabled,
+
+      campaign:
+        profile.campaignEnabled,
+
+      events:
+        profile.eventEnabled,
+
+      inventory:
+        profile.inventoryEnabled,
+
+      prayerSchedule:
+        profile.prayerEnabled,
+    },
+  }
+},
+
   async update(
     data: UpdateMosqueProfileData,
     qrisImage?: Express.Multer.File
