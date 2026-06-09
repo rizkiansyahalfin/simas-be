@@ -20,12 +20,13 @@ export const changePassword = async (req: Request, res: Response) => {
     }
 
     const isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
-    
+
     if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect old password' });
     }
 
-    await userRepository.updatePassword(Number(userId), newPassword);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userRepository.updatePassword(Number(userId), hashedPassword);
     
     res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {

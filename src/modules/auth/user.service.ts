@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt"
 import { AuthRepository } from "./auth.repository"
+import { User } from "../../generated/client"
 
 export const UserService = {
   async findByEmail(email: string) {
@@ -10,7 +11,7 @@ export const UserService = {
     return AuthRepository.findById(id)
   },
 
-  async validateCredentials(email: string, password: string) {
+  async validateCredentials(email: string, password: string): Promise<User | null> {
     const user = await AuthRepository.findByEmail(email)
     if (!user) return null
     const match = await bcrypt.compare(password, user.passwordHash)
@@ -18,7 +19,7 @@ export const UserService = {
     return user
   },
 
-  toPublic(user: any) {
+  toPublic(user: User) {
     return {
       id: user.id,
       username: user.username,
