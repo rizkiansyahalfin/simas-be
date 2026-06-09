@@ -24,3 +24,16 @@ export const disableTwoFactorSchema = z.object({
     .min(6)
     .max(6)
 })
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email()
+})
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(10),
+
+  password: z
+    .string()
+    .min(8)
+    .max(100)
+})

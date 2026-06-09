@@ -2,14 +2,17 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { Role } from "../../generated/enums"
 import { AuthRepository } from "./auth.repository"
-import { LoginRequest, LoginResponse, LoginSuccessResponse, Temp2FAPayload } from "./auth.type"
+import { LoginRequest, LoginResponse, LoginSuccessResponse, Temp2FAPayload, PasswordResetPayload } from "./auth.type"
 import speakeasy from "speakeasy"
 import QRCode from "qrcode"
+import { MailService } from "../mail/mail.service"
+import crypto from "crypto"
 
 
 const ACCESS_TOKEN_EXPIRES = "8h"
 const REFRESH_TOKEN_EXPIRES = "7d"
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const PASSWORD_RESET_EXPIRES = "1h"
 
 const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET
@@ -25,6 +28,21 @@ const getJwtRefreshSecret = () => {
     throw new Error("JWT_REFRESH_SECRET_MISSING")
   }
   return secret
+}
+
+const createPasswordResetToken = (
+  userId: number
+) => {
+  return jwt.sign(
+    {
+      id: userId,
+      purpose: "password-reset"
+    },
+    getJwtSecret(),
+    {
+      expiresIn: PASSWORD_RESET_EXPIRES
+    }
+  )
 }
 
 const createAccessToken = (user: { id: number; role: Role; isActive: boolean }) => {
@@ -337,5 +355,142 @@ async disableTwoFactor(
     return {
       accessToken
     }
+  },
+  async forgotPassword(
+  email: string
+) {
+
+  const user =
+    await AuthRepository.findByEmail(
+      email
+    )
+
+  if (!user) {
+    return
   }
+
+  const resetToken =
+    createPasswordResetToken(
+      user.id
+    )
+
+  const tokenHash =
+    crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex")
+
+  await AuthRepository
+    .createPasswordResetToken(
+      tokenHash,
+      user.id,
+      new Date(
+        Date.now() +
+        60 * 60 * 1000
+      )
+    )
+
+  const frontendUrl =
+    process.env.FRONTEND_URL
+
+  const resetLink =
+    `${frontendUrl}/reset-password?token=${resetToken}`
+
+  await MailService
+    .sendPasswordResetEmail(
+      user.email,
+      resetLink
+    )
+},
+async resetPassword(
+  token: string,
+  password: string
+) {
+
+  let payload: PasswordResetPayload
+
+  try {
+
+    payload =
+      jwt.verify(
+        token,
+        getJwtSecret()
+      ) as PasswordResetPayload
+
+  } catch {
+
+    throw new Error(
+      "INVALID_RESET_TOKEN"
+    )
+  }
+
+  if (
+    payload.purpose !==
+    "password-reset"
+  ) {
+    throw new Error(
+      "INVALID_RESET_TOKEN"
+    )
+  }
+
+  const tokenHash =
+    crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex")
+
+  const tokenRecord =
+    await AuthRepository
+      .findPasswordResetToken(
+        tokenHash
+      )
+
+  if (!tokenRecord) {
+    throw new Error(
+      "INVALID_RESET_TOKEN"
+    )
+  }
+
+  if (tokenRecord.usedAt) {
+    throw new Error(
+      "TOKEN_ALREADY_USED"
+    )
+  }
+
+  if (
+    tokenRecord.expiresAt <
+    new Date()
+  ) {
+    throw new Error(
+      "RESET_TOKEN_EXPIRED"
+    )
+  }
+
+  const hashedPassword =
+    await bcrypt.hash(
+      password,
+      10
+    )
+
+  await AuthRepository
+    .updatePassword(
+      tokenRecord.user.id,
+      hashedPassword
+    )
+
+  await AuthRepository
+    .markPasswordResetTokenUsed(
+      tokenRecord.id
+    )
+
+  await AuthRepository
+    .deleteAllRefreshTokens(
+      tokenRecord.user.id
+    )
+
+  await MailService
+    .sendPasswordChangedEmail(
+      tokenRecord.user.email
+    )
+}
 }

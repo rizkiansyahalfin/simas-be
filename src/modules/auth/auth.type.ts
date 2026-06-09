@@ -23,6 +23,15 @@ export type Disable2FARequest = {
   token: string
 }
 
+export type ForgotPasswordRequest = {
+  email: string
+}
+
+export type ResetPasswordRequest = {
+  token: string
+  password: string
+}
+
 // ======================
 // USER
 // ======================
@@ -105,3 +114,11 @@ export type DisableTwoFactorInput = {
   otpCode: string
 }
 
+// ======================
+// PAYLOAD
+// ======================
+
+export type PasswordResetPayload = {
+  id: number
+  purpose: "password-reset"
+}

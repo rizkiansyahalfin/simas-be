@@ -5,7 +5,9 @@ import {
   loginSchema,
   verifyLoginTwoFactorSchema,
   verifyTwoFactorSchema,
-  disableTwoFactorSchema
+  disableTwoFactorSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema
 } from "./auth.validation"
 
 
@@ -214,5 +216,77 @@ async disableTwoFactor(
         error_code: "INVALID_REFRESH_TOKEN"
       })
     }
+  },
+  async forgotPassword(
+  req: Request,
+  res: Response
+) {
+
+  try {
+
+    const { email } =
+      forgotPasswordSchema.parse(
+        req.body
+      )
+
+    await AuthService
+      .forgotPassword(
+        email
+      )
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Jika email terdaftar, link reset password telah dikirim"
+    })
+
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      error_code:
+        error instanceof Error
+          ? error.message
+          : "UNKNOWN_ERROR"
+    })
   }
+},
+async resetPassword(
+  req: Request,
+  res: Response
+) {
+
+  try {
+
+    const {
+      token,
+      password
+    } =
+      resetPasswordSchema.parse(
+        req.body
+      )
+
+    await AuthService
+      .resetPassword(
+        token,
+        password
+      )
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Password berhasil diubah"
+    })
+
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      error_code:
+        error instanceof Error
+          ? error.message
+          : "UNKNOWN_ERROR"
+    })
+  }
+}
 }

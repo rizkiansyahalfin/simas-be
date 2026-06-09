@@ -72,5 +72,69 @@ export const AuthRepository = {
     return prisma.refreshToken.deleteMany({
       where: { token }
     })
-  }
+  },
+
+  async updatePassword(
+  userId: number,
+  passwordHash: string
+) {
+  return prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      passwordHash
+    }
+  })
+},
+
+async createPasswordResetToken(
+  tokenHash: string,
+  userId: number,
+  expiresAt: Date
+) {
+  return prisma.passwordResetToken.create({
+    data: {
+      tokenHash,
+      userId,
+      expiresAt
+    }
+  })
+},
+
+async findPasswordResetToken(
+  tokenHash: string
+) {
+  return prisma.passwordResetToken.findUnique({
+    where: {
+      tokenHash
+    },
+    include: {
+      user: true
+    }
+  })
+},
+
+async markPasswordResetTokenUsed(
+  id: number
+) {
+  return prisma.passwordResetToken.update({
+    where: {
+      id
+    },
+    data: {
+      usedAt: new Date()
+    }
+  })
+},
+
+async deleteAllRefreshTokens(
+  userId: number
+) {
+  return prisma.refreshToken.deleteMany({
+    where: {
+      userId
+    }
+  })
+}
 }

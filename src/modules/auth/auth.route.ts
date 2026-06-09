@@ -60,4 +60,16 @@ router.post(
   AuthController.disableTwoFactor
 )
 
+router.post(
+  "/forgot-password",
+  bruteForceMiddleware,
+  AuthController.forgotPassword
+)
+
+router.post(
+  "/reset-password",
+  bruteForceMiddleware,
+  AuthController.resetPassword
+)
+
 export default router
