@@ -9,22 +9,30 @@ model User {
   role         Role
   isActive     Boolean  @default(true) @map("is_active")
 
+  // =====================
+  // TWO FACTOR AUTH
+  // =====================
+
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+
+  twoFactorSecret  String? @map("two_factor_secret") @db.VarChar(255)
+
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   // Relations
-  articles          Article[]
-  cashTransactions  CashTransaction[]
-  zisTransactions   ZisTransaction[]
-  donationsVerified Donation[]        @relation("DonationVerifier")
-  events            Event[]
-  jumatSchedules    JumatSchedule[]
-  inventories       Inventory[]
-  inventoryLoans    InventoryLoan[]
-  galleries         Gallery[]
-  campaigns         Campaign[]
-  auditLogs         AuditLog[]
-  refreshTokens     RefreshToken[]
+  articles           Article[]
+  cashTransactions   CashTransaction[]
+  zisTransactions    ZisTransaction[]
+  donationsVerified  Donation[] @relation("DonationVerifier")
+  events             Event[]
+  jumatSchedules     JumatSchedule[]
+  inventories        Inventory[]
+  inventoryLoans     InventoryLoan[]
+  galleries          Gallery[]
+  campaigns          Campaign[]
+  auditLogs          AuditLog[]
+  refreshTokens      RefreshToken[]
   AttendanceSessions AttendanceSession[]
 
   @@map("users")
