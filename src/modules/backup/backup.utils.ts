@@ -1,5 +1,7 @@
 import fs from "fs"
 import path from "path"
+import { execSync } from "child_process"
+
 
 const BACKUP_DIRECTORY = path.resolve(process.cwd(), "storage", "backups")
 
@@ -26,7 +28,6 @@ export const BackupUtils = {
   },
 
   validatePgDumpAvailable(): void {
-    const { execSync } = require("child_process")
     try {
       execSync("pg_dump --version", { stdio: "pipe" })
     } catch {
