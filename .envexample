@@ -9,8 +9,21 @@
 # server with the `prisma dev` CLI command, when not choosing any non-default ports or settings. The API key, unlike the
 # one found in a remote Prisma Postgres URL, does not contain any sensitive information.
 
+FRONTEND_URL=
+
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+
 JWT_SECRET="your_jwt_secret_key_here"
 JWT_EXPIRES_IN="8h"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret_key_here"
+
+JWT_2FA_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+
+# 2FA
+TWO_FACTOR_APP_NAME=SIMAS
 
 DATABASE_URL="postgres://2eaca25cd6e9ae9b0b50b6fba9452a98ef3848f009c739ae429f2d211938a8ec:sk_HDSVDPMsr4dNCPQhixj3t@db.prisma.io:5432/postgres?sslmode=require"
 
@@ -27,7 +40,7 @@ MAIL_PORT=587
 MAIL_USER=xxx@gmail.com
 MAIL_PASS=xxxx
 
-MIDTRANS_SERVER_KEY=SB-Mid-server-xxxxxxxx
-MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxxxxxx
+MIDTRANS_SERVER_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+MIDTRANS_CLIENT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxx
 MIDTRANS_IS_PRODUCTION=false
-MIDTRANS_WEBHOOK_SECRET=my-super-secret
+MIDTRANS_WEBHOOK_SECRET=xxxxxxxxxxxxx

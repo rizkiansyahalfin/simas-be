@@ -1,14 +1,31 @@
-import prisma from '../../database';
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt"
+import { AuthRepository } from "./auth.repository"
+import { User } from "../../generated/client"
 
-export const updatePassword = async (userId: number, newPassword: string) => {
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  return await prisma.user.update({
-    where: { id: userId },
-    data: { passwordHash: hashedPassword },
-  });
-};
+export const UserService = {
+  async findByEmail(email: string) {
+    return AuthRepository.findByEmail(email)
+  },
 
-export const findUserById = async (id: number) => {
-  return await prisma.user.findUnique({ where: { id } });
-};
+  async findById(id: number) {
+    return AuthRepository.findById(id)
+  },
+
+  async validateCredentials(email: string, password: string): Promise<User | null> {
+    const user = await AuthRepository.findByEmail(email)
+    if (!user) return null
+    const match = await bcrypt.compare(password, user.passwordHash)
+    if (!match) return null
+    return user
+  },
+
+  toPublic(user: User) {
+    return {
+      id: user.id,
+      username: user.username,
+      name: user.username,
+      role: user.role,
+      email: user.email
+    }
+  }
+}
