@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { AuthService } from "./auth.service"
+import { AuthUtils } from "./auth.utils"
 import { LoginRequest, LoginSuccessResponse, VerifyLogin2FARequest } from "./auth.type"
 import {
   loginSchema,
@@ -114,12 +115,7 @@ async disableTwoFactor(
         })
       }
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      })
+      AuthUtils.setRefreshTokenCookie(res, result.refreshToken)
 
       return res.status(200).json({
         success: true,
@@ -142,12 +138,7 @@ async disableTwoFactor(
       const { tempToken, token }: VerifyLogin2FARequest = verifyLoginTwoFactorSchema.parse(req.body)
       const result: LoginSuccessResponse = await AuthService.verifyLoginTwoFactor(tempToken, token)
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      })
+      AuthUtils.setRefreshTokenCookie(res, result.refreshToken)
 
       return res.status(200).json({
         success: true,
@@ -195,7 +186,7 @@ async disableTwoFactor(
 
   async refresh(req: Request, res: Response) {
     try {
-      const refreshToken = req.cookies.refreshToken
+      const refreshToken = AuthUtils.getRefreshTokenFromRequest(req)
 
       if (!refreshToken) {
         return res.status(401).json({

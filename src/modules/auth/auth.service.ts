@@ -3,6 +3,7 @@ import { AuthRepository } from "./auth.repository"
 import { LoginRequest, LoginResponse, LoginSuccessResponse, Temp2FAPayload, PasswordResetPayload } from "./auth.type"
 import { TokenService } from "./token.service"
 import { TwoFactorService } from "./twofactor.service"
+import { TokenBlacklistService } from "./token-blacklist"
 import { UserService } from "./user.service"
 import { MailService } from "../mail/mail.service"
 import crypto from "crypto"
@@ -136,10 +137,41 @@ export const AuthService = {
 
     const tokenRecord = await AuthRepository.findRefreshToken(refreshToken)
     if (!tokenRecord) throw new Error("INVALID_REFRESH_TOKEN")
-    if (tokenRecord.expiresAt < new Date()) {  throw new Error("INVALID_REFRESH_TOKEN")}
+    if (tokenRecord.expiresAt < new Date()) {
+      throw new Error("INVALID_REFRESH_TOKEN")
+    }
 
     const accessToken = TokenService.createAccessToken({ id: tokenRecord.user.id, role: tokenRecord.user.role, isActive: tokenRecord.user.isActive })
     return { accessToken }
+  },
+
+  async logout(accessToken: string, refreshToken?: string) {
+    await TokenBlacklistService.blacklistToken(accessToken)
+
+    if (refreshToken) {
+      await AuthRepository.deleteRefreshToken(refreshToken)
+    }
+  },
+
+  async changePassword(
+    userId: number,
+    oldPassword: string,
+    newPassword: string,
+    accessToken?: string
+  ) {
+    const user = await UserService.findById(userId)
+    if (!user) throw new Error("USER_NOT_FOUND")
+
+    const isMatch = await (await import("bcrypt")).compare(oldPassword, user.passwordHash)
+    if (!isMatch) throw new Error("INCORRECT_PASSWORD")
+
+    const hashedPassword = await (await import("bcrypt")).hash(newPassword, 10)
+    await AuthRepository.updatePassword(user.id, hashedPassword)
+    await AuthRepository.deleteAllRefreshTokens(user.id)
+
+    if (accessToken) {
+      await TokenBlacklistService.blacklistToken(accessToken)
+    }
   },
 
   async forgotPassword(email: string) {

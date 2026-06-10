@@ -1,11 +1,6 @@
-import { Request, Response } from 'express';
-import * as userRepository from './user.repository';
-import {AuthRepository} from "./auth.repository"
-import bcrypt from 'bcrypt';
-import {
-  TokenBlacklistService
-}
-from "../auth/token-blacklist"
+import { Request, Response } from 'express'
+import { AuthService } from './auth.service'
+import { AuthUtils } from './auth.utils'
 
 export const logout =
   async (
@@ -15,45 +10,18 @@ export const logout =
 
     try {
 
-      const authHeader =
-        req.headers.authorization
+      const accessToken = AuthUtils.getAccessTokenFromRequest(req)
+      const refreshToken = AuthUtils.getRefreshTokenFromRequest(req)
 
-      if (
-        !authHeader ||
-        !authHeader.startsWith(
-          "Bearer "
-        )
-      ) {
+      if (!accessToken) {
         return res.status(401).json({
-          message:
-            "Unauthorized"
+          success: false,
+          error_code: "UNAUTHORIZED"
         })
       }
 
-      const accessToken =
-        authHeader.split(" ")[1]
-
-      const refreshToken =
-        req.cookies
-          ?.refreshToken as
-          string | undefined
-
-      await TokenBlacklistService
-        .blacklistToken(
-          accessToken
-        )
-
-      if (refreshToken) {
-
-        await AuthRepository
-          .deleteRefreshToken(
-            refreshToken
-          )
-      }
-
-      res.clearCookie(
-        "refreshToken"
-      )
+      await AuthService.logout(accessToken, refreshToken)
+      AuthUtils.clearRefreshTokenCookie(res)
 
       return res.status(200).json({
         success: true,
@@ -72,36 +40,37 @@ export const logout =
   }
 
 export const changePassword = async (req: Request, res: Response) => {
-  const { oldPassword, newPassword } = req.body;
-  const userId = (req as Request & { user: { id: string | number } }).user.id;
+  const { oldPassword, newPassword } = req.body
+  const userId = req.user?.id
+
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      error_code: "UNAUTHORIZED"
+    })
+  }
 
   try {
-    const user = await userRepository.findById(Number(userId));
-    
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const accessToken = AuthUtils.getAccessTokenFromRequest(req)
 
-    const isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
+    await AuthService.changePassword(
+      userId,
+      oldPassword,
+      newPassword,
+      accessToken ?? undefined
+    )
 
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect old password' });
-    }
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully"
+    })
+  } catch (error: unknown) {
+    const errorCode = error instanceof Error ? error.message : "INTERNAL_ERROR"
+    const status = errorCode === "INCORRECT_PASSWORD" ? 400 : 500
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await userRepository.updatePassword(Number(userId), hashedPassword);
-    await AuthRepository.deleteAllRefreshTokens(Number(userId));
-    const authHeader = req.headers.authorization
-
-    const accessToken = authHeader?.split(" ")[1]
-    
-    if (accessToken) {
-  await TokenBlacklistService.blacklistToken(accessToken)
-    }
-    
-    res.status(200).json({ message: 'Password updated successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(status).json({
+      success: false,
+      error_code: errorCode
+    })
   }
-};
+}
