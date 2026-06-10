@@ -22,6 +22,8 @@ JWT_REFRESH_SECRET="your_jwt_refresh_secret_key_here"
 
 JWT_2FA_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
 
+REDIS_URL=redis://localhost:6379
+
 # 2FA
 TWO_FACTOR_APP_NAME=SIMAS
 
