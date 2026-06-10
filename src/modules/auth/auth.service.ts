@@ -136,6 +136,7 @@ export const AuthService = {
 
     const tokenRecord = await AuthRepository.findRefreshToken(refreshToken)
     if (!tokenRecord) throw new Error("INVALID_REFRESH_TOKEN")
+    if (tokenRecord.expiresAt < new Date()) {  throw new Error("INVALID_REFRESH_TOKEN")}
 
     const accessToken = TokenService.createAccessToken({ id: tokenRecord.user.id, role: tokenRecord.user.role, isActive: tokenRecord.user.isActive })
     return { accessToken }

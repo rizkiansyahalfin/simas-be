@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt"
 import { AuthRepository } from "./auth.repository"
 import { User } from "../../generated/client"
+import {
+  TokenBlacklistService
+}
+from "../auth/token-blacklist"
 
 export const UserService = {
   async findByEmail(email: string) {
@@ -18,6 +22,24 @@ export const UserService = {
     if (!match) return null
     return user
   },
+
+  async logout(
+  accessToken: string,
+  refreshToken?: string
+) {
+
+  await TokenBlacklistService
+    .blacklistToken(
+      accessToken
+    )
+
+  if (refreshToken) {
+    await AuthRepository
+      .deleteRefreshToken(
+        refreshToken
+      )
+  }
+},
 
   toPublic(user: User) {
     return {

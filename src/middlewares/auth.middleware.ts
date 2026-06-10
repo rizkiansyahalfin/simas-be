@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import type { JwtPayload } from '../modules/auth/auth.type'
+import { TokenBlacklistService } from '../modules/auth/token-blacklist'
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -13,10 +14,20 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
   try {
     const secret = process.env.JWT_SECRET
-
+    
     if (!secret) {
       return res.status(500).json({ message: 'JWT secret is not configured' })
     }
+    
+    const isBlacklisted =
+  await TokenBlacklistService
+    .isBlacklisted(token)
+
+  if (isBlacklisted) {
+    return res.status(401).json({
+      message: "Token revoked"
+    })
+  }
 
     const decoded = jwt.verify(token, secret) as JwtPayload | string
 
