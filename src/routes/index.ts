@@ -28,6 +28,7 @@ import notificationRouter from '../modules/notification/notification.route'
 import articleCategoryRoute from '../modules/articles/article-category.route'
 import paymentRoute from '../modules/payment/payment.route'
 import attendanceRouter from '../modules/attendance/attendance.route'
+import backupRouter from '../modules/backup/backup.route'
 
 const router = Router()
 
@@ -65,4 +66,5 @@ router.use('/audit', auditRouter)
 router.use('/notifications', notificationRouter)
 router.use('/attendance', attendanceRouter)
 router.use("/payments", paymentRoute)
+router.use("/backup", backupRouter)
 export default router
