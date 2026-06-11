@@ -1,10 +1,19 @@
+import fs from "fs"
 import multer from "multer"
 import path from "path"
+
+function ensureDirectoryExists(dir: string): void {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+}
 
 const storage = multer.diskStorage({
 
   destination: (_, __, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads'))
+    const destinationPath = path.join(__dirname, '..', 'uploads')
+    ensureDirectoryExists(destinationPath)
+    cb(null, destinationPath)
   },
 
   filename: (_, file, cb) => {
@@ -26,15 +35,17 @@ const ProfileStorage =
 
     destination:
       (_, __, cb) => {
+        const destinationPath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          'profiles'
+        )
+        ensureDirectoryExists(destinationPath)
 
         cb(
           null,
-          path.join(
-            __dirname,
-            '..',
-            'uploads',
-            'profiles'
-          )
+          destinationPath
         )
       },
 
@@ -61,7 +72,9 @@ const ProfileStorage =
 const DonationProofStorage = multer.diskStorage({
 
   destination: (_, __, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads', 'donations'))
+    const destinationPath = path.join(__dirname, '..', 'uploads', 'donations')
+    ensureDirectoryExists(destinationPath)
+    cb(null, destinationPath)
   },
 
   filename: (_, file, cb) => {
@@ -81,16 +94,14 @@ const DonationProofStorage = multer.diskStorage({
   multer.diskStorage({
 
     destination: (_, __, cb) => {
-
-      cb(
-        null,
-        path.join(
-          __dirname,
-          "..",
-          "uploads",
-          "events"
-        )
+      const destinationPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "events"
       )
+      ensureDirectoryExists(destinationPath)
+      cb(null, destinationPath)
     },
 
     filename: (_, file, cb) => {
@@ -111,15 +122,14 @@ const DonationProofStorage = multer.diskStorage({
   const InventoryStorage =
   multer.diskStorage({
     destination: (_, __, cb) => {
-      cb(
-        null,
-        path.join(
-          __dirname,
-          "..",
-          "uploads",
-          "inventories"
-        )
+      const destinationPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "inventories"
       )
+      ensureDirectoryExists(destinationPath)
+      cb(null, destinationPath)
     },
 
     filename: (_, file, cb) => {
@@ -152,6 +162,66 @@ const fileFilter: multer.Options["fileFilter"] = (
 
     return cb(
       new Error("INVALID_FILE_TYPE")
+    )
+  }
+
+  cb(null, true)
+}
+
+const RestoreStorage =
+  multer.diskStorage({
+
+    destination:
+      (_, __, cb) => {
+        const destinationPath = path.join(
+          process.cwd(),
+          "storage",
+          "restore-temp"
+        )
+        ensureDirectoryExists(destinationPath)
+        cb(null, destinationPath)
+      },
+
+    filename:
+      (_, file, cb) => {
+
+        const unique =
+          Date.now() +
+          "-" +
+          Math.round(
+            Math.random() * 1e9
+          )
+
+        cb(
+          null,
+          unique +
+          path.extname(
+            file.originalname
+          )
+        )
+      }
+  })
+
+const restoreFileFilter:
+  multer.Options["fileFilter"] =
+(
+  _req,
+  file,
+  cb
+) => {
+
+  if (
+    !file.originalname
+      .toLowerCase()
+      .endsWith(
+        ".sql.gz"
+      )
+  ) {
+
+    return cb(
+      new Error(
+        "INVALID_BACKUP_FORMAT"
+      )
     )
   }
 
@@ -208,5 +278,22 @@ export const uploadProfileImage =
     fileFilter,
     limits: {
       fileSize: 5 * 1024 * 1024
+    }
+  })
+
+  export const uploadRestoreBackup =
+  multer({
+
+    storage:
+      RestoreStorage,
+
+    fileFilter:
+      restoreFileFilter,
+
+    limits: {
+      fileSize:
+        100 *
+        1024 *
+        1024
     }
   })

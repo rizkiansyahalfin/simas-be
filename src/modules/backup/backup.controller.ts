@@ -1,5 +1,7 @@
 import { Request, Response } from "express"
 import { BackupService } from "./backup.service"
+import { RestoreService } from "./restore.service"
+import {  confirmRestoreSchema} from "./restore.validation"
 
 export const BackupController = {
   async createBackup(req: Request, res: Response) {
@@ -74,5 +76,78 @@ export const BackupController = {
         error_code: errorCode
       })
     }
+  },
+  async validateRestore(
+  req: Request,
+  res: Response
+) {
+
+  try {
+
+    if (!req.file) {
+
+      return res.status(400).json({
+        success: false,
+        error_code:
+          "BACKUP_FILE_REQUIRED"
+      })
+    }
+
+    const result =
+      await RestoreService
+        .validateBackup(
+          req.file
+        )
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    })
+
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      error_code:
+        error instanceof Error
+          ? error.message
+          : "UNKNOWN_ERROR"
+    })
   }
+},
+async restore(
+  req: Request,
+  res: Response
+) {
+
+  try {
+
+    const {
+      restoreToken
+    } =
+      confirmRestoreSchema
+        .parse(req.body)
+
+    await RestoreService
+      .restoreDatabase(
+        restoreToken
+      )
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Database restored successfully"
+    })
+
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      error_code:
+        error instanceof Error
+          ? error.message
+          : "UNKNOWN_ERROR"
+    })
+  }
+}
 }
