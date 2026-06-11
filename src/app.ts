@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import cookieParser from "cookie-parser";
 import path from "path";
+import {securityHeadersConfig} from "./config/security-headers.config"
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
@@ -16,7 +17,28 @@ const app = express();
 
 // Basic security & JSON parser
 app.use(cors(corsOptions));
-app.use(helmet());
+app.use(
+  helmet({
+
+    hsts:
+      securityHeadersConfig.hsts,
+
+    contentSecurityPolicy:
+      securityHeadersConfig
+        .contentSecurityPolicy,
+
+    frameguard: {
+      action: "deny"
+    },
+
+    noSniff: true,
+
+    referrerPolicy: {
+      policy:
+        "strict-origin-when-cross-origin"
+    }
+  })
+);
 app.use(express.json({ limit: "10kb" }));
 app.use(limiter);
 app.use(cookieParser());
