@@ -6,10 +6,7 @@ import { spawn, execSync } from "child_process"
 
 import redis from "../../lib/redis"
 
-import {
-  RestoreMetadata,
-  ValidateRestoreResponse
-} from "./restore.type"
+import { RestoreMetadata, ValidateRestoreResponse } from "./restore.type"
 
 const REDIS_TTL_SECONDS = 600
 

@@ -1,12 +1,6 @@
 import cron from "node-cron"
-
-import {
-  BackupService
-} from "./backup.service"
-
-import {
-  BackupRotationService
-} from "./backup-rotation.service"
+import {BackupService} from "./backup.service"
+import {BackupRotationService} from "./backup-rotation.service"
 
 export const BackupCron = {
 
