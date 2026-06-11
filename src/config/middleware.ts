@@ -9,11 +9,14 @@ export const corsOptions: CorsOptions = {
 };
 
 // RATE LIMIT
+const windowMs = 15 * 60 * 1000
+
 export const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  skipFailedRequests: true,
   message: {
     status: 429,
     error: 'Terlalu banyak request, coba lagi nanti.',
