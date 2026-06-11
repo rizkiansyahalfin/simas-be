@@ -35,6 +35,7 @@ export const BackupService = {
     BackupUtils.validateDatabaseUrl(databaseUrl)
     BackupUtils.ensureBackupDirectoryExists()
     BackupUtils.validatePgDumpAvailable()
+    BackupUtils.validateBackupEnabled()
 
     const backupDir = BackupUtils.getBackupDirectory()
     const fileName = BackupUtils.generateBackupFileName()

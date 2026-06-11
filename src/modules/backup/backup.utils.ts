@@ -33,5 +33,15 @@ export const BackupUtils = {
     } catch {
       throw new Error("PG_DUMP_NOT_AVAILABLE")
     }
+  },
+
+  validateBackupEnabled(): void {
+    if (
+      process.env
+        .BACKUP_CRON_ENABLED !==
+      "true"
+    ) {
+      throw new Error("BACKUP_CRON_DISABLED")
+    }
   }
 }

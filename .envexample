@@ -46,3 +46,6 @@ MIDTRANS_SERVER_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 MIDTRANS_CLIENT_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxx
 MIDTRANS_IS_PRODUCTION=false
 MIDTRANS_WEBHOOK_SECRET=xxxxxxxxxxxxx
+
+BACKUP_CRON_ENABLED=true
+BACKUP_KEEP_COUNT=4
