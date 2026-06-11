@@ -1,10 +1,19 @@
+import fs from "fs"
 import multer from "multer"
 import path from "path"
+
+function ensureDirectoryExists(dir: string): void {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+}
 
 const storage = multer.diskStorage({
 
   destination: (_, __, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads'))
+    const destinationPath = path.join(__dirname, '..', 'uploads')
+    ensureDirectoryExists(destinationPath)
+    cb(null, destinationPath)
   },
 
   filename: (_, file, cb) => {
@@ -26,15 +35,17 @@ const ProfileStorage =
 
     destination:
       (_, __, cb) => {
+        const destinationPath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          'profiles'
+        )
+        ensureDirectoryExists(destinationPath)
 
         cb(
           null,
-          path.join(
-            __dirname,
-            '..',
-            'uploads',
-            'profiles'
-          )
+          destinationPath
         )
       },
 
@@ -61,7 +72,9 @@ const ProfileStorage =
 const DonationProofStorage = multer.diskStorage({
 
   destination: (_, __, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads', 'donations'))
+    const destinationPath = path.join(__dirname, '..', 'uploads', 'donations')
+    ensureDirectoryExists(destinationPath)
+    cb(null, destinationPath)
   },
 
   filename: (_, file, cb) => {
@@ -81,16 +94,14 @@ const DonationProofStorage = multer.diskStorage({
   multer.diskStorage({
 
     destination: (_, __, cb) => {
-
-      cb(
-        null,
-        path.join(
-          __dirname,
-          "..",
-          "uploads",
-          "events"
-        )
+      const destinationPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "events"
       )
+      ensureDirectoryExists(destinationPath)
+      cb(null, destinationPath)
     },
 
     filename: (_, file, cb) => {
@@ -111,15 +122,14 @@ const DonationProofStorage = multer.diskStorage({
   const InventoryStorage =
   multer.diskStorage({
     destination: (_, __, cb) => {
-      cb(
-        null,
-        path.join(
-          __dirname,
-          "..",
-          "uploads",
-          "inventories"
-        )
+      const destinationPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "inventories"
       )
+      ensureDirectoryExists(destinationPath)
+      cb(null, destinationPath)
     },
 
     filename: (_, file, cb) => {
@@ -163,15 +173,13 @@ const RestoreStorage =
 
     destination:
       (_, __, cb) => {
-
-        cb(
-          null,
-          path.join(
-            process.cwd(),
-            "storage",
-            "restore-temp"
-          )
+        const destinationPath = path.join(
+          process.cwd(),
+          "storage",
+          "restore-temp"
         )
+        ensureDirectoryExists(destinationPath)
+        cb(null, destinationPath)
       },
 
     filename:
@@ -203,9 +211,11 @@ const restoreFileFilter:
 ) => {
 
   if (
-    !file.originalname.endsWith(
-      ".sql.gz"
-    )
+    !file.originalname
+      .toLowerCase()
+      .endsWith(
+        ".sql.gz"
+      )
   ) {
 
     return cb(

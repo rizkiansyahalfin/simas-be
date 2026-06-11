@@ -1,7 +1,8 @@
 import fs from "fs"
 import crypto from "crypto"
-import { execSync } from "child_process"
-import { promisify } from "util"
+import zlib from "zlib"
+import { pipeline } from "stream/promises"
+import { spawn, execSync } from "child_process"
 
 import redis from "../../lib/redis"
 
@@ -14,6 +15,68 @@ const REDIS_TTL_SECONDS = 600
 
 const RESTORE_PREFIX =
   "restore:confirm:"
+
+const GZIP_SIGNATURE = Buffer.from([0x1f, 0x8b])
+
+function isGzipFile(filePath: string): boolean {
+  const buffer = Buffer.alloc(2)
+  const fd = fs.openSync(filePath, "r")
+  fs.readSync(fd, buffer, 0, 2, 0)
+  fs.closeSync(fd)
+
+  return buffer.equals(GZIP_SIGNATURE)
+}
+
+async function readFirstLinesFromGzip(
+  filePath: string,
+  maxLines = 50
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const readStream = fs.createReadStream(filePath)
+    const gunzip = zlib.createGunzip()
+    let content = ""
+    let finished = false
+
+    const cleanup = (): void => {
+      finished = true
+      readStream.destroy()
+      gunzip.destroy()
+    }
+
+    gunzip.on("data", (chunk) => {
+      if (finished) {
+        return
+      }
+
+      content += chunk.toString("utf8")
+      const lines = content.split(/\r?\n/)
+
+      if (lines.length >= maxLines) {
+        cleanup()
+        resolve(lines.slice(0, maxLines).join("\n"))
+      }
+    })
+
+    gunzip.on("end", () => {
+      if (!finished) {
+        resolve(content)
+      }
+    })
+
+    gunzip.on("error", reject)
+    readStream.on("error", reject)
+
+    readStream.pipe(gunzip)
+  })
+}
+
+function validatePsqlAvailable(): void {
+  try {
+    execSync("psql --version", { stdio: "pipe" })
+  } catch {
+    throw new Error("PSQL_NOT_AVAILABLE")
+  }
+}
 
 export const RestoreService = {
 
@@ -28,40 +91,40 @@ export const RestoreService = {
     }
 
     if (
-      !file.originalname.endsWith(
-        ".sql.gz"
-      )
+      !file.originalname
+        .toLowerCase()
+        .endsWith(
+          ".sql.gz"
+        )
     ) {
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path)
+      }
+
       throw new Error(
         "INVALID_BACKUP_FORMAT"
       )
     }
 
-    try {
-
-      execSync(
-        `gunzip -t "${file.path}"`
-      )
-
-    } catch {
+    if (!isGzipFile(file.path)) {
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path)
+      }
 
       throw new Error(
         "INVALID_GZIP_FILE"
       )
     }
 
-    let sqlPreview = ""
+    const sqlPreview = await readFirstLinesFromGzip(
+      file.path,
+      50
+    )
 
-    try {
-
-      sqlPreview =
-        execSync(
-          `gunzip -c "${file.path}" | head -n 50`
-        ).toString()
-
-        console.log(sqlPreview)
-
-    } catch {
+    if (!sqlPreview) {
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path)
+      }
 
       throw new Error(
         "INVALID_SQL_DUMP"
@@ -83,6 +146,10 @@ export const RestoreService = {
       )
 
     if (!isValidSqlDump) {
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path)
+      }
+
       throw new Error(
         "INVALID_SQL_DUMP"
       )
@@ -145,18 +212,37 @@ export const RestoreService = {
       )
     }
 
+    validatePsqlAvailable()
+
+    const psqlProcess = spawn(
+      "psql",
+      ["-d", databaseUrl],
+      {
+        stdio: ["pipe", "inherit", "inherit"]
+      }
+    )
+
     try {
-
-      execSync(
-        `gunzip -c "${metadata.filePath}" | psql "${databaseUrl}"`,
-        {
-          stdio:
-            "inherit"
-        }
+      await pipeline(
+        fs.createReadStream(metadata.filePath),
+        zlib.createGunzip(),
+        psqlProcess.stdin
       )
-
     } catch {
+      psqlProcess.kill()
+      throw new Error(
+        "DATABASE_RESTORE_FAILED"
+      )
+    }
 
+    const exitCode = await new Promise<number>(
+      (resolve, reject) => {
+        psqlProcess.on("close", resolve)
+        psqlProcess.on("error", reject)
+      }
+    )
+
+    if (exitCode !== 0) {
       throw new Error(
         "DATABASE_RESTORE_FAILED"
       )
