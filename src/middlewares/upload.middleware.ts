@@ -158,6 +158,66 @@ const fileFilter: multer.Options["fileFilter"] = (
   cb(null, true)
 }
 
+const RestoreStorage =
+  multer.diskStorage({
+
+    destination:
+      (_, __, cb) => {
+
+        cb(
+          null,
+          path.join(
+            process.cwd(),
+            "storage",
+            "restore-temp"
+          )
+        )
+      },
+
+    filename:
+      (_, file, cb) => {
+
+        const unique =
+          Date.now() +
+          "-" +
+          Math.round(
+            Math.random() * 1e9
+          )
+
+        cb(
+          null,
+          unique +
+          path.extname(
+            file.originalname
+          )
+        )
+      }
+  })
+
+const restoreFileFilter:
+  multer.Options["fileFilter"] =
+(
+  _req,
+  file,
+  cb
+) => {
+
+  if (
+    !file.originalname.endsWith(
+      ".sql.gz"
+    )
+  ) {
+
+    return cb(
+      new Error(
+        "INVALID_BACKUP_FORMAT"
+      )
+    )
+  }
+
+  cb(null, true)
+}
+
 export const uploadImage = multer({
 
   storage,
@@ -208,5 +268,22 @@ export const uploadProfileImage =
     fileFilter,
     limits: {
       fileSize: 5 * 1024 * 1024
+    }
+  })
+
+  export const uploadRestoreBackup =
+  multer({
+
+    storage:
+      RestoreStorage,
+
+    fileFilter:
+      restoreFileFilter,
+
+    limits: {
+      fileSize:
+        100 *
+        1024 *
+        1024
     }
   })
