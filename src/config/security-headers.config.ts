@@ -1,3 +1,5 @@
+const frontendOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:5173"
+
 export const securityHeadersConfig = {
 
   hsts: {
@@ -36,7 +38,7 @@ export const securityHeadersConfig = {
 
       connectSrc: [
         "'self'",
-        "http://localhost:5173"
+        frontendOrigin
       ],
 
       objectSrc: [

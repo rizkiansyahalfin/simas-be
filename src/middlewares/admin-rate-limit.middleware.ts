@@ -1,6 +1,7 @@
 import rateLimit from "express-rate-limit"
 import {
-  RedisStore
+  RedisStore,
+  type RedisReply,
 } from "rate-limit-redis"
 
 import redis from "../lib/redis"
@@ -21,12 +22,10 @@ export const adminRateLimitMiddleware =
 
     store:
       new RedisStore({
-
-        sendCommand:
-          (...args: string[]) =>
-            redis.call(
-              ...args
-            )
+        sendCommand: (
+          command: string,
+          ...args: string[]
+        ) => redis.call(command, ...args) as Promise<RedisReply>,
       }),
 
     keyGenerator:

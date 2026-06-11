@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import {securityHeadersConfig} from "./config/security-headers.config"
 import { userRateLimitMiddleware } from "./middlewares/user-rate-limit.middleware";
+import { inputSanitizationMiddleware } from "./middlewares/input-sanitization.middleware";
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
@@ -16,7 +17,11 @@ dotenv.config();
 
 const app = express();
 
-// Basic security & JSON parser
+// Trust proxy for correct IP detection when running behind a load balancer or reverse proxy
+app.set("trust proxy", 1)
+
+// Basic security & body parsing
+app.disable("x-powered-by")
 app.use(cors(corsOptions));
 app.use(
   helmet({
@@ -41,11 +46,11 @@ app.use(
   })
 );
 app.use(express.json({ limit: "10kb" }));
-app.use(
-  userRateLimitMiddleware
-)
-app.use(limiter);
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: false, limit: "10kb" }))
+app.use(inputSanitizationMiddleware)
+app.use(userRateLimitMiddleware)
+app.use(limiter)
+app.use(cookieParser())
 
 app.use(
   "/uploads",
