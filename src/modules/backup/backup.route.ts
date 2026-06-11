@@ -6,6 +6,7 @@ import { auditMiddleware } from "../audit/audit.middleware"
 import { Role } from "../../generated/enums"
 import { AuditAction } from "../../generated/client"
 import { uploadRestoreBackup } from "../../middlewares/upload.middleware"
+import {adminRateLimitMiddleware} from "../../middlewares/admin-rate-limit.middleware"
 
 const router = Router()
 
@@ -14,6 +15,7 @@ router.post(
   "/backup",
   authMiddleware,
   rbacMiddleware(Role.superadmin),
+  adminRateLimitMiddleware,
   auditMiddleware({
     action: AuditAction.create,
     module: "database-backup"
@@ -50,6 +52,8 @@ router.post(
     Role.superadmin
   ),
 
+  adminRateLimitMiddleware,
+
   auditMiddleware({
     action:
       AuditAction.update,
@@ -73,6 +77,8 @@ router.post(
   rbacMiddleware(
     Role.superadmin
   ),
+
+  adminRateLimitMiddleware,
 
   auditMiddleware({
     action:
