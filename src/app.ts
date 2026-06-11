@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import cookieParser from "cookie-parser";
 import path from "path";
 import {securityHeadersConfig} from "./config/security-headers.config"
+import { userRateLimitMiddleware } from "./middlewares/user-rate-limit.middleware";
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
@@ -40,6 +41,9 @@ app.use(
   })
 );
 app.use(express.json({ limit: "10kb" }));
+app.use(
+  userRateLimitMiddleware
+)
 app.use(limiter);
 app.use(cookieParser());
 
