@@ -33,10 +33,16 @@ export const BackupCron = {
           )
 
         } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error)
+          const errorStack = error instanceof Error ? error.stack : undefined
 
           console.error(
             "[BACKUP_CRON] Failed",
-            error
+            {
+              timestamp: new Date().toISOString(),
+              message: errorMessage,
+              stack: errorStack
+            }
           )
         }
       }

@@ -7,11 +7,13 @@ const BACKUP_DIRECTORY = path.resolve(
   "backups"
 )
 
-const MAX_BACKUPS =
+const MAX_BACKUPS = Math.max(
+  1,
   Number(
     process.env
       .BACKUP_KEEP_COUNT
   ) || 4
+)
 
 export const BackupRotationService = {
 
@@ -79,10 +81,19 @@ export const BackupRotationService = {
       const file
       of filesToDelete
     ) {
-
-      fs.unlinkSync(
-        file.fullPath
-      )
+      try {
+        fs.unlinkSync(
+          file.fullPath
+        )
+        console.log(
+          `[BACKUP_ROTATION] Deleted old backup: ${file.file}`
+        )
+      } catch (error) {
+        console.error(
+          `[BACKUP_ROTATION] Failed to delete: ${file.file}`,
+          error instanceof Error ? error.message : String(error)
+        )
+      }
     }
   }
 }
