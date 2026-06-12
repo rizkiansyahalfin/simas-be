@@ -58,3 +58,20 @@ export type ZisCategoryReceipt = {
   category: string
   amount: number
 }
+
+export type DonationsReportQuery = {
+  dateFrom: Date
+  dateTo: Date
+}
+
+export type DonationReportRow = {
+  id: number
+  donorName: string
+  phone: string | null
+  amount: number
+  status: string
+  category: string | null
+  campaign: string | null
+  verifiedAt: Date | null
+  createdAt: Date
+}

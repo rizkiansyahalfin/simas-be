@@ -22,6 +22,25 @@ export const monthlyZisQuerySchema = z.object({
   format: z.enum(["pdf"]).default("pdf"),
 })
 
+export const donationsReportQuerySchema =
+  z.object({
+
+    date_from:
+      z.coerce.date(),
+
+    date_to:
+      z.coerce.date(),
+
+    format:
+      z.enum(["excel"])
+      .optional()
+  })
+
+export type DonationsReportQuery =
+  z.infer<
+    typeof donationsReportQuerySchema
+  >
+
 export type MonthlyFinanceQuery = z.infer<typeof monthlyFinanceQuerySchema>
 export type WeeklyFinanceQuery = z.infer<typeof weeklyFinanceQuerySchema>
 export type MonthlyZisQuery = z.infer<typeof monthlyZisQuerySchema>

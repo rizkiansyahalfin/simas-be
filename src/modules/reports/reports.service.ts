@@ -2,6 +2,7 @@ import { ReportsRepository } from "./reports.repository"
 import { generateFinancePdf } from "./reports.pdf"
 import { generateFinanceExcel, generateInventoryExcel } from "./reports.excel"
 import { generateZisMonthlyPdf } from "./reports.zis.pdf"
+import { generateDonationsExcel } from "./reports.excel"
 import type {
   MonthlyFinanceQuery,
   MonthlyZisQuery,
@@ -74,4 +75,23 @@ export const ReportsService = {
 
     return generateZisMonthlyPdf(payload)
   },
+  async generateDonationsExcel({
+  dateFrom,
+  dateTo
+}: {
+  dateFrom: Date
+  dateTo: Date
+}) {
+
+  const donations =
+    await ReportsRepository
+      .getDonationsReport({
+        dateFrom,
+        dateTo
+      })
+
+  return generateDonationsExcel(
+    donations
+  )
+}
 }

@@ -70,3 +70,117 @@ export const generateFinanceExcel = async (transactions: CashTransaction[]) => {
 
   return workbook.xlsx.writeBuffer()
 }
+
+export const generateDonationsExcel =
+async (
+  donations: any[]
+) => {
+
+  const workbook =
+    new ExcelJS.Workbook()
+
+  const sheet =
+    workbook.addWorksheet(
+      "Donations"
+    )
+
+  sheet.columns = [
+
+    {
+      header: "Tanggal",
+      key: "date",
+      width: 18
+    },
+
+    {
+      header: "Donatur",
+      key: "donor",
+      width: 30
+    },
+
+    {
+      header: "Telepon",
+      key: "phone",
+      width: 20
+    },
+
+    {
+      header: "Kategori",
+      key: "category",
+      width: 25
+    },
+
+    {
+      header: "Campaign",
+      key: "campaign",
+      width: 35
+    },
+
+    {
+      header: "Status",
+      key: "status",
+      width: 15
+    },
+
+    {
+      header: "Nominal",
+      key: "amount",
+      width: 20
+    }
+  ]
+
+  donations.forEach(
+    donation => {
+
+      sheet.addRow({
+
+        date:
+          donation.createdAt,
+
+        donor:
+          donation.donorName,
+
+        phone:
+          donation.phone,
+
+        category:
+          donation.category?.name ??
+          "-",
+
+        campaign:
+          donation.campaign?.title ??
+          "-",
+
+        status:
+          donation.status,
+
+        amount:
+          Number(
+            donation.amount
+          )
+      })
+    }
+  )
+
+  sheet.getRow(1)
+    .font = {
+      bold: true
+    }
+
+  const total =
+    donations.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.amount),
+      0
+    )
+
+  sheet.addRow([])
+
+  sheet.addRow({
+    donor: "TOTAL",
+    amount: total
+  })
+
+  return workbook.xlsx.writeBuffer()
+}

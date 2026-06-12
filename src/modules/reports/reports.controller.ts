@@ -3,7 +3,8 @@ import { ReportsService } from "./reports.service"
 import {
   monthlyFinanceQuerySchema,
   monthlyZisQuerySchema,
-  weeklyFinanceQuerySchema
+  weeklyFinanceQuerySchema,
+  donationsReportQuerySchema
 } from "./reports.validation"
 
 export const ReportsController = {
@@ -95,4 +96,58 @@ export const ReportsController = {
 
     return res.status(400).json({ message: 'Invalid format, only pdf is supported' })
   },
+
+  async donationsExcel(
+  req: Request,
+  res: Response
+) {
+
+  const query =
+    donationsReportQuerySchema
+      .safeParse(
+        req.query
+      )
+
+  if (!query.success) {
+
+    return res
+      .status(400)
+      .json({
+
+        message:
+          "Invalid query",
+
+        errors:
+          query.error.format()
+      })
+  }
+
+  const {
+    date_from,
+    date_to
+  } = query.data
+
+  const buffer =
+    await ReportsService
+      .generateDonationsExcel({
+
+        dateFrom:
+          date_from,
+
+        dateTo:
+          date_to
+      })
+
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  )
+
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=donations-report.xlsx"
+  )
+
+  return res.send(buffer)
+}
 }
