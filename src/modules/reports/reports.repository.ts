@@ -149,6 +149,74 @@ export const ReportsRepository = {
     }))
   },
 
+  async getMonthlyZisCategoryReceipts(
+  {
+    month,
+    year
+  }: {
+    month: number
+    year: number
+  }
+) {
+
+  const startDate =
+    new Date(year, month - 1, 1)
+
+  const endDate =
+    new Date(year, month, 0)
+
+  const transactions =
+    await prisma.zisTransaction.findMany({
+
+      where: {
+
+        deletedAt: null,
+
+        transactionDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
+
+      select: {
+        amount: true,
+        zisCategory: true
+      }
+    })
+
+  const grouped =
+    transactions.reduce<
+      Record<string, number>
+    >(
+      (
+        acc,
+        transaction
+      ) => {
+
+        const category =
+          transaction.zisCategory
+
+        acc[category] =
+          (acc[category] ?? 0) +
+          Number(transaction.amount)
+
+        return acc
+      },
+      {}
+    )
+
+  return Object.entries(grouped)
+    .map(
+      ([
+        category,
+        amount
+      ]) => ({
+        category,
+        amount
+      })
+    )
+},
+
   async getInventoryReport() {
 
     return prisma.inventory.findMany({

@@ -38,9 +38,23 @@ export type ZisCategoryDistribution = {
   amount: number
 }
 
-export type ZisReportPdfPayload = MonthlyZisQuery & {
-  totalReceipts: number
-  totalDistributions: number
-  zisTransactions: ZisTransaction[]
-  categoryDistributions: ZisCategoryDistribution[]
+export type ZisReportPdfPayload =
+  MonthlyZisQuery & {
+
+    totalReceipts: number
+
+    totalDistributions: number
+
+    zisTransactions: ZisTransaction[]
+
+    categoryReceipts:
+      ZisCategoryReceipt[]
+
+    categoryDistributions:
+      ZisCategoryDistribution[]
+  }
+
+export type ZisCategoryReceipt = {
+  category: string
+  amount: number
 }

@@ -37,6 +37,21 @@ export const generateZisMonthlyPdf = async (
     doc.fontSize(12).text(`Periode: ${String(data.month).padStart(2, '0')}/${data.year}`)
     doc.text(`Total Penerimaan ZIS: ${formatCurrency(data.totalReceipts)}`)
     doc.text(`Total Penyaluran: ${formatCurrency(data.totalDistributions)}`)
+    const balance = data.totalReceipts -  data.totalDistributions
+    doc.text( `Saldo ZIS: ${formatCurrency(balance)}`)
+    doc.moveDown()
+    doc.fontSize(14).text(
+        "Rekap Penerimaan per Kategori", {underline: true})
+    doc.moveDown(0.5)
+        if ( data.categoryReceipts.length === 0 ) {
+    doc.fontSize(11).text("Tidak ada data penerimaan")
+      } else {
+        data.categoryReceipts.forEach(( item ) => {
+            doc.fontSize(11).text(
+                `${item.category}: ${formatCurrency(item.amount)}`
+              )}
+            )
+    }
     doc.moveDown(1)
 
     doc.fontSize(14).text('Rincian Penerimaan ZIS', { underline: true })
