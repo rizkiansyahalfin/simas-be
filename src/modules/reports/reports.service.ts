@@ -49,24 +49,27 @@ export const ReportsService = {
   },
 
   async generateMonthlyZisPdf({ month, year }: MonthlyZisQuery) {
-    const [zisTransactions, totalDistributions, categoryDistributions] = await Promise.all([
-      ReportsRepository.getMonthlyZisTransactions({ month, year }),
-      ReportsRepository.getMonthlyZisTotalDistributions({ month, year }),
-      ReportsRepository.getMonthlyZisCategoryDistributions({ month, year }),
-    ])
+    const [zisTransactions, totalDistributions, categoryDistributions, categoryReceipts] = await Promise.all([
+  ReportsRepository.getMonthlyZisTransactions({month,year}),
+  ReportsRepository.getMonthlyZisTotalDistributions({month,year}),
+  ReportsRepository.getMonthlyZisCategoryDistributions({month,year}),
+  ReportsRepository.getMonthlyZisCategoryReceipts({month,year})
+])
 
     const totalReceipts = zisTransactions.reduce(
       (sum, tx) => sum + Number(tx.amount),
       0
     )
 
-    const payload: ZisReportPdfPayload = {
+  const payload:
+    ZisReportPdfPayload = {
       month,
       year,
       totalReceipts,
       totalDistributions,
       zisTransactions,
-      categoryDistributions,
+      categoryReceipts,
+      categoryDistributions
     }
 
     return generateZisMonthlyPdf(payload)
