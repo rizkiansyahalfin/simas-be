@@ -1,8 +1,23 @@
 import type {
   CashTransaction,
   Inventory,
-  ZisTransaction
+  ZisTransaction,
+  Campaign,
+  Donation,
+  DonationCategory
 } from "../../generated/client"
+
+export type DonationReport = Donation & {
+  category: Pick<
+    DonationCategory,
+    "name"
+  > | null
+
+  campaign: Pick<
+    Campaign,
+    "title"
+  > | null
+}
 
 export type MonthlyFinanceQuery = {
   month: number

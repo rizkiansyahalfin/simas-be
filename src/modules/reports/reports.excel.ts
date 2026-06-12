@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs"
 import type { CashTransaction } from "../../generated/client"
-import type { InventoryReport } from "./reports.type"
+import type { InventoryReport, DonationReport } from "./reports.type"
 
 export const generateInventoryExcel = async (inventories: InventoryReport[]) => {
   const workbook = new ExcelJS.Workbook()
@@ -73,7 +73,7 @@ export const generateFinanceExcel = async (transactions: CashTransaction[]) => {
 
 export const generateDonationsExcel =
 async (
-  donations: any[]
+  donations: DonationReport[]
 ) => {
 
   const workbook =
@@ -130,34 +130,18 @@ async (
   ]
 
   donations.forEach(
-    donation => {
+    (
+      donation: DonationReport
+    ) => {
 
       sheet.addRow({
-
-        date:
-          donation.createdAt,
-
-        donor:
-          donation.donorName,
-
-        phone:
-          donation.phone,
-
-        category:
-          donation.category?.name ??
-          "-",
-
-        campaign:
-          donation.campaign?.title ??
-          "-",
-
-        status:
-          donation.status,
-
-        amount:
-          Number(
-            donation.amount
-          )
+        date: donation.createdAt,
+        donor: donation.donorName,
+        phone: donation.phone,
+        category: donation.category?.name ?? "-",
+        campaign: donation.campaign?.title ?? "-",
+        status: donation.status,
+        amount: Number( donation.amount )
       })
     }
   )
@@ -167,13 +151,11 @@ async (
       bold: true
     }
 
-  const total =
-    donations.reduce(
-      (sum, item) =>
-        sum +
-        Number(item.amount),
-      0
-    )
+const total =
+  donations.reduce(
+    ( sum: number, donation: DonationReport ) => sum + Number( donation.amount ), 
+    0
+  )
 
   sheet.addRow([])
 

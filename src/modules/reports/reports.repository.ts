@@ -222,7 +222,6 @@ export const ReportsRepository = {
     return prisma.inventory.findMany({
 
       include: {
-
         manager: {
           select: {
             username: true
@@ -245,31 +244,24 @@ export const ReportsRepository = {
 }) {
 
   return prisma.donation.findMany({
-
     where: {
-
       createdAt: {
-
         gte: dateFrom,
         lte: dateTo
       }
     },
-
     include: {
-
       category: {
         select: {
           name: true
         }
       },
-
       campaign: {
         select: {
           title: true
         }
       }
     },
-
     orderBy: {
       createdAt: "desc"
     }
