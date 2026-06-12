@@ -234,5 +234,45 @@ export const ReportsRepository = {
         createdAt: "desc"
       }
     })
-  }
+  },
+
+  async getDonationsReport({
+  dateFrom,
+  dateTo
+}: {
+  dateFrom: Date
+  dateTo: Date
+}) {
+
+  return prisma.donation.findMany({
+
+    where: {
+
+      createdAt: {
+
+        gte: dateFrom,
+        lte: dateTo
+      }
+    },
+
+    include: {
+
+      category: {
+        select: {
+          name: true
+        }
+      },
+
+      campaign: {
+        select: {
+          title: true
+        }
+      }
+    },
+
+    orderBy: {
+      createdAt: "desc"
+    }
+  })
+}
 }

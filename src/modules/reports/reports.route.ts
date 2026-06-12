@@ -36,4 +36,11 @@ router.get(
   ReportsController.monthlyZis
 )
 
+router.get(
+  "/donations",
+  authMiddleware,
+  rbacMiddleware("superadmin","bendahara"),
+  ReportsController.donationsExcel
+)
+
 export default router
