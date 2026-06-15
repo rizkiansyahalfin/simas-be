@@ -1,4 +1,5 @@
 import type {
+  Prisma,
   CashTransaction,
   Inventory,
   ZisTransaction,
@@ -8,6 +9,28 @@ import type {
   InventoryCondition,
   LoanStatus
 } from "../../generated/client"
+
+export type CongregationReportData =
+  Prisma.CongregationGetPayload<{
+    include: {
+      mustahik: true
+      attendanceRecords: true
+    }
+  }>
+
+export type MustahikStatistic = {
+  category: string
+  _count: {
+    category: number
+  }
+}
+
+export type AttendanceStatistic = {
+  congregationId: number
+  _count: {
+    congregationId: number
+  }
+}
 
 export type DonationReport = Donation & {
   category: Pick<

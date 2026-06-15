@@ -53,4 +53,14 @@ router.get(
   ReportsController.inventoryFull
 )
 
+router.get(
+  "/congregations",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin",
+    "admin_kegiatan"
+  ),
+  ReportsController.congregations
+)
+
 export default router
