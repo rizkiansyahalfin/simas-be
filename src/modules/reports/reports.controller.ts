@@ -4,7 +4,8 @@ import {
   monthlyFinanceQuerySchema,
   monthlyZisQuerySchema,
   weeklyFinanceQuerySchema,
-  donationsReportQuerySchema
+  donationsReportQuerySchema,
+  inventoryReportQuerySchema
 } from "./reports.validation"
 
 export const ReportsController = {
@@ -149,5 +150,40 @@ export const ReportsController = {
   )
 
   return res.send(buffer)
+},
+async inventoryFull(
+  req: Request,
+  res: Response
+) {
+
+  const query =
+    inventoryReportQuerySchema
+      .safeParse(req.query)
+
+  if (!query.success) {
+
+    return res
+      .status(400)
+      .json({
+        message:
+          "Invalid query"
+      })
+  }
+
+  const pdf =
+    await ReportsService
+      .generateInventoryPdf()
+
+  res.setHeader(
+    "Content-Type",
+    "application/pdf"
+  )
+
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="inventory-full-report.pdf"'
+  )
+
+  return res.send(pdf)
 }
 }

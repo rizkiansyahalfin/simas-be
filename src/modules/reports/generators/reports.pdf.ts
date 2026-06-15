@@ -1,5 +1,5 @@
 import PDFDocument from "pdfkit"
-import type { FinancePdfPayload } from "./reports.type"
+import type { FinancePdfPayload } from "../reports.type"
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("id-ID", {

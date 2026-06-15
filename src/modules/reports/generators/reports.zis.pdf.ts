@@ -1,5 +1,5 @@
 import PDFDocument from 'pdfkit'
-import type { ZisReportPdfPayload } from './reports.type'
+import type { ZisReportPdfPayload } from '../reports.type'
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('id-ID', {
