@@ -311,5 +311,41 @@ export const ReportsRepository = {
       createdAt: "desc"
     }
   })
+},
+async getCongregationReport() {
+  const congregations = await prisma.congregation.findMany({
+    where: {
+      deletedAt: null
+    },
+    include: {
+      mustahik: true,
+      attendanceRecords: true
+    },
+    orderBy: {
+      fullName: "asc"
+    }
+  })
+
+  const mustahikStats =
+    await prisma.mustahik.groupBy({
+      by: ["category"],
+      _count: {
+        category: true
+      }
+    })
+
+  const attendanceStats =
+    await prisma.attendanceRecord.groupBy({
+      by: ["congregationId"],
+      _count: {
+        congregationId: true
+      }
+    })
+
+  return {
+    congregations,
+    mustahikStats,
+    attendanceStats
+  }
 }
 }

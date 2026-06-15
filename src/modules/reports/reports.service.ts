@@ -4,6 +4,7 @@ import { generateFinanceExcel, generateInventoryExcel } from "./exporters/report
 import { generateZisMonthlyPdf } from "./generators/reports.zis.pdf"
 import { generateInventoryPdf } from "./generators/reports.inventory.pdf"
 import { generateDonationsExcel } from "./exporters/reports.excel"
+import { generateCongregationExcel } from "./generators/reports.congregation.excel"
 import type {
   MonthlyFinanceQuery,
   MonthlyZisQuery,
@@ -148,6 +149,16 @@ async generateInventoryPdf() {
 
   return generateInventoryPdf(
     payload
+  )
+},
+async generateCongregationExcel() {
+
+  const report =
+    await ReportsRepository
+      .getCongregationReport()
+
+  return generateCongregationExcel(
+    report
   )
 }
 }

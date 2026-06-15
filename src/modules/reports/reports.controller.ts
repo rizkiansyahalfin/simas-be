@@ -185,5 +185,26 @@ async inventoryFull(
   )
 
   return res.send(pdf)
+},
+async congregations(
+  req: Request,
+  res: Response
+) {
+
+  const buffer =
+    await ReportsService
+      .generateCongregationExcel()
+
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  )
+
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=congregations-report.xlsx"
+  )
+
+  return res.send(buffer)
 }
 }
