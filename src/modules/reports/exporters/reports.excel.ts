@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs"
-import type { CashTransaction } from "../../generated/client"
-import type { InventoryReport, DonationReport } from "./reports.type"
+import type { CashTransaction } from "../../../generated/client"
+import type { InventoryReport, DonationReport } from "../reports.type"
 
 export const generateInventoryExcel = async (inventories: InventoryReport[]) => {
   const workbook = new ExcelJS.Workbook()

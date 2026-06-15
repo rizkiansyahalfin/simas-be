@@ -1,9 +1,9 @@
 import { ReportsRepository } from "./reports.repository"
-import { generateFinancePdf } from "./generators/reports.pdf"
-import { generateFinanceExcel, generateInventoryExcel } from "./reports.excel"
+import { generateFinancePdf } from "./exporters/reports.pdf"
+import { generateFinanceExcel, generateInventoryExcel } from "./exporters/reports.excel"
 import { generateZisMonthlyPdf } from "./generators/reports.zis.pdf"
 import { generateInventoryPdf } from "./generators/reports.inventory.pdf"
-import { generateDonationsExcel } from "./reports.excel"
+import { generateDonationsExcel } from "./exporters/reports.excel"
 import type {
   MonthlyFinanceQuery,
   MonthlyZisQuery,
