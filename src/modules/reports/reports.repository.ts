@@ -1,5 +1,7 @@
 import prisma from "../../database"
 
+import type { CongregationReportPayload } from "./reports.type"
+
 export const ReportsRepository = {
   async getWeeklyFinance({
   startDate,
@@ -312,40 +314,62 @@ export const ReportsRepository = {
     }
   })
 },
-async getCongregationReport() {
-  const congregations = await prisma.congregation.findMany({
-    where: {
-      deletedAt: null
-    },
-    include: {
-      mustahik: true,
-      attendanceRecords: true
-    },
-    orderBy: {
-      fullName: "asc"
+  async getCongregationReport():
+  Promise<CongregationReportPayload> {
+
+    const [
+      congregations,
+      mustahikStats,
+      totalSessions,
+      totalAttendanceRecords
+    ] = await Promise.all([
+
+      prisma.congregation.findMany({
+
+        where: {
+          deletedAt: null
+        },
+
+        include: {
+
+          mustahik: true,
+
+          attendanceRecords: {
+
+            include: {
+              session: true
+            },
+
+            orderBy: {
+              checkInAt: "desc"
+            }
+          }
+        },
+
+        orderBy: {
+          fullName: "asc"
+        }
+      }),
+
+      prisma.mustahik.groupBy({
+
+        by: ["category"],
+
+        _count: {
+          category: true
+        }
+      }),
+
+      prisma.attendanceSession.count(),
+
+      prisma.attendanceRecord.count()
+    ])
+
+    return {
+      congregations,
+      mustahikStats,
+      totalSessions,
+      totalAttendanceRecords
     }
-  })
-
-  const mustahikStats =
-    await prisma.mustahik.groupBy({
-      by: ["category"],
-      _count: {
-        category: true
-      }
-    })
-
-  const attendanceStats =
-    await prisma.attendanceRecord.groupBy({
-      by: ["congregationId"],
-      _count: {
-        congregationId: true
-      }
-    })
-
-  return {
-    congregations,
-    mustahikStats,
-    attendanceStats
   }
-}
 }

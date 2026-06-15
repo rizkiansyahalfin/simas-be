@@ -14,7 +14,11 @@ export type CongregationReportData =
   Prisma.CongregationGetPayload<{
     include: {
       mustahik: true
-      attendanceRecords: true
+      attendanceRecords: {
+        include: {
+          session: true
+        }
+      }
     }
   }>
 
@@ -25,11 +29,11 @@ export type MustahikStatistic = {
   }
 }
 
-export type AttendanceStatistic = {
-  congregationId: number
-  _count: {
-    congregationId: number
-  }
+export type CongregationReportPayload = {
+  congregations: CongregationReportData[]
+  mustahikStats: MustahikStatistic[]
+  totalSessions: number
+  totalAttendanceRecords: number
 }
 
 export type DonationReport = Donation & {

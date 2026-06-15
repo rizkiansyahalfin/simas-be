@@ -1,20 +1,13 @@
 import ExcelJS from "exceljs"
 
 import type {
-  CongregationReportData,
-  MustahikStatistic,
-  AttendanceStatistic
+  CongregationReportPayload,
 } from "../reports.type"
 
-type Payload = {
-  congregations: CongregationReportData[]
-  mustahikStats: MustahikStatistic[]
-  attendanceStats: AttendanceStatistic[]
-}
 
 export const generateCongregationExcel =
 async (
-  data: Payload
+  data: CongregationReportPayload
 ) => {
 
   const workbook =
@@ -32,91 +25,111 @@ async (
 
   congregationSheet.columns = [
 
-    {
-      header: "ID",
-      key: "id",
-      width: 10
-    },
+      {
+        header: "ID",
+        key: "id",
+        width: 10
+      },
 
-    {
-      header: "Nama",
-      key: "name",
-      width: 30
-    },
+      {
+        header: "Nama",
+        key: "name",
+        width: 30
+      },
 
-    {
-      header: "NIK",
-      key: "nik",
-      width: 25
-    },
+      {
+        header: "NIK",
+        key: "nik",
+        width: 25
+      },
 
-    {
-      header: "Gender",
-      key: "gender",
-      width: 15
-    },
+      {
+        header: "Gender",
+        key: "gender",
+        width: 15
+      },
 
-    {
-      header: "Telepon",
-      key: "phone",
-      width: 20
-    },
+      {
+        header: "Tanggal Lahir",
+        key: "birthDate",
+        width: 20
+      },
 
-    {
-      header: "Mustahik",
-      key: "mustahik",
-      width: 15
-    },
+      {
+        header: "Telepon",
+        key: "phone",
+        width: 20
+      },
 
-    {
-      header: "Kategori Mustahik",
-      key: "category",
-      width: 20
-    },
+      {
+        header: "Alamat",
+        key: "address",
+        width: 40
+      },
 
-    {
-      header: "Status Aktif",
-      key: "active",
-      width: 15
-    }
-  ]
+      {
+        header: "Mustahik",
+        key: "mustahik",
+        width: 15
+      },
+
+      {
+        header: "Kategori Mustahik",
+        key: "category",
+        width: 20
+      },
+
+      {
+        header: "Status Aktif",
+        key: "active",
+        width: 15
+      }
+    ]
 
   data.congregations.forEach(
-    congregation => {
+      congregation => {
 
-      congregationSheet.addRow({
+        congregationSheet.addRow({
 
-        id:
-          congregation.id,
+          id:
+            congregation.id,
 
-        name:
-          congregation.fullName,
+          name:
+            congregation.fullName,
 
-        nik:
-          congregation.nik,
+          nik:
+            congregation.nik ?? "-",
 
-        gender:
-          congregation.gender,
+          gender:
+            congregation.gender ?? "-",
 
-        phone:
-          congregation.phone,
+          birthDate:
+            congregation.birthDate
+              ?.toISOString()
+              .split("T")[0] ?? "-",
 
-        mustahik:
-          congregation.isMustahik
-            ? "Ya"
-            : "Tidak",
+          phone:
+            congregation.phone ?? "-",
 
-        category:
-          congregation.mustahik
-            ?.category ?? "-",
+          address:
+            congregation.address ?? "-",
 
-        active:
-          congregation.isActive
-            ? "Aktif"
-            : "Nonaktif"
-      })
-    }
-  )
+          mustahik:
+            congregation.isMustahik
+              ? "Ya"
+              : "Tidak",
+
+          category:
+            congregation.mustahik
+              ?.category ?? "-",
+
+          active:
+            congregation.isActive
+              ? "Aktif"
+              : "Nonaktif"
+        })
+      }
+    )
 
   congregationSheet.getRow(1)
     .font = { bold: true }
@@ -169,55 +182,181 @@ async (
    */
 
   const attendanceSheet =
-    workbook.addWorksheet(
-      "Kehadiran"
-    )
+      workbook.addWorksheet(
+        "Kehadiran"
+      )
+  
+    attendanceSheet.columns = [
+        
+      {
+        header: "Nama",
+        key: "name",
+        width: 30
+      },
 
-  attendanceSheet.columns = [
+      {
+        header: "Jumlah Kehadiran",
+        key: "attendance",
+        width: 20
+      },
 
-    {
-      header: "ID Jamaah",
-      key: "id",
-      width: 15
-    },
+      {
+        header: "Persentase",
+        key: "percentage",
+        width: 15
+      },
 
-    {
-      header: "Nama",
-      key: "name",
-      width: 30
-    },
+      {
+        header: "Terakhir Hadir",
+        key: "lastAttendance",
+        width: 20
+      },
 
-    {
-      header: "Total Kehadiran",
-      key: "attendance",
-      width: 20
-    }
-  ]
+      {
+        header: "Sesi Terakhir",
+        key: "sessionTitle",
+        width: 30
+      },
+
+      {
+        header: "Jenis Sesi",
+        key: "sessionType",
+        width: 20
+      },
+
+      {
+        header: "Metode Check In",
+        key: "method",
+        width: 20
+      }
+    ]
 
   data.congregations.forEach(
-    congregation => {
+      congregation => {
 
-      const attendance =
-        data.attendanceStats.find(
-          item =>
-            item.congregationId ===
-            congregation.id
-        )
+        const attendanceCount =
+          congregation.attendanceRecords.length
 
-      attendanceSheet.addRow({
+        const percentage =
+          data.totalSessions === 0
+            ? 0
+            : Number(
+                (
+                  attendanceCount /
+                  data.totalSessions *
+                  100
+                ).toFixed(2)
+              )
 
-        id:
-          congregation.id,
+        const latestRecord =
+          congregation.attendanceRecords[0]
 
-        name:
-          congregation.fullName,
+        attendanceSheet.addRow({
 
-        attendance:
-          attendance?._count
-            .congregationId ?? 0
-      })
-    }
+          name:
+            congregation.fullName,
+
+          attendance:
+            attendanceCount,
+
+          percentage:
+            `${percentage}%`,
+
+          lastAttendance:
+            latestRecord?.checkInAt ?? "-",
+
+          sessionTitle:
+            latestRecord?.session
+              ?.title ?? "-",
+
+          sessionType:
+            latestRecord?.session
+              ?.type ?? "-",
+
+          method:
+            latestRecord?.method ?? "-"
+        })
+      }
+    )
+
+const summarySheet =
+  workbook.addWorksheet(
+    "Ringkasan"
   )
+
+summarySheet.addRows([
+
+  ["Metric", "Value"],
+
+  [
+    "Total Jamaah",
+    data.congregations.length
+  ],
+
+  [
+    "Total Mustahik",
+    data.congregations.filter(
+      c => c.isMustahik
+    ).length
+  ],
+
+  [
+    "Total Jamaah Aktif",
+    data.congregations.filter(
+      c => c.isActive
+    ).length
+  ],
+
+  [
+    "Total Sesi Kehadiran",
+    data.totalSessions
+  ],
+
+  [
+    "Total Record Kehadiran",
+    data.totalAttendanceRecords
+  ]
+])
+
+summarySheet.getRow(1).font = {
+  bold: true
+}
+
+congregationSheet.views = [
+  {
+    state: "frozen",
+    ySplit: 1
+  }
+]
+
+mustahikSheet.views = [
+  {
+    state: "frozen",
+    ySplit: 1
+  }
+]
+
+attendanceSheet.views = [
+  {
+    state: "frozen",
+    ySplit: 1
+  }
+]
+
+congregationSheet.autoFilter = {
+  from: "A1",
+  to: "J1"
+}
+
+mustahikSheet.autoFilter = {
+  from: "A1",
+  to: "B1"
+}
+
+attendanceSheet.autoFilter = {
+  from: "A1",
+  to: "G1"
+}
 
   attendanceSheet.getRow(1)
     .font = { bold: true }
