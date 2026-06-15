@@ -235,6 +235,51 @@ export const ReportsRepository = {
     })
   },
 
+  async getInventoryFullReport() {
+
+  return prisma.inventory.findMany({
+
+    include: {
+
+      category: {
+        select: {
+          name: true
+        }
+      },
+
+      manager: {
+        select: {
+          username: true
+        }
+      },
+
+      inventoryLoans: {
+
+        select: {
+
+          borrowerName: true,
+
+          loanDate: true,
+
+          expectedReturnDate: true,
+
+          actualReturnDate: true,
+
+          status: true
+        },
+
+        orderBy: {
+          loanDate: "desc"
+        }
+      }
+    },
+
+    orderBy: {
+      itemName: "asc"
+    }
+  })
+},
+
   async getDonationsReport({
   dateFrom,
   dateTo

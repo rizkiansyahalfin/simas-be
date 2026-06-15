@@ -4,7 +4,9 @@ import type {
   ZisTransaction,
   Campaign,
   Donation,
-  DonationCategory
+  DonationCategory,
+  InventoryCondition,
+  LoanStatus
 } from "../../generated/client"
 
 export type DonationReport = Donation & {
@@ -89,4 +91,44 @@ export type DonationReportRow = {
   campaign: string | null
   verifiedAt: Date | null
   createdAt: Date
+}
+
+export type InventoryReportPdfItem = {
+  id: number
+  itemCode: string
+  itemName: string
+
+  quantity: number
+
+  condition: InventoryCondition
+
+  category: {
+    name: string
+  }
+
+  manager: {
+    username: string | null
+  }
+
+  inventoryLoans: {
+    borrowerName: string
+    loanDate: Date
+    expectedReturnDate: Date
+    actualReturnDate: Date | null
+    status: LoanStatus
+  }[]
+}
+
+export type InventoryReportPdfPayload = {
+  totalAssets: number
+  totalQuantity: number
+
+  conditionSummary: {
+    baik: number
+    rusak_ringan: number
+    rusak_berat: number
+    hilang: number
+  }
+
+  inventories: InventoryReportPdfItem[]
 }

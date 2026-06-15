@@ -43,4 +43,14 @@ router.get(
   ReportsController.donationsExcel
 )
 
+router.get(
+  "/inventory/full",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin",
+    "admin_inventaris"
+  ),
+  ReportsController.inventoryFull
+)
+
 export default router

@@ -1,7 +1,8 @@
 import { ReportsRepository } from "./reports.repository"
-import { generateFinancePdf } from "./reports.pdf"
+import { generateFinancePdf } from "./generators/reports.pdf"
 import { generateFinanceExcel, generateInventoryExcel } from "./reports.excel"
-import { generateZisMonthlyPdf } from "./reports.zis.pdf"
+import { generateZisMonthlyPdf } from "./generators/reports.zis.pdf"
+import { generateInventoryPdf } from "./generators/reports.inventory.pdf"
 import { generateDonationsExcel } from "./reports.excel"
 import type {
   MonthlyFinanceQuery,
@@ -92,6 +93,61 @@ export const ReportsService = {
 
   return generateDonationsExcel(
     donations
+  )
+},
+async generateInventoryPdf() {
+
+  const inventories =
+    await ReportsRepository
+      .getInventoryFullReport()
+
+  const payload = {
+
+    totalAssets:
+      inventories.length,
+
+    totalQuantity:
+      inventories.reduce(
+        (sum, item) =>
+          sum + item.quantity,
+        0
+      ),
+
+    conditionSummary: {
+
+      baik:
+        inventories.filter(
+          i =>
+            i.condition === "baik"
+        ).length,
+
+      rusak_ringan:
+        inventories.filter(
+          i =>
+            i.condition ===
+            "rusak_ringan"
+        ).length,
+
+      rusak_berat:
+        inventories.filter(
+          i =>
+            i.condition ===
+            "rusak_berat"
+        ).length,
+
+      hilang:
+        inventories.filter(
+          i =>
+            i.condition ===
+            "hilang"
+        ).length
+    },
+
+    inventories
+  }
+
+  return generateInventoryPdf(
+    payload
   )
 }
 }

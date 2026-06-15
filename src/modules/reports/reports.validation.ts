@@ -41,6 +41,13 @@ export type DonationsReportQuery =
     typeof donationsReportQuerySchema
   >
 
+export const inventoryReportQuerySchema =
+  z.object({
+    format: z.enum(["pdf"])
+  })
+
+export type InventoryReportQuery = z.infer<typeof inventoryReportQuerySchema>
 export type MonthlyFinanceQuery = z.infer<typeof monthlyFinanceQuerySchema>
 export type WeeklyFinanceQuery = z.infer<typeof weeklyFinanceQuerySchema>
 export type MonthlyZisQuery = z.infer<typeof monthlyZisQuerySchema>
+
