@@ -49,12 +49,14 @@ export interface UpdateEventData {
 
 export interface EventQueryParams {
   status?: string
+  search?: string
   page: number
   limit: number
 }
 
 export interface EventRepositoryParams {
   status?: string
+  search?: string
   skip: number
   limit: number
 }
@@ -68,3 +70,4 @@ export interface PaginatedEvents {
     totalPages: number
   }
 }
+

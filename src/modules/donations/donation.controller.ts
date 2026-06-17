@@ -16,6 +16,7 @@ export const getDonations = async (
       : undefined,
       page: Number(req.query.page) || 1,
       limit: Number(req.query.limit) || 10,
+      search: typeof req.query.search === "string" ? req.query.search : undefined
     })
 
     const result = await DonationService.getAll(validated)

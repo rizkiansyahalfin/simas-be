@@ -1,4 +1,5 @@
 import prisma from '../../database'
+import { Prisma } from '../../generated/client'
 import { DonationStatus } from '../../generated/enums'
 import type { CreateDonationInput, UpdateDonationInput } from './donation.type'
 
@@ -10,28 +11,43 @@ export const DonationRepository = {
   async findAll({
     status,
     categoryId,
+    search,
     skip,
     limit,
   }: {
     status?: string
     categoryId?: number
+    search?: string
     skip: number
     limit: number
   }) {
-    const whereClause: {
-  status?: DonationStatus
-  categoryId?: number
-} = {}
+   const whereClause: Prisma.DonationWhereInput = {
+  ...(status && {
+    status: status as DonationStatus
+  }),
 
-if (status) {
-  whereClause.status =
-    status as DonationStatus
-}
-
-if (categoryId) {
-  whereClause.categoryId =
+  ...(categoryId && {
     categoryId
+  }),
+
+  ...(search && {
+    OR: [
+      {
+        donorName: {
+          contains: search,
+          mode: "insensitive"
+        }
+      },
+      {
+        phone: {
+          contains: search,
+          mode: "insensitive"
+        }
+      }
+    ]
+  })
 }
+
 
     const [data, total] = await Promise.all([
       prisma.donation.findMany({
@@ -42,7 +58,6 @@ if (categoryId) {
               id: true,
               username: true,
               role: true,
-              category: true,
             },
           },
         },
@@ -138,6 +153,7 @@ if (categoryId) {
             id: true,
             username: true,
             role: true,
+
           },
         },
         categoryId: {

@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const createGallerySchema = z.object({
-  titles: z.array(z.string().optional()).optional(),
+  titles: z.union([z.string(),z.array(z.string())]).optional(),
   captions: z.array(z.string().optional()).optional()
 })
 

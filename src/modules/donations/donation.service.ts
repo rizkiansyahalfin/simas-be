@@ -21,6 +21,7 @@ export const DonationService = {
   async getAll({
   status,
   categoryId,
+  search,
   page,
   limit,
 }: GetDonationsQuery) {
@@ -31,6 +32,7 @@ export const DonationService = {
     return DonationRepository.findAll({
       status,
       skip,
+      search,
       limit,
       categoryId,
     })

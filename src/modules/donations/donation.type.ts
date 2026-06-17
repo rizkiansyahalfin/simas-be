@@ -29,6 +29,7 @@ export type DonationResponse = Omit<Donation, 'createdAt' | 'updatedAt'> & {
 export type GetDonationsQuery = {
   status?: 'pending' | 'verified' | 'rejected'
   categoryId?: number
+  search?: string
   page: number
   limit: number
 }

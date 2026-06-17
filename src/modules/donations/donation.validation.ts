@@ -16,4 +16,5 @@ export const donationQuerySchema = z.object({
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(10),
   categoryId: z.number().int().positive('Category ID must be a positive integer').optional(),
+  search: z.string().optional()
 })

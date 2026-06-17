@@ -4,14 +4,27 @@ import { createGallerySchema } from "./gallery.validation"
 import type { CreateGalleryBody } from "./gallery.type"
 
 export const GalleryController = {
-  async findAll(req: Request, res: Response) {
-    const data = await GalleryService.getAll()
+async findAll(req: Request, res: Response) {
+  const page = Number(req.query.page ?? 1)
+  const limit = Number(req.query.limit ?? 10)
 
-    return res.json({
-      success: true,
-      data
-    })
-  },
+  const search =
+    typeof req.query.search === "string"
+      ? req.query.search
+      : ""
+
+  const result = await GalleryService.getAll({
+    page,
+    limit,
+    search
+  })
+
+  return res.json({
+    success: true,
+    data: result.data,
+    meta: result.meta
+  })
+},
 
   async create(req: Request, res: Response) {
     const files = req.files as Express.Multer.File[]
@@ -24,6 +37,9 @@ export const GalleryController = {
       })
     }
 
+      console.log("BODY:", req.body)
+      console.log("FILES:", files)
+  
     const parsed = createGallerySchema.safeParse(req.body)
     if (!parsed.success) {
       return res.status(400).json({

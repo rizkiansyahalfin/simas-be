@@ -22,6 +22,7 @@ import {
 export const EventService = {
   async getAll({
     status,
+    search,
     page,
     limit
   }: EventQueryParams): Promise<PaginatedEvents> {
@@ -29,6 +30,7 @@ export const EventService = {
 
     return EventRepository.findAll({
       status,
+      search,
       skip,
       limit
     })

@@ -1,10 +1,12 @@
 import { Router, Request, Response } from 'express'
-
 import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
+<<<<<<< HEAD
 import { startInventoryOverdueJob } from "../modules/inventory-loan/inventory-overdue.job"
 import { startPaymentRetryJob } from "../modules/payment/payment.cron"
 import { BackupCron }from "../modules/backup/backup.cron"
 
+=======
+>>>>>>> feat/be-pagination-filter
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'
@@ -30,6 +32,8 @@ import articleCategoryRoute from '../modules/articles/article-category.route'
 import paymentRoute from '../modules/payment/payment.route'
 import attendanceRouter from '../modules/attendance/attendance.route'
 import backupRouter from '../modules/backup/backup.route'
+import galleryRouter from '../modules/gallery/gallery.route'
+
 
 const router = Router()
 
@@ -53,6 +57,7 @@ router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/inventory-categories', inventoryCategoryRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
+router.use('/gallery', galleryRouter)
 router.use("/articles", articleRiuter)
 router.use("/article-categories", articleCategoryRoute)
 router.use('/donations', donationRouter)
@@ -65,7 +70,11 @@ router.use('/mosque-profile', mosqueprofileRouter)
 router.use('/campaigns', campaignRouter)
 router.use('/audit', auditRouter)
 router.use('/notifications', notificationRouter)
+<<<<<<< HEAD
 router.use('/attendance', attendanceRouter)
 router.use("/payments", paymentRoute)
 router.use("/backup", backupRouter)
+=======
+
+>>>>>>> feat/be-pagination-filter
 export default router
