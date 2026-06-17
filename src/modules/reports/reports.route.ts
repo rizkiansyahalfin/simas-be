@@ -63,4 +63,14 @@ router.get(
   ReportsController.congregations
 )
 
+router.get(
+  "/annual",
+  authMiddleware,
+  rbacMiddleware(
+    "superadmin",
+    "bendahara"
+  ),
+  ReportsController.annualReport
+)
+
 export default router
