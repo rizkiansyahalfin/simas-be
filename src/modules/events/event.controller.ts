@@ -13,11 +13,16 @@ export const EventController = {
       const status = req.query.status as string | undefined
       const page = Number(req.query.page) || 1
       const limit = Number(req.query.limit) || 10
+      const search = 
+        typeof req.query.search === "string"
+        ? req.query.search
+        : ""
 
       const params: EventQueryParams = {
         status,
         page,
-        limit
+        limit,
+        search
       }
 
       const result = await EventService.getAll(params)

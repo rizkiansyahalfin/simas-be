@@ -1,4 +1,5 @@
 import prisma from "../../database"
+import { Prisma } from "../../generated/client"
 import { EventStatus } from "../../generated/enums"
 import type {
   Event,
@@ -11,10 +12,44 @@ import type {
 export const EventRepository = {
   async findAll({
     status,
+    search,
     skip,
     limit
   }: EventRepositoryParams): Promise<PaginatedEvents> {
-    const whereClause = status ? { status: status as EventStatus } : {}
+    const whereClause: Prisma.EventWhereInput = {
+  ...(status && {
+    status: status as EventStatus
+  }),
+
+  ...(search && {
+    OR: [
+      {
+        title: {
+          contains: search,
+          mode: "insensitive"
+        }
+      },
+      {
+        description: {
+          contains: search,
+          mode: "insensitive"
+        }
+      },
+      {
+        speaker: {
+          contains: search,
+          mode: "insensitive"
+        }
+      },
+      {
+        location: {
+          contains: search,
+          mode: "insensitive"
+        }
+      }
+    ]
+  })
+}
 
     const [data, total] = await Promise.all([
       prisma.event.findMany({

@@ -23,6 +23,7 @@ import auditRouter from '../modules/audit/audit.route'
 import campaignRouter from '../modules/campaign/campaign.route'
 import notificationRouter from '../modules/notification/notification.route'
 import articleCategoryRoute from '../modules/articles/article-category.route'
+import galleryRouter from '../modules/gallery/gallery.route'
 
 const router = Router()
 
@@ -43,6 +44,7 @@ router.use('/inventory', inventoryRouter)
 router.use('/inventory-loan', inventoryLoanRouter)
 router.use('/events', eventRouter)
 router.use('/reports', reportsRouter)
+router.use('/gallery', galleryRouter)
 router.use("/articles", articleRiuter)
 router.use("/article-categories", articleCategoryRoute)
 router.use('/donations', donationRouter)
@@ -55,4 +57,5 @@ router.use('/mosque-profile', mosqueprofileRouter)
 router.use('/campaigns', campaignRouter)
 router.use('/audit', auditRouter)
 router.use('/notifications', notificationRouter)
+
 export default router
