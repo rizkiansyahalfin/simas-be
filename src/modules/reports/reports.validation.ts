@@ -46,6 +46,16 @@ export const inventoryReportQuerySchema =
     format: z.enum(["pdf"])
   })
 
+export const annualReportQuerySchema =
+  z.object({
+    year:
+      z.coerce
+        .number()
+        .int()
+        .min(2000)
+  })
+
+export type AnnualReportQuery = z.infer<typeof annualReportQuerySchema>
 export type InventoryReportQuery = z.infer<typeof inventoryReportQuerySchema>
 export type MonthlyFinanceQuery = z.infer<typeof monthlyFinanceQuerySchema>
 export type WeeklyFinanceQuery = z.infer<typeof weeklyFinanceQuerySchema>

@@ -5,7 +5,8 @@ import {
   monthlyZisQuerySchema,
   weeklyFinanceQuerySchema,
   donationsReportQuerySchema,
-  inventoryReportQuerySchema
+  inventoryReportQuerySchema,
+  annualReportQuerySchema
 } from "./reports.validation"
 
 export const ReportsController = {
@@ -206,5 +207,25 @@ async congregations(
   )
 
   return res.send(buffer)
+},
+ async annualReport(
+  req: Request,
+  res: Response
+) {
+
+  const query =
+    annualReportQuerySchema
+      .parse(req.query)
+
+  const result =
+    await ReportsService
+      .generateAnnualReport(
+        query.year
+      )
+
+  return res.json({
+    success: true,
+    data: result
+  })
 }
 }

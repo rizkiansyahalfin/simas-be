@@ -160,5 +160,293 @@ async generateCongregationExcel() {
   return generateCongregationExcel(
     report
   )
+},
+async generateAnnualReport(
+  year: number
+) {
+
+  const data =
+    await ReportsRepository
+      .getAnnualReportData(
+        year
+      )
+
+  const financeIncome =
+    data.cashTransactions
+      .filter(
+        t =>
+          t.type === "income"
+      )
+      .reduce(
+        (sum, t) =>
+          sum +
+          Number(t.amount),
+        0
+      )
+
+  const financeExpense =
+    data.cashTransactions
+      .filter(
+        t =>
+          t.type === "expense"
+      )
+      .reduce(
+        (sum, t) =>
+          sum +
+          Number(t.amount),
+        0
+      )
+
+  const zisReceipts =
+    data.zisTransactions
+      .reduce(
+        (sum, t) =>
+          sum +
+          Number(t.amount),
+        0
+      )
+
+  const zisDistributions =
+    data.distributions
+      .reduce(
+        (sum, d) =>
+          sum +
+          Number(d.amount),
+        0
+      )
+
+  const verifiedAmount =
+    data.donations
+      .filter(
+        d =>
+          d.status ===
+          "verified"
+      )
+      .reduce(
+        (sum, d) =>
+          sum +
+          Number(d.amount),
+        0
+      )
+
+  const pendingAmount =
+    data.donations
+      .filter(
+        d =>
+          d.status ===
+          "pending"
+      )
+      .reduce(
+        (sum, d) =>
+          sum +
+          Number(d.amount),
+        0
+      )
+
+  const totalDonations =
+    data.donations.reduce(
+      (sum, d) =>
+        sum +
+        Number(d.amount),
+      0
+    )
+
+  return {
+
+    year,
+
+    finance: {
+
+      income:
+        financeIncome,
+
+      expense:
+        financeExpense,
+
+      balance:
+        financeIncome -
+        financeExpense,
+
+      transactionCount:
+        data.cashTransactions
+          .length
+    },
+
+    zis: {
+
+      receipts:
+        zisReceipts,
+
+      distributions:
+        zisDistributions,
+
+      balance:
+        zisReceipts -
+        zisDistributions,
+
+      transactionCount:
+        data.zisTransactions
+          .length
+    },
+
+    donations: {
+
+      totalAmount:
+        totalDonations,
+
+      verifiedAmount,
+
+      pendingAmount,
+
+      totalDonations:
+        data.donations
+          .length
+    },
+
+    campaigns: {
+
+      total:
+        data.campaigns.length,
+
+      active:
+        data.campaigns.filter(
+          c =>
+            c.status ===
+            "active"
+        ).length,
+
+      completed:
+        data.campaigns.filter(
+          c =>
+            c.status ===
+            "completed"
+        ).length,
+
+      cancelled:
+        data.campaigns.filter(
+          c =>
+            c.status ===
+            "cancelled"
+        ).length,
+
+      totalRaised:
+        data.payments.reduce(
+          (sum, p) =>
+            sum +
+            Number(
+              p.amount
+            ),
+          0
+        )
+    },
+
+    events: {
+
+      total:
+        data.events.length,
+
+      upcoming:
+        data.events.filter(
+          e =>
+            e.status ===
+            "upcoming"
+        ).length,
+
+      ongoing:
+        data.events.filter(
+          e =>
+            e.status ===
+            "ongoing"
+        ).length,
+
+      completed:
+        data.events.filter(
+          e =>
+            e.status ===
+            "completed"
+        ).length,
+
+      cancelled:
+        data.events.filter(
+          e =>
+            e.status ===
+            "cancelled"
+        ).length
+    },
+
+    attendance: {
+
+      totalSessions:
+        data.sessions.length,
+
+      totalRecords:
+        data.attendanceRecords
+          .length,
+
+      averageAttendancePerSession:
+        data.sessions.length === 0
+          ? 0
+          : Number(
+              (
+                data
+                  .attendanceRecords
+                  .length /
+                data
+                  .sessions
+                  .length
+              ).toFixed(2)
+            )
+    },
+
+    congregations: {
+
+      total:
+        data.congregations
+          .length,
+
+      active:
+        data.congregations
+          .filter(
+            c =>
+              c.isActive
+          ).length,
+
+      mustahik:
+        data.congregations
+          .filter(
+            c =>
+              c.isMustahik
+          ).length
+    },
+
+    mustahik: {
+
+      total:
+        data.mustahiks.length,
+
+      active:
+        data.mustahiks
+          .filter(
+            m =>
+              m.isActive
+          ).length,
+
+      totalDistributed:
+        zisDistributions,
+
+      byCategory:
+        data.mustahikCategories
+          .map(
+            item => ({
+              category:
+                item.category,
+
+              count:
+                item._count
+                  .category
+            })
+          )
+    }
+  }
 }
 }
