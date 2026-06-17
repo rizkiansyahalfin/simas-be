@@ -1,7 +1,5 @@
 import { Router, Request, Response } from 'express'
-
 import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
-
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'

@@ -155,6 +155,11 @@ export const DonationRepository = {
             role: true,
           },
         },
+        category: {
+          select: {
+            name: true
+          }
+        }
       },
     })
   },
