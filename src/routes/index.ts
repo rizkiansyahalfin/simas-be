@@ -1,12 +1,9 @@
 import { Router, Request, Response } from 'express'
 import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.job"
-<<<<<<< HEAD
 import { startInventoryOverdueJob } from "../modules/inventory-loan/inventory-overdue.job"
 import { startPaymentRetryJob } from "../modules/payment/payment.cron"
 import { BackupCron }from "../modules/backup/backup.cron"
 
-=======
->>>>>>> feat/be-pagination-filter
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'
@@ -70,11 +67,8 @@ router.use('/mosque-profile', mosqueprofileRouter)
 router.use('/campaigns', campaignRouter)
 router.use('/audit', auditRouter)
 router.use('/notifications', notificationRouter)
-<<<<<<< HEAD
 router.use('/attendance', attendanceRouter)
 router.use("/payments", paymentRoute)
 router.use("/backup", backupRouter)
-=======
 
->>>>>>> feat/be-pagination-filter
 export default router
