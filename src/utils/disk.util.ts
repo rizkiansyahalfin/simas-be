@@ -4,8 +4,13 @@ import checkDiskSpace from "check-disk-space"
 
 export async function getDiskInfo() {
 
+  const diskPath =
+    process.platform === "win32"
+      ? process.env.SYSTEMDRIVE ?? "C:"
+      : "/"
+
   const disk =
-    await checkDiskSpace("/")
+    await checkDiskSpace(diskPath)
 
   const used =
     disk.size - disk.free
