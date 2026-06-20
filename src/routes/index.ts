@@ -30,6 +30,7 @@ import articleCategoryRoute from '../modules/articles/article-category.route'
 import paymentRoute from '../modules/payment/payment.route'
 import attendanceRouter from '../modules/attendance/attendance.route'
 import backupRouter from '../modules/backup/backup.route'
+import healthRouter from '../modules/health/health.route'
 
 const router = Router()
 
@@ -68,4 +69,5 @@ router.use('/notifications', notificationRouter)
 router.use('/attendance', attendanceRouter)
 router.use("/payments", paymentRoute)
 router.use("/backup", backupRouter)
+router.use("/health", healthRouter)
 export default router
