@@ -3,6 +3,7 @@
 import { Router } from 'express';
 
 import * as dashboardController from './dashboard.controller';
+import { asyncHandler } from '../../utils/async-handler';
 import { authMiddleware } from '../../middlewares/auth.middleware';
 import { rbacMiddleware } from '../../middlewares/rbac.middleware';
 import { Role } from '../../generated/enums';
@@ -17,7 +18,7 @@ router.get(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getDashboardStats
+  asyncHandler(dashboardController.getDashboardStats)
 )
 
 router.get(
@@ -26,7 +27,7 @@ router.get(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getFinanceChart
+  asyncHandler(dashboardController.getFinanceChart)
 )
 
 router.get(
@@ -35,7 +36,7 @@ router.get(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getDonationChart
+  asyncHandler(dashboardController.getDonationChart)
 )
 router.get(
   '/charts/zis',
@@ -43,7 +44,7 @@ router.get(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getZisChart
+  asyncHandler(dashboardController.getZisChart)
 );
 router.get(
   '/charts/donations',
@@ -51,7 +52,7 @@ router.get(
     Role.superadmin,
     Role.bendahara
   ),
-  dashboardController.getDonationChart
+  asyncHandler(dashboardController.getDonationChart)
 );
 
 export default router;

@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import * as controller
 from "./donation-category.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 import {
   authMiddleware
@@ -15,7 +16,7 @@ const router = Router()
 
 router.get(
   "/",
-  controller.getDonationCategories
+  asyncHandler(controller.getDonationCategories)
 )
 
 router.post(
@@ -25,7 +26,7 @@ router.post(
     "bendahara",
     "superadmin"
   ),
-  controller.createDonationCategory
+  asyncHandler(controller.createDonationCategory)
 )
 
 export default router

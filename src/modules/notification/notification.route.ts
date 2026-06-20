@@ -4,6 +4,7 @@ import { Router } from 'express'
 
 import * as notificationController
 from './notification.controller'
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   authMiddleware,
@@ -31,7 +32,7 @@ router.get(
     Role.admin_inventaris,
   ),
 
-  notificationController.getNotifications
+  asyncHandler(notificationController.getNotifications)
 )
 
 router.get(
@@ -44,7 +45,7 @@ router.get(
     Role.admin_inventaris,
   ),
 
-  notificationController.streamNotifications
+  asyncHandler(notificationController.streamNotifications)
 )
 
 router.patch(
@@ -57,7 +58,7 @@ router.patch(
     Role.admin_inventaris,
   ),
 
-  notificationController.markNotificationRead
+  asyncHandler(notificationController.markNotificationRead)
 )
 
 router.patch(
@@ -70,7 +71,7 @@ router.patch(
     Role.admin_inventaris,
   ),
 
-  notificationController.markAllNotificationsRead
+  asyncHandler(notificationController.markAllNotificationsRead)
 )
 
 router.delete(
@@ -80,7 +81,7 @@ router.delete(
     Role.superadmin,
   ),
 
-  notificationController.deleteNotification
+  asyncHandler(notificationController.deleteNotification)
 )
 
 export default router

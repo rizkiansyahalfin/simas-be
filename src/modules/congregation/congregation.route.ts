@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { CongregationController } from "./congregation.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -13,7 +14,7 @@ const controller = CongregationController
 router.get(
   "/",
   authMiddleware,
-  controller.getAll
+  asyncHandler(controller.getAll)
 )
 
 router.post(
@@ -27,7 +28,7 @@ router.post(
     action: AuditAction.create,
     module: 'congregation',
   }),
-  controller.create
+  asyncHandler(controller.create)
 )
 
 router.put(
@@ -41,7 +42,7 @@ router.put(
     action: AuditAction.update,
     module: 'congregation',
   }),
-  controller.update
+  asyncHandler(controller.update)
 )
 
 router.patch(
@@ -54,13 +55,13 @@ router.patch(
     action: AuditAction.update,
     module: 'congregation',
   }),
-  controller.delete
+  asyncHandler(controller.delete)
 )
 
 router.get(
   "/export",
   authMiddleware,
-  controller.export
+  asyncHandler(controller.export)
 )
 
 router.post(
@@ -75,7 +76,7 @@ router.post(
     action: AuditAction.create,
     module: "congregation",
   }),
-  controller.import
+  asyncHandler(controller.import)
 )
 
 export default router

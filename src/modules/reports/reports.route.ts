@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { ReportsController } from "./reports.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from "../audit/audit.middleware"
@@ -11,21 +12,21 @@ router.get(
   "/finance/monthly",
   authMiddleware,
   rbacMiddleware("superadmin", "bendahara"),
-  ReportsController.monthlyFinance
+  asyncHandler(ReportsController.monthlyFinance)
 )
 
 router.get(
   "/inventory",
   authMiddleware,
   rbacMiddleware("superadmin", "admin_inventaris"),
-  ReportsController.inventoryExcel
+  asyncHandler(ReportsController.inventoryExcel)
 )
 
 router.get(
   "/finance/weekly",
   authMiddleware,
   rbacMiddleware("superadmin", "bendahara"),
-  ReportsController.weeklyFinanceExcel
+  asyncHandler(ReportsController.weeklyFinanceExcel)
 )
 
 router.get(
@@ -33,14 +34,14 @@ router.get(
   authMiddleware,
   rbacMiddleware("superadmin", "bendahara"),
    auditMiddleware({ action: AuditAction.create, module: "report-zis"}),
-  ReportsController.monthlyZis
+  asyncHandler(ReportsController.monthlyZis)
 )
 
 router.get(
   "/donations",
   authMiddleware,
   rbacMiddleware("superadmin","bendahara"),
-  ReportsController.donationsExcel
+  asyncHandler(ReportsController.donationsExcel)
 )
 
 router.get(
@@ -50,7 +51,7 @@ router.get(
     "superadmin",
     "admin_inventaris"
   ),
-  ReportsController.inventoryFull
+  asyncHandler(ReportsController.inventoryFull)
 )
 
 router.get(
@@ -60,7 +61,7 @@ router.get(
     "superadmin",
     "admin_kegiatan"
   ),
-  ReportsController.congregations
+  asyncHandler(ReportsController.congregations)
 )
 
 router.get(
@@ -70,7 +71,7 @@ router.get(
     "superadmin",
     "bendahara"
   ),
-  ReportsController.annualReport
+  asyncHandler(ReportsController.annualReport)
 )
 
 export default router

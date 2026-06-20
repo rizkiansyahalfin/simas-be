@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { AuthController } from "./auth.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { bruteForceMiddleware } from "../../middlewares/brute-force.middleware"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { auditMiddleware }from "../audit/audit.middleware"
@@ -10,18 +11,18 @@ const router = Router()
 router.post(
     "/login", 
     bruteForceMiddleware, 
-    AuthController.login
+    asyncHandler(AuthController.login)
   )
 
 router.post(
   "/login/2fa",
   bruteForceMiddleware,
-  AuthController.verifyLoginTwoFactor
+  asyncHandler(AuthController.verifyLoginTwoFactor)
 )
 
 router.post(
   "/refresh",
-  AuthController.refresh
+  asyncHandler(AuthController.refresh)
   )
 
   router.post(
@@ -33,7 +34,7 @@ router.post(
     module: "auth-2fa"
   }),
 
-  AuthController.setupTwoFactor
+  asyncHandler(AuthController.setupTwoFactor)
 )
 
 router.post(
@@ -45,7 +46,7 @@ router.post(
     module: "auth-2fa"
   }),
 
-  AuthController.verifyTwoFactor
+  asyncHandler(AuthController.verifyTwoFactor)
 )
 
 router.post(
@@ -57,19 +58,19 @@ router.post(
     module: "auth-2fa"
   }),
 
-  AuthController.disableTwoFactor
+  asyncHandler(AuthController.disableTwoFactor)
 )
 
 router.post(
   "/forgot-password",
   bruteForceMiddleware,
-  AuthController.forgotPassword
+  asyncHandler(AuthController.forgotPassword)
 )
 
 router.post(
   "/reset-password",
   bruteForceMiddleware,
-  AuthController.resetPassword
+  asyncHandler(AuthController.resetPassword)
 )
 
 export default router

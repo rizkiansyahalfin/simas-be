@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { BackupController } from "./backup.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from "../audit/audit.middleware"
@@ -20,7 +21,7 @@ router.post(
     action: AuditAction.create,
     module: "database-backup"
   }),
-  BackupController.createBackup
+  asyncHandler(BackupController.createBackup)
 )
 
 // Superadmin only - list backups
@@ -28,7 +29,7 @@ router.get(
   "/backup",
   authMiddleware,
   rbacMiddleware(Role.superadmin),
-  BackupController.listBackups
+  asyncHandler(BackupController.listBackups)
 )
 
 // Superadmin only - delete backup
@@ -40,7 +41,7 @@ router.delete(
     action: AuditAction.delete,
     module: "database-backup"
   }),
-  BackupController.deleteBackup
+  asyncHandler(BackupController.deleteBackup)
 )
 
 router.post(
@@ -65,8 +66,7 @@ router.post(
     "file"
   ),
 
-  BackupController
-    .validateRestore
+  asyncHandler(BackupController.validateRestore)
 )
 
 router.post(
@@ -87,7 +87,7 @@ router.post(
       "database-restore"
   }),
 
-  BackupController.restore
+  asyncHandler(BackupController.restore)
 )
 
 export default router
