@@ -1,9 +1,9 @@
-// campaign.controller.ts
-
 import type {
   Request,
   Response,
 } from 'express'
+
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   CampaignStatus,
@@ -14,12 +14,8 @@ import {
   createCampaignSchema,
   updateCampaignSchema,
 } from './campaign.validation'
-import type {
-  CreateCampaignInput,
-  UpdateCampaignInput,
-} from './campaign.validation'
 
-export const getCampaigns = async (
+export const getCampaigns = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -41,9 +37,9 @@ export const getCampaigns = async (
     success: true,
     ...data,
   })
-}
+})
 
-export const getCampaignById = async (
+export const getCampaignById = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -64,14 +60,10 @@ export const getCampaignById = async (
     success: true,
     data: campaign,
   })
-}
+})
 
-export const createCampaign = async (
-  req: Request<
-    Record<string, never>,
-    Record<string, never>,
-    CreateCampaignInput
-  >,
+export const createCampaign = asyncHandler(async (
+  req: Request,
   res: Response
 ) => {
 
@@ -101,14 +93,10 @@ export const createCampaign = async (
     success: true,
     data: campaign,
   })
-}
+})
 
-export const updateCampaign = async (
-  req: Request<
-    { id: string },
-    Record<string, never>,
-    UpdateCampaignInput
-  >,
+export const updateCampaign = asyncHandler(async (
+  req: Request,
   res: Response
 ) => {
 
@@ -133,9 +121,9 @@ export const updateCampaign = async (
     success: true,
     data: campaign,
   })
-}
+})
 
-export const deleteCampaign = async (
+export const deleteCampaign = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -148,9 +136,9 @@ export const deleteCampaign = async (
     success: true,
     message: 'Campaign deleted successfully',
   })
-}
+})
 
-export const getCampaignProgress = async (
+export const getCampaignProgress = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -173,4 +161,4 @@ export const getCampaignProgress = async (
     success: true,
     data: progress,
   })
-}
+})

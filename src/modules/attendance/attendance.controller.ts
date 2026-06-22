@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { AttendanceService } from "./attendance.service"
 import { createSessionSchema, checkInSchema } from "./attendance.validation"
 import { attendanceReportSchema } from "./attendance.validation"
@@ -15,21 +16,16 @@ const parseLimit = (value: unknown) => {
 }
 
 export const AttendanceController = {
-	async getAll(req: Request, res: Response, next: NextFunction) {
-		try {
+	getAll: asyncHandler(async (req: Request, res: Response) => {
 			const page = parsePage(req.query.page)
 			const limit = parseLimit(req.query.limit)
 
 			const result = await AttendanceService.getSessions(page, limit, req.query.search as string | undefined)
 
 			res.json({ status: "success", data: result })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async getById(req: Request, res: Response, next: NextFunction) {
-		try {
+	getById: asyncHandler(async (req: Request, res: Response) => {
 			const id = Number(req.params.id)
 
 			if (isNaN(id)) return res.status(400).json({ status: "error", message: "Invalid session ID" })
@@ -37,13 +33,9 @@ export const AttendanceController = {
 			const result = await AttendanceService.getSessionById(id)
 
 			res.json({ status: "success", data: result })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async create(req: Request, res: Response, next: NextFunction) {
-		try {
+	create: asyncHandler(async (req: Request, res: Response) => {
 			const validated = createSessionSchema.parse(req.body)
 
 			if (!req.user?.id) return res.status(401).json({ status: "error", message: "Unauthorized" })
@@ -53,13 +45,9 @@ export const AttendanceController = {
 			const result = await AttendanceService.createSession(payload)
 
 			res.status(201).json({ status: "success", data: result })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async update(req: Request, res: Response, next: NextFunction) {
-		try {
+	update: asyncHandler(async (req: Request, res: Response) => {
 			const id = Number(req.params.id)
 
 			if (isNaN(id)) return res.status(400).json({ status: "error", message: "Invalid session ID" })
@@ -69,13 +57,9 @@ export const AttendanceController = {
 			const result = await AttendanceService.updateSession(id, validated)
 
 			res.json({ status: "success", data: result })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async delete(req: Request, res: Response, next: NextFunction) {
-		try {
+	delete: asyncHandler(async (req: Request, res: Response) => {
 			const id = Number(req.params.id)
 
 			if (isNaN(id)) return res.status(400).json({ status: "error", message: "Invalid session ID" })
@@ -83,29 +67,20 @@ export const AttendanceController = {
 			await AttendanceService.deleteSession(id)
 
 			res.json({ status: "success", message: "Session deleted" })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async checkIn(req: Request, res: Response, next: NextFunction) {
-		try {
+	checkIn: asyncHandler(async (req: Request, res: Response) => {
 			const validated = checkInSchema.parse(req.body)
 
 			const result = await AttendanceService.checkIn(validated)
 
 			res.status(201).json({ status: "success", data: result })
-		} catch (err) {
-			next(err)
-		}
-	},
+	}),
 
-	async report(
+	report: asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
+    res: Response
+  ) => {
       const query =
         attendanceReportSchema.parse(
           req.query
@@ -120,8 +95,5 @@ export const AttendanceController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

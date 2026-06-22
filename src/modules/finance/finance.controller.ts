@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
+import { asyncHandler } from '../../utils/async-handler';
 import { TransactionType, ZisCategory } from '../../generated/enums';
 import * as service from './finance.service';
 import {
@@ -45,8 +46,7 @@ const parseZisCategory = (value: unknown): ZisCategory | undefined => {
   return undefined;
 };
 
-export const getCash = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getCash = asyncHandler(async (req: Request, res: Response) => {
     const page = parsePage(req.query.page);
     const limit = parseLimit(req.query.limit);
 
@@ -60,13 +60,9 @@ export const getCash = async (req: Request, res: Response, next: NextFunction) =
 
     const data = await service.getCashTransactions({ page, limit, filters });
     res.json({ status: 'success', data });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const getCashById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getCashById = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const data = await service.getCashTransactionById(id);
 
@@ -75,38 +71,25 @@ export const getCashById = async (req: Request, res: Response, next: NextFunctio
     }
 
     res.json({ status: 'success', data });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const getSummary = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getSummary = asyncHandler(async (req: Request, res: Response) => {
     const data = await service.getSummary();
     res.json({ status: 'success', data });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const postCash = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const postCash = asyncHandler(async (req: Request, res: Response) => {
     const validatedData = createCashSchema.parse(req.body);
     const userId = req.user?.id ?? 1;
 
     const result = await service.addCashTransaction(validatedData, userId);
     res.status(201).json({ status: 'success', data: result });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const putCash = async (
+export const putCash = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const id = Number(req.params.id)
 
     const validatedData =
@@ -122,49 +105,15 @@ export const putCash = async (
       status: "success",
       data: result
     })
+})
 
-  } catch (error) {
-
-    if (
-      error instanceof Error &&
-      error.message ===
-        "ONLY_CURRENT_PERIOD_CAN_BE_EDITED"
-    ) {
-      return res.status(400).json({
-        status: "error",
-        message:
-          "Hanya transaksi periode bulan berjalan yang dapat diedit"
-      })
-    }
-
-    if (
-      error instanceof Error &&
-      error.message ===
-        "CASH_TRANSACTION_NOT_FOUND"
-    ) {
-      return res.status(404).json({
-        status: "error",
-        message:
-          "Cash transaction not found"
-      })
-    }
-
-    next(error)
-  }
-}
-
-export const deleteCash = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const deleteCash = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     await service.removeCashTransaction(id);
     res.json({ status: 'success', message: 'Cash transaction deleted successfully' });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const getZis = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getZis = asyncHandler(async (req: Request, res: Response) => {
     const page = parsePage(req.query.page);
     const limit = parseLimit(req.query.limit);
 
@@ -178,13 +127,9 @@ export const getZis = async (req: Request, res: Response, next: NextFunction) =>
 
     const data = await service.getZisTransactions({ page, limit, filters });
     res.json({ status: 'success', data });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const getZisById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getZisById = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const data = await service.getZisTransactionById(id);
 
@@ -193,41 +138,26 @@ export const getZisById = async (req: Request, res: Response, next: NextFunction
     }
 
     res.json({ status: 'success', data });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const postZis = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const postZis = asyncHandler(async (req: Request, res: Response) => {
     const validatedData = createZisSchema.parse(req.body);
     const userId = req.user?.id ?? 1;
 
     const result = await service.addZisTransaction(validatedData, userId);
     res.status(201).json({ status: 'success', data: result });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const putZis = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const putZis = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const validatedData = updateZisSchema.parse(req.body);
 
     const result = await service.updateZisTransaction(id, validatedData);
     res.json({ status: 'success', data: result });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-export const deleteZis = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const deleteZis = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     await service.removeZisTransaction(id);
     res.json({ status: 'success', message: 'ZIS transaction deleted successfully' });
-  } catch (error) {
-    next(error);
-  }
-};
+});

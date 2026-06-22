@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { DistributionService } from "./distribution.service"
 import {
   createDistributionSchema,
@@ -6,33 +7,25 @@ import {
 } from "./distribution.validation"
 
 export const DistributionController = {
-  async getHistory(req: Request, res: Response, next: NextFunction) {
-    try {
-      const query = distributionQuerySchema.parse(req.query)
+  getHistory: asyncHandler(async (req: Request, res: Response) => {
+    const query = distributionQuerySchema.parse(req.query)
 
-      const result = await DistributionService.getHistory(query)
+    const result = await DistributionService.getHistory(query)
 
-      res.json({
-        status: "success",
-        data: result
-      })
-    } catch (err) {
-      next(err)
-    }
-  },
+    res.json({
+      status: "success",
+      data: result
+    })
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const validated = createDistributionSchema.parse(req.body)
+  create: asyncHandler(async (req: Request, res: Response) => {
+    const validated = createDistributionSchema.parse(req.body)
 
-      const result = await DistributionService.create(validated)
+    const result = await DistributionService.create(validated)
 
-      res.status(201).json({
-        status: "success",
-        data: result
-      })
-    } catch (err) {
-      next(err)
-    }
-  }
+    res.status(201).json({
+      status: "success",
+      data: result
+    })
+  })
 }

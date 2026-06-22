@@ -1,9 +1,10 @@
 import type { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { PrayerService } from "./prayer.service"
 import { prayerQuerySchema } from "./prayer.validation"
 
 export const PrayerController = {
-  async getSchedule(req: Request, res: Response) {
+  getSchedule: asyncHandler(async (req: Request, res: Response) => {
     const query = prayerQuerySchema.safeParse(req.query)
 
     if (!query.success) {
@@ -22,21 +23,21 @@ export const PrayerController = {
       success: true,
       data
     })
-  },
+  }),
 
-  async sync(req: Request, res: Response) {
+  sync: asyncHandler(async (req: Request, res: Response) => {
     const result = await PrayerService.syncMonthly()
 
     return res.json({
       success: true,
       result
     })
-  },
+  }),
 
-  async getWeeklySchedule(
+  getWeeklySchedule: asyncHandler(async (
   req: Request,
   res: Response
-) {
+) => {
 
   const city =
     typeof req.query.city === "string"
@@ -52,5 +53,5 @@ export const PrayerController = {
     success: true,
     data
   })
-}
+})
 }

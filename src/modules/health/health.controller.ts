@@ -1,9 +1,9 @@
-// health.controller.ts
-
 import {
   Request,
   Response
 } from "express"
+
+import { asyncHandler } from "../../utils/async-handler"
 
 import {
   HealthService
@@ -11,10 +11,10 @@ import {
 
 export const HealthController = {
 
-  async basic(
+  basic: asyncHandler(async (
     req: Request,
     res: Response
-  ) {
+  ) => {
 
     const result =
       await HealthService
@@ -28,12 +28,12 @@ export const HealthController = {
     res
       .status(statusCode)
       .json(result)
-  },
+  }),
 
-  async detailed(
+  detailed: asyncHandler(async (
     req: Request,
     res: Response
-  ) {
+  ) => {
 
     const result =
       await HealthService
@@ -47,5 +47,5 @@ export const HealthController = {
     res
       .status(statusCode)
       .json(result)
-  }
+  })
 }

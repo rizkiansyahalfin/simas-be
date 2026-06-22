@@ -1,59 +1,38 @@
 import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
+import { AppError } from "../../errors/app-error"
 import { BackupService } from "./backup.service"
 import { RestoreService } from "./restore.service"
 import {  confirmRestoreSchema} from "./restore.validation"
 
 export const BackupController = {
-  async createBackup(req: Request, res: Response) {
-    try {
+  createBackup: asyncHandler(async (req: Request, res: Response) => {
       const result = await BackupService.createBackup()
 
       return res.status(200).json({
         success: true,
         data: result
       })
-    } catch (error: unknown) {
-      const errorCode = error instanceof Error ? error.message : "BACKUP_FAILED"
-      const status =
-        errorCode === "PG_DUMP_NOT_AVAILABLE" ||
-        errorCode === "DATABASE_URL_MISSING"
-          ? 400
-          : 500
+  }),
 
-      return res.status(status).json({
-        success: false,
-        error_code: errorCode
-      })
-    }
-  },
-
-  async listBackups(req: Request, res: Response) {
-    try {
+  listBackups: asyncHandler(async (req: Request, res: Response) => {
       const backups = await BackupService.listBackups()
 
       return res.status(200).json({
         success: true,
         data: backups
       })
-    } catch (error: unknown) {
-      const errorCode = error instanceof Error ? error.message : "LIST_BACKUPS_FAILED"
+  }),
 
-      return res.status(500).json({
-        success: false,
-        error_code: errorCode
-      })
-    }
-  },
-
-  async deleteBackup(req: Request, res: Response) {
-    try {
+  deleteBackup: asyncHandler(async (req: Request, res: Response) => {
       const fileName = req.params.fileName
 
       if (!fileName || Array.isArray(fileName)) {
-        return res.status(400).json({
-          success: false,
-          error_code: "FILENAME_REQUIRED"
-        })
+        throw new AppError(
+          "FILENAME_REQUIRED",
+          "Filename is required",
+          400
+        )
       }
 
       await BackupService.deleteBackup(fileName)
@@ -62,35 +41,19 @@ export const BackupController = {
         success: true,
         message: "Backup deleted successfully"
       })
-    } catch (error: unknown) {
-      const errorCode = error instanceof Error ? error.message : "DELETE_BACKUP_FAILED"
-      const status =
-        errorCode === "INVALID_BACKUP_NAME" ||
-        errorCode === "INVALID_BACKUP_PATH" ||
-        errorCode === "BACKUP_NOT_FOUND"
-          ? 400
-          : 500
+  }),
 
-      return res.status(status).json({
-        success: false,
-        error_code: errorCode
-      })
-    }
-  },
-  async validateRestore(
+  validateRestore: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     if (!req.file) {
-
-      return res.status(400).json({
-        success: false,
-        error_code:
-          "BACKUP_FILE_REQUIRED"
-      })
+      throw new AppError(
+        "BACKUP_FILE_REQUIRED",
+        "Backup file is required",
+        400
+      )
     }
 
     const result =
@@ -103,24 +66,12 @@ export const BackupController = {
       success: true,
       data: result
     })
+}),
 
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-},
-async restore(
+restore: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     const {
       restoreToken
@@ -138,16 +89,5 @@ async restore(
       message:
         "Database restored successfully"
     })
-
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-}
+})
 }

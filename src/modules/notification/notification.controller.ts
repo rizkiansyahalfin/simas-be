@@ -1,11 +1,11 @@
-// notification.controller.ts
-
 import type {
   Request,
   Response,
 } from 'express'
 
 import crypto from 'crypto'
+
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   NotificationType,
@@ -18,44 +18,6 @@ import {
 import {
   NotificationSSE,
 } from './notification.sse'
-
-const getErrorMessage = (
-  error: unknown
-): string => {
-
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error
-  ) {
-
-    return String(
-      (
-        error as {
-          message: unknown
-        }
-      ).message
-    )
-  }
-
-  return 'Internal server error'
-}
-
-const isPrismaNotFoundError = (
-  error: unknown
-): boolean => {
-
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    (
-      error as {
-        code: unknown
-      }
-    ).code === 'P2025'
-  )
-}
 
 const parseNotificationType = (
   value: unknown
@@ -78,12 +40,10 @@ const parseNotificationType = (
 }
 
 export const streamNotifications =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
-
-    try {
       res.setHeader(
         'Content-Type',
         'text/event-stream'
@@ -139,23 +99,13 @@ export const streamNotifications =
 
         res.end()
       })
-    } catch (error: unknown) {
-
-      return res.status(500).json({
-        success: false,
-        message:
-          getErrorMessage(error),
-      })
-    }
-  }
+  })
 
 export const getNotifications =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
-
-    try {
       const page =
         Number(req.query.page) || 1
 
@@ -166,10 +116,8 @@ export const getNotifications =
         page < 1 ||
         limit < 1
       ) {
-
         return res.status(400).json({
           success: false,
-
           message:
             'Page and limit must be positive numbers',
         })
@@ -202,23 +150,13 @@ export const getNotifications =
         success: true,
         ...result,
       })
-    } catch (error: unknown) {
-
-      return res.status(500).json({
-        success: false,
-        message:
-          getErrorMessage(error),
-      })
-    }
-  }
+  })
 
 export const markNotificationRead =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
-
-    try {
       const id =
         Number(req.params.id)
 
@@ -226,7 +164,6 @@ export const markNotificationRead =
         Number.isNaN(id) ||
         id < 1
       ) {
-
         return res.status(400).json({
           success: false,
           message:
@@ -243,56 +180,27 @@ export const markNotificationRead =
         success: true,
         data: notification,
       })
-    } catch (error: unknown) {
-
-      const statusCode =
-        isPrismaNotFoundError(error)
-          ? 404
-          : 500
-
-      return res.status(statusCode).json({
-        success: false,
-
-        message:
-          statusCode === 404
-            ? 'Notification not found'
-            : getErrorMessage(error),
-      })
-    }
-  }
+  })
 
 export const markAllNotificationsRead =
-  async (
+  asyncHandler(async (
     _req: Request,
     res: Response
   ) => {
-
-    try {
       await NotificationService.readAll()
 
       return res.status(200).json({
         success: true,
-
         message:
           'All notifications marked as read',
       })
-    } catch (error: unknown) {
-
-      return res.status(500).json({
-        success: false,
-        message:
-          getErrorMessage(error),
-      })
-    }
-  }
+  })
 
 export const deleteNotification =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
-
-    try {
       const id =
         Number(req.params.id)
 
@@ -300,7 +208,6 @@ export const deleteNotification =
         Number.isNaN(id) ||
         id < 1
       ) {
-
         return res.status(400).json({
           success: false,
           message:
@@ -314,24 +221,7 @@ export const deleteNotification =
 
       return res.status(200).json({
         success: true,
-
         message:
           'Notification deleted successfully',
       })
-    } catch (error: unknown) {
-
-      const statusCode =
-        isPrismaNotFoundError(error)
-          ? 404
-          : 500
-
-      return res.status(statusCode).json({
-        success: false,
-
-        message:
-          statusCode === 404
-            ? 'Notification not found'
-            : getErrorMessage(error),
-      })
-    }
-  }
+  })

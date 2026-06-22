@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
+import { asyncHandler } from '../../utils/async-handler'
 import { InventoryService } from './inventory.service'
 import {
   CreateInventorySchema,
@@ -7,8 +8,7 @@ import {
 } from './inventory.validation'
 
 export const InventoryController = {
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const filter = FilterInventorySchema.parse(req.query)
       const data = await InventoryService.getAll(filter)
 
@@ -16,13 +16,9 @@ export const InventoryController = {
         status: 'success',
         data
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async getById(req: Request, res: Response, next: NextFunction) {
-    try {
+  getById: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -38,13 +34,9 @@ export const InventoryController = {
         status: 'success',
         data
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated =
         CreateInventorySchema.parse(
           req.body
@@ -60,13 +52,9 @@ export const InventoryController = {
         status: 'success',
         data
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -92,13 +80,9 @@ export const InventoryController = {
         status: 'success',
         data
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
+  delete: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -114,8 +98,5 @@ export const InventoryController = {
         status: 'success',
         message: 'Inventory item deleted successfully'
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

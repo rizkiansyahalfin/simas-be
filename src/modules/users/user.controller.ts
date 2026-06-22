@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { Role } from "../../generated/enums"
 import { UserService } from "./user.service"
 import { createUserSchema, updateUserSchema } from "./user.validation"
@@ -38,8 +39,7 @@ const parseRole = (value: unknown): Role | undefined => {
 
 export const UserController = {
 
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const page = parsePage(req.query.page)
       const limit = parseLimit(req.query.limit)
       const filters = {
@@ -51,44 +51,29 @@ export const UserController = {
       const result = await UserService.getAll(page, limit, filters)
 
       res.json({ status: "success", data: result })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated = createUserSchema.parse(req.body)
 
       const result = await UserService.create(validated)
 
       res.status(201).json({ status: "success", data: result })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
       const validated = updateUserSchema.parse(req.body)
 
       const result = await UserService.update(id, validated)
 
       res.json({ status: "success", data: result })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async getProfile(
+  getProfile: asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
-) {
-
-  try {
-
+  res: Response
+) => {
     const userId =
       req.user!.id
 
@@ -101,20 +86,12 @@ export const UserController = {
       status: "success",
       data: result
     })
+  }),
 
-  } catch (err) {
-    next(err)
-  }
-  },
-
-  async updateProfile(
+  updateProfile: asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
-) {
-
-  try {
-
+  res: Response
+) => {
     const userId =
       req.user!.id
 
@@ -137,35 +114,23 @@ export const UserController = {
       status: "success",
       data: result
     })
+  }),
 
-  } catch (err) {
-    next(err)
-  }
-},
-
-  async activate(req: Request, res: Response, next: NextFunction) {
-    try {
+  activate: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
       const currentUserId = req.user!.id
 
       await UserService.activate(id, currentUserId)
 
       res.json({ status: "success", message: "User activated" })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async deactivate(req: Request, res: Response, next: NextFunction) {
-    try {
+  deactivate: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
       const currentUserId = req.user!.id
 
       await UserService.deactivate(id, currentUserId)
 
       res.json({ status: "success", message: "User deactivated" })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }
