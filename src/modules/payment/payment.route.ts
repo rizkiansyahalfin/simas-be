@@ -6,17 +6,18 @@ import { AuditAction } from "../../generated/client"
 import { midtransWebhookAuth } from "./payment.middleware"
 
 import { PaymentController } from "./payment.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 const router = Router()
 
 router.post(
   "/create-transaction",
-  PaymentController.createTransaction
+  asyncHandler(PaymentController.createTransaction)
 )
 
 router.get(
   "/:orderId/status",
-  PaymentController.getStatus
+  asyncHandler(PaymentController.getStatus)
 )
 
 router.post(
@@ -27,13 +28,13 @@ router.post(
     action: AuditAction.update,
     module: "payments",
   }),
-  PaymentController.refund
+  asyncHandler(PaymentController.refund)
 )
 
 router.post(
   "/notification",
   midtransWebhookAuth,
-  PaymentController.notification
+  asyncHandler(PaymentController.notification)
 )
 
 export default router

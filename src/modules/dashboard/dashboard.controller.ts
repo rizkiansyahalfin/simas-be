@@ -1,6 +1,5 @@
-// dashboard.controller.ts
-
 import type { Request, Response } from 'express';
+import { asyncHandler } from '../../utils/async-handler';
 
 import * as dashboardService from './dashboard.service';
 
@@ -8,7 +7,7 @@ import type {
   DashboardRange,
 } from './dashboard.type';
 
-export const getFinanceChart = async (
+export const getFinanceChart = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -22,9 +21,9 @@ export const getFinanceChart = async (
     success: true,
     data,
   });
-};
+});
 
-export const getDonationChart = async (
+export const getDonationChart = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -38,9 +37,9 @@ export const getDonationChart = async (
     success: true,
     data,
   });
-};
+});
 
-export const getDashboardStats = async (
+export const getDashboardStats = asyncHandler(async (
   _req: Request,
   res: Response
 ) => {
@@ -50,8 +49,9 @@ export const getDashboardStats = async (
     success: true,
     data,
   });
-};
-export const getCongregationChart = async (
+});
+
+export const getCongregationChart = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -66,8 +66,9 @@ export const getCongregationChart = async (
     success: true,
     data,
   });
-};
-export const getZisChart = async (
+});
+
+export const getZisChart = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -82,4 +83,4 @@ export const getZisChart = async (
     success: true,
     data,
   });
-};
+});

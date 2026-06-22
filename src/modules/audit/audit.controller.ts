@@ -1,9 +1,9 @@
-// audit.controller.ts
-
 import type {
   Request,
   Response,
 } from 'express'
+
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   AuditAction,
@@ -11,7 +11,7 @@ import {
 
 import * as auditService from './audit.service'
 
-export const getAuditLogs = async (
+export const getAuditLogs = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
@@ -63,4 +63,4 @@ export const getAuditLogs = async (
     success: true,
     ...data,
   })
-}
+})

@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { MustahikService } from "./mustahik.service"
 import {
   createMustahikSchema,
@@ -7,8 +8,7 @@ import {
 } from "./mustahik.validation"
 
 export const MustahikController = {
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const query = mustahikQuerySchema.parse(req.query)
 
       const result = await MustahikService.getAll(query)
@@ -17,13 +17,9 @@ export const MustahikController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated = createMustahikSchema.parse(req.body)
 
       const result = await MustahikService.create(validated)
@@ -32,13 +28,9 @@ export const MustahikController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -56,8 +48,5 @@ export const MustahikController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

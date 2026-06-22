@@ -1,8 +1,9 @@
 import type {
   Request,
-  Response,
-  NextFunction
+  Response
 } from "express"
+
+import { asyncHandler } from "../../utils/async-handler"
 
 import {
   ArticleCategoryService
@@ -29,14 +30,10 @@ const parseId = (
   return id
 }
 
-export const getAll = async (
+export const getAll = asyncHandler(async (
   _req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-
-  try {
-
     const data =
       await ArticleCategoryService.getAll()
 
@@ -44,20 +41,12 @@ export const getAll = async (
       status: "success",
       data
     })
+})
 
-  } catch (err) {
-    next(err)
-  }
-}
-
-export const create = async (
+export const create = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-
-  try {
-
     const payload =
       createArticleCategorySchema.parse(
         req.body
@@ -72,20 +61,12 @@ export const create = async (
       status: "success",
       data: result
     })
+})
 
-  } catch (err) {
-    next(err)
-  }
-}
-
-export const update = async (
+export const update = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-
-  try {
-
     const id =
       parseId(req.params.id)
 
@@ -104,21 +85,13 @@ export const update = async (
       status: "success",
       data: result
     })
-
-  } catch (err) {
-    next(err)
-  }
-}
+})
 
 export const deleteCategory =
-  async (
+  asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
   ) => {
-
-    try {
-
       const id =
         parseId(req.params.id)
 
@@ -131,8 +104,4 @@ export const deleteCategory =
         message:
           "Category deleted successfully"
       })
-
-    } catch (err) {
-      next(err)
-    }
-  }
+  })

@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { GalleryController } from "./gallery.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
@@ -10,7 +11,7 @@ import { uploadImage } from "../../middlewares/upload.middleware"
 
 const router = Router()
 
-router.get("/", GalleryController.findAll)
+router.get("/", asyncHandler(GalleryController.findAll))
 
 router.post(
   "/",
@@ -24,7 +25,7 @@ router.post(
     module: 'gallery',
   }),
   uploadImage.array("images", 10),
-  GalleryController.create
+  asyncHandler(GalleryController.create)
 )
 
 router.delete(
@@ -38,7 +39,7 @@ router.delete(
     action: AuditAction.delete,
     module: 'gallery',
   }),
-  GalleryController.delete
+  asyncHandler(GalleryController.delete)
 )
 
 export default router

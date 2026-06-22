@@ -18,7 +18,7 @@ export const asyncHandler =
   next: NextFunction
 ) => {
 
-  Promise
+  return Promise
     .resolve(
       fn(req, res, next)
     )

@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import {
   congregationQuerySchema,
   createCongregationSchema,
@@ -7,8 +8,7 @@ import {
 import { CongregationService } from "./congregation.service"
 
 export const CongregationController = {
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const query = congregationQuerySchema.parse(req.query)
       const result = await CongregationService.getAll(query)
 
@@ -16,13 +16,9 @@ export const CongregationController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated = createCongregationSchema.parse(req.body)
       const result = await CongregationService.create(validated)
 
@@ -30,13 +26,9 @@ export const CongregationController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -53,13 +45,9 @@ export const CongregationController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async export(req: Request, res: Response, next: NextFunction) {
-  try {
+  export: asyncHandler(async (req: Request, res: Response) => {
     const format = req.query.format
 
     if (format !== "excel") {
@@ -83,15 +71,9 @@ export const CongregationController = {
     )
 
     return res.send(file)
+  }),
 
-  } catch (err) {
-    next(err)
-  }
-},
-
-async import(req: Request, res: Response, next: NextFunction) {
-  try {
-
+  import: asyncHandler(async (req: Request, res: Response) => {
     if (!req.file) {
       return res.status(400).json({
         status: "error",
@@ -108,14 +90,9 @@ async import(req: Request, res: Response, next: NextFunction) {
       status: "success",
       data: result
     })
+  }),
 
-  } catch (err) {
-    next(err)
-  }
-},
-
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
+  delete: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -131,8 +108,5 @@ async import(req: Request, res: Response, next: NextFunction) {
         status: "success",
         message: "Congregation deleted successfully"
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

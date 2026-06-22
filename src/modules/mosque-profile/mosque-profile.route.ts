@@ -3,6 +3,7 @@ import { AuditAction } from '../../generated/client'
 
 import { MosqueProfileController }
 from "./mosque-profile.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 import { authMiddleware }
 from "../../middlewares/auth.middleware"
@@ -18,12 +19,12 @@ const router = Router()
 
 router.get(
   "/",
-  MosqueProfileController.get
+  asyncHandler(MosqueProfileController.get)
 )
 
 router.get(
   "/public-config",
-  MosqueProfileController.getPublicConfig
+  asyncHandler(MosqueProfileController.getPublicConfig)
 )
 
 router.put(
@@ -38,7 +39,7 @@ router.put(
     module: 'mosque-profile',
   }),
   uploadImage.single("qris"),
-  MosqueProfileController.update
+  asyncHandler(MosqueProfileController.update)
 )
 
 export default router

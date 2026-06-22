@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { EventService } from "./event.service"
 import type { EventQueryParams } from "./event.type"
 import {
@@ -8,8 +9,7 @@ import {
 } from "./event.validation"
 
 export const EventController = {
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const status = req.query.status as string | undefined
       const page = Number(req.query.page) || 1
       const limit = Number(req.query.limit) || 10
@@ -31,13 +31,9 @@ export const EventController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated = createEventSchema.parse(req.body)
 
       if (!req.user?.id) {
@@ -54,13 +50,9 @@ export const EventController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -78,13 +70,9 @@ export const EventController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async updateStatus(req: Request, res: Response, next: NextFunction) {
-    try {
+  updateStatus: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -102,13 +90,9 @@ export const EventController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
+  delete: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -124,8 +108,5 @@ export const EventController = {
         status: "success",
         message: "Event deleted successfully"
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

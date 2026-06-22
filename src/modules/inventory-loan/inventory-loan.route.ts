@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { InventoryLoanController } from "./inventory-loan.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -11,13 +12,13 @@ const controller = InventoryLoanController
 router.get(
   "/",
   authMiddleware,
-  controller.getAll
+  asyncHandler(controller.getAll)
 )
 
 router.get(
   "/:id",
   authMiddleware,
-  controller.getById
+  asyncHandler(controller.getById)
 )
 
 router.post(
@@ -28,7 +29,7 @@ router.post(
     action: AuditAction.create,
     module: 'inventory-loan',
   }),
-  controller.create
+  asyncHandler(controller.create)
 )
 
 router.put(
@@ -39,7 +40,7 @@ router.put(
     action: AuditAction.update,
     module: 'inventory-loan',
   }),
-  controller.update
+  asyncHandler(controller.update)
 )
 
 router.put(
@@ -50,7 +51,7 @@ router.put(
     action: AuditAction.update,
     module: 'inventory-loan',
   }),
-  controller.returnLoan
+  asyncHandler(controller.returnLoan)
 )
 
 router.delete(
@@ -61,7 +62,7 @@ router.delete(
     action: AuditAction.delete,
     module: 'inventory-loan',
   }),
-  controller.delete
+  asyncHandler(controller.delete)
 )
 
 export default router

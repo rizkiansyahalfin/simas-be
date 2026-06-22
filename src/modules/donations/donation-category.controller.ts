@@ -1,10 +1,10 @@
 import type {
   Request,
-  Response,
-  NextFunction
+  Response
 } from "express"
 
 import { z } from "zod"
+import { asyncHandler } from "../../utils/async-handler"
 
 import {
   DonationCategoryService
@@ -16,14 +16,10 @@ const createSchema = z.object({
 })
 
 export const getDonationCategories =
-  async (
+  asyncHandler(async (
     _req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
   ) => {
-
-    try {
-
       const data =
         await DonationCategoryService.getAll()
 
@@ -31,21 +27,13 @@ export const getDonationCategories =
         status: "success",
         data
       })
-
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 
 export const createDonationCategory =
-  async (
+  asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
   ) => {
-
-    try {
-
       const validated =
         createSchema.parse(req.body)
 
@@ -58,8 +46,4 @@ export const createDonationCategory =
         status: "success",
         data
       })
-
-    } catch (err) {
-      next(err)
-    }
-  }
+  })

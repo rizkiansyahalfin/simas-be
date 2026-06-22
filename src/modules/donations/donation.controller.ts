@@ -1,13 +1,12 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Request, Response } from 'express'
+import { asyncHandler } from '../../utils/async-handler'
 import { DonationService } from './donation.service'
 import { createDonationSchema, rejectDonationSchema, donationQuerySchema } from './donation.validation'
 
-export const getDonations = async (
+export const getDonations = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const validated = donationQuerySchema.parse({
       status: req.query.status,
       categoryId:
@@ -25,19 +24,13 @@ export const getDonations = async (
       status: 'success',
       data: result,
     })
-  } catch (err) {
-    next(err)
-  }
-}
+})
 
 export const getDonationStats =
-  async (
+  asyncHandler(async (
     _req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
   ) => {
-
-    try {
 
       const data =
         await DonationService.getPublicStats()
@@ -46,18 +39,12 @@ export const getDonationStats =
         status: "success",
         data
       })
+  })
 
-    } catch (err) {
-      next(err)
-    }
-  }
-
-export const getDonationCertificate = async (
+export const getDonationCertificate = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const id = Number(req.params.id)
 
     if (Number.isNaN(id) || id < 1) {
@@ -76,17 +63,12 @@ export const getDonationCertificate = async (
     )
 
     return res.send(pdf)
-  } catch (err) {
-    next(err)
-  }
-}
+})
 
-export const submitDonation = async (
+export const submitDonation = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const validated = createDonationSchema.parse({
       ...req.body,
       amount: Number(req.body.amount),
@@ -98,17 +80,12 @@ export const submitDonation = async (
       status: 'success',
       data: result,
     })
-  } catch (err) {
-    next(err)
-  }
-}
+})
 
-export const verifyDonation = async (
+export const verifyDonation = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const id = Number(req.params.id)
     const userId = req.user?.id
 
@@ -122,17 +99,12 @@ export const verifyDonation = async (
       status: 'success',
       message: 'Donation verified',
     })
-  } catch (err) {
-    next(err)
-  }
-}
+})
 
-export const rejectDonation = async (
+export const rejectDonation = asyncHandler(async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  try {
     const id = Number(req.params.id)
     const userId = req.user?.id
 
@@ -148,7 +120,4 @@ export const rejectDonation = async (
       status: 'success',
       message: 'Donation rejected',
     })
-  } catch (err) {
-    next(err)
-  }
-}
+})

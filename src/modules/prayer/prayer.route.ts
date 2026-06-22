@@ -1,22 +1,23 @@
 import { Router } from "express"
 import { PrayerController } from "./prayer.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 
 const router = Router()
 
-router.get("/", PrayerController.getSchedule)
+router.get("/", asyncHandler(PrayerController.getSchedule))
 
 router.get(
   "/weekly",
-  PrayerController.getWeeklySchedule
+  asyncHandler(PrayerController.getWeeklySchedule)
 )
 
 router.post(
   "/sync",
   authMiddleware,
   rbacMiddleware("superadmin"),
-  PrayerController.sync
+  asyncHandler(PrayerController.sync)
 )
 
 export default router
