@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit"
+import rateLimit ,{ipKeyGenerator}from "express-rate-limit"
 import {
   RedisStore,
   type RedisReply,
@@ -33,7 +33,7 @@ export const adminRateLimitMiddleware =
 
         return `admin:${
           req.user?.id ??
-          req.ip
+          ipKeyGenerator(req.ip!)
         }`
       }
   })

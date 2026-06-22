@@ -6,6 +6,7 @@ import type {
 } from "./congregation.validation"
 import type { Gender } from "../../generated/enums"
 import type { Prisma } from "../../generated/client"
+import QRCode from "qrcode"
 import ExcelJS from "exceljs"
 import { parseExcelFile } from "./congregation.import"
 import type {
@@ -49,6 +50,22 @@ export const CongregationService = {
 
     return CongregationRepository.softDelete(id)
   },
+  async generateQrCode(id: number) {
+  const congregation =
+    await CongregationRepository.findById(id)
+
+  if (!congregation) {
+    throw new Error("CONGREGATION_NOT_FOUND")
+  }
+
+  const qrCode =
+    await QRCode.toDataURL(congregation.uuid)
+
+  return {
+    uuid: congregation.uuid,
+    qrCode
+  }
+},
 
   async exportExcel() {
   const congregations =
