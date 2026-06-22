@@ -1,12 +1,36 @@
-import { DonationService } from "../donation.service"
 import { DonationRepository } from "../donation.repository"
 import { NotificationTrigger } from "../../notification/notification.trigger"
-import * as CampaignService from "../../campaign/campaign.service"
 
-jest.mock("../donation.repository")
-jest.mock("../../notification/notification.trigger")
-jest.mock("../../campaign/campaign.service")
-jest.mock("../../mosque-profile/mosque-profile.service")
+jest.mock("../donation.repository", () => ({
+  DonationRepository: {
+    create: jest.fn(),
+    update: jest.fn(),
+    findById: jest.fn(),
+    findAll: jest.fn(),
+    getPublicStats: jest.fn()
+  }
+}))
+
+jest.mock("../../mosque-profile/mosque-profile.service", () => ({
+  MosqueProfileService: {
+    getProfile: jest.fn()
+  }
+}))
+
+jest.mock("../../notification/notification.trigger", () => ({
+  NotificationTrigger: {
+    donationCreated: jest.fn(),
+    donationVerified: jest.fn(),
+    campaignReached: jest.fn()
+  }
+}))
+
+jest.mock("../../campaign/campaign.service", () => ({
+  getCampaignProgress: jest.fn()
+}))
+
+import {DonationService} from "../donation.service"
+import * as CampaignService from "../../campaign/campaign.service"
 
 describe("DonationService", () => {
 

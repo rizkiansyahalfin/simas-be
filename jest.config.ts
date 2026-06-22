@@ -1,7 +1,6 @@
 import type { Config } from "jest"
 
 const config: Config = {
-
   preset: "ts-jest",
 
   testEnvironment: "node",
@@ -14,27 +13,38 @@ const config: Config = {
     "**/*.spec.ts"
   ],
 
+  setupFilesAfterEnv: [
+    "<rootDir>/src/tests/setup.ts"
+  ],
+
+  moduleFileExtensions: [
+    "ts",
+    "js",
+    "json"
+  ],
+
   collectCoverage: true,
 
   collectCoverageFrom: [
-
     "src/modules/auth/**/*.ts",
-
     "src/modules/finance/**/*.ts",
+    "src/modules/donations/**/*.ts",
 
-    "src/modules/donation/**/*.ts",
-
-    "src/modules/zis/**/*.ts",
-
+    "!**/*.controller.ts",
     "!**/*.route.ts",
+    "!**/*.validation.ts",
     "!**/*.type.ts",
-    "!**/*.validation.ts"
+    "!**/*.pdf.ts",
+    "!**/*.excel.ts"
   ],
 
-  coverageDirectory:
-    "coverage",
+  coverageDirectory: "coverage",
 
-  clearMocks: true
+  clearMocks: true,
+
+  resetMocks: true,
+
+  restoreMocks: true
 }
 
 export default config
