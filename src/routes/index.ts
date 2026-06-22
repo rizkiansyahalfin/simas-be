@@ -69,8 +69,6 @@ router.use('/notifications', notificationRouter)
 router.use('/attendance', attendanceRouter)
 router.use("/payments", paymentRoute)
 router.use("/backup", backupRouter)
-
-
 router.use("/health", healthRouter)
 
 

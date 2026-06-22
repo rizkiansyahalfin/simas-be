@@ -108,5 +108,40 @@ export const CongregationController = {
         status: "success",
         message: "Congregation deleted successfully"
       })
+<<<<<<< HEAD
   })
 }
+=======
+    } catch (err) {
+      next(err)
+    }
+  },
+  async getQrCode(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = Number(req.params.id)
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid congregation ID"
+      })
+    }
+
+    const result =
+      await CongregationService.generateQrCode(id)
+
+    res.json({
+      status: "success",
+      data: result
+    })
+
+  } catch (err) {
+    next(err)
+  }
+},
+}
+>>>>>>> feat/be-congregation-qr-code

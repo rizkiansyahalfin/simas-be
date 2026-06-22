@@ -13,4 +13,4 @@ redis.on("error", (error: Error) => {
   console.error("Redis Error:", error)
 })
 
-export default redis
+export default redis  

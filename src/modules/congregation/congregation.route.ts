@@ -59,6 +59,12 @@ router.patch(
 )
 
 router.get(
+  "/:id/qr-code",
+  authMiddleware,
+  controller.getQrCode
+)
+
+router.get(
   "/export",
   authMiddleware,
   asyncHandler(controller.export)
