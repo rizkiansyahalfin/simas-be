@@ -1,12 +1,63 @@
-import { AuthService } from "../auth.service"
-import { UserService } from "../user.service"
 import { TwoFactorService } from "../twofactor.service"
 import { TokenService } from "../token.service"
 
-jest.mock("../user.service")
-jest.mock("../auth.repository")
-jest.mock("../twofactor.service")
-jest.mock("../token.service")
+jest.mock("../auth.repository", () => ({
+  AuthRepository: {
+    createRefreshToken: jest.fn(),
+    findRefreshToken: jest.fn(),
+    deleteRefreshToken: jest.fn(),
+    findPasswordResetToken: jest.fn(),
+    updatePassword: jest.fn(),
+    deleteAllRefreshTokens: jest.fn(),
+    createPasswordResetToken: jest.fn(),
+    markPasswordResetTokenUsed: jest.fn(),
+    findByEmail: jest.fn(),
+
+    updateTwoFactorSecret: jest.fn(),
+    enableTwoFactor: jest.fn(),
+    disableTwoFactor: jest.fn()
+  }
+}))
+
+jest.mock("../user.service", () => ({
+  UserService: {
+    findById: jest.fn(),
+    validateCredentials: jest.fn(),
+    toPublic: jest.fn()
+  }
+}))
+
+jest.mock("../token.service", () => ({
+  TokenService: {
+    createAccessToken: jest.fn(),
+    createRefreshToken: jest.fn(),
+    createTempTwoFactorToken: jest.fn()
+  }
+}))
+
+jest.mock("../twofactor.service", () => ({
+  TwoFactorService: {
+    verifyTotp: jest.fn(),
+    generateSecret: jest.fn(),
+    generateQrCode: jest.fn()
+  }
+}))
+
+jest.mock("../token-blacklist", () => ({
+  TokenBlacklistService: {
+    blacklistToken: jest.fn()
+  }
+}))
+
+jest.mock("../../mail/mail.service", () => ({
+  MailService: {
+    sendPasswordResetEmail: jest.fn(),
+    sendPasswordChangedEmail: jest.fn()
+  }
+}))
+
+import { AuthService } from "../auth.service"
+import { UserService } from "../user.service"
 
 describe("AuthService", () => {
 

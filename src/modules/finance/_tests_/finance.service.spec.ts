@@ -1,9 +1,28 @@
-import * as FinanceService from "../finance.service"
 import * as repo from "../finance.repository"
-import * as domain from "../finance.domain"
 
-jest.mock("../finance.repository")
-jest.mock("../finance.domain")
+jest.mock("../finance.repository", () => ({
+  findSummaryData: jest.fn(),
+  findCashTransactions: jest.fn(),
+  countCashTransactions: jest.fn(),
+  findCashTransactionById: jest.fn(),
+  createCashTransaction: jest.fn(),
+  updateCashTransaction: jest.fn(),
+  softDeleteCashTransaction: jest.fn(),
+
+  findZisTransactions: jest.fn(),
+  countZisTransactions: jest.fn(),
+  findZisTransactionById: jest.fn(),
+  createZisTransaction: jest.fn(),
+  updateZisTransaction: jest.fn(),
+  softDeleteZisTransaction: jest.fn()
+}))
+
+jest.mock("../finance.domain", () => ({
+  calculateSummary: jest.fn()
+}))
+
+import * as FinanceService from "../finance.service"
+import * as domain from "../finance.domain"
 
 describe("FinanceService", () => {
 
@@ -23,8 +42,13 @@ describe("FinanceService", () => {
 
       ;(domain.calculateSummary as jest.Mock)
         .mockReturnValue({
-          income: 1000,
-          expense: 500
+          totalIncome: 1000,
+          totalExpense: 500,
+          cashIncome: 1000,
+          cashExpense: 500,
+          zisIncome: 0,
+          zisDistribution: 0,
+          balance: 500
         })
 
       const result =
