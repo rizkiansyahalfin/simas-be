@@ -14,6 +14,7 @@ import { requestLogger } from "./middlewares/request-logger.middleware"
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
 import { errorMiddleware } from "./middlewares/error.middleware";
+import docsRouter from "./docs/docs.route";
 
 dotenv.config();
 
@@ -84,6 +85,9 @@ app.use((_req, res, next) => {//'req' is declared but its value is never read.
 
   next();
 });
+
+// API Documentation
+app.use("/api-docs", docsRouter);
 
 app.use("/api", routes);
 
