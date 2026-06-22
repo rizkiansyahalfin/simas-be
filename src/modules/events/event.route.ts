@@ -2,6 +2,7 @@ import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 
 import { EventController } from "./event.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 
 import { uploadEventPoster } from "../../middlewares/upload.middleware"
@@ -12,7 +13,7 @@ import { auditMiddleware } from '../audit/audit.middleware'
 const router = Router()
 
 // PUBLIC
-router.get("/", EventController.getAll)
+router.get("/", asyncHandler(EventController.getAll))
 
 // ADMIN
 router.post(
@@ -27,7 +28,7 @@ router.post(
     action: AuditAction.create,
     module: "events",
   }),
-  EventController.create
+  asyncHandler(EventController.create)
 )
 
 router.put(
@@ -42,7 +43,7 @@ router.put(
     action: AuditAction.update,
     module: "events",
   }),
-  EventController.update
+  asyncHandler(EventController.update)
 )
 
 router.patch(
@@ -56,7 +57,7 @@ router.patch(
     action: AuditAction.update,
     module: 'events',
   }),
-  EventController.updateStatus
+  asyncHandler(EventController.updateStatus)
 )
 
 router.delete(
@@ -66,7 +67,7 @@ router.delete(
     "superadmin",
     "admin_kegiatan"
   ),
-  EventController.delete
+  asyncHandler(EventController.delete)
 )
 
 export default router

@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { UserController } from "./user.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -10,14 +11,14 @@ const router = Router()
 
 router.use(authMiddleware, rbacMiddleware("superadmin"))
 
-router.get("/", UserController.getAll)
+router.get("/", asyncHandler(UserController.getAll))
 router.post(
   "/",
   auditMiddleware({
     action: AuditAction.create,
     module: 'users',
   }),
-  UserController.create
+  asyncHandler(UserController.create)
 )
 router.put(
   "/:id",
@@ -25,23 +26,23 @@ router.put(
     action: AuditAction.update,
     module: 'users',
   }),
-  UserController.update
+  asyncHandler(UserController.update)
 )
 
 router.get(
   "/profile",
   authMiddleware,
-  UserController.getProfile
+  asyncHandler(UserController.getProfile)
 )
 
 router.put(
   "/profile",
   authMiddleware,
   uploadProfileImage.single("photo"),
-  UserController.updateProfile
+  asyncHandler(UserController.updateProfile)
 )
 
-router.patch("/:id/activate", UserController.activate)
-router.patch("/:id/deactivate", UserController.deactivate)
+router.patch("/:id/activate", asyncHandler(UserController.activate))
+router.patch("/:id/deactivate", asyncHandler(UserController.deactivate))
 
 export default router

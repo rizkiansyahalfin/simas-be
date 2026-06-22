@@ -4,6 +4,7 @@ import { Router } from 'express'
 import { AuditAction } from '../../generated/client'
 
 import * as campaignController from './campaign.controller'
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   authMiddleware,
@@ -24,17 +25,17 @@ const router = Router()
 // Public
 router.get(
   '/',
-  campaignController.getCampaigns
+  asyncHandler(campaignController.getCampaigns)
 )
 
 router.get(
   '/:id',
-  campaignController.getCampaignById
+  asyncHandler(campaignController.getCampaignById)
 )
 
 router.get(
   '/:id/progress',
-  campaignController.getCampaignProgress
+  asyncHandler(campaignController.getCampaignProgress)
 )
 
 // Protected
@@ -49,7 +50,7 @@ router.post(
     action: AuditAction.create,
     module: 'campaigns',
   }),
-  campaignController.createCampaign
+  asyncHandler(campaignController.createCampaign)
 )
 
 router.put(
@@ -63,7 +64,7 @@ router.put(
     action: AuditAction.update,
     module: 'campaigns',
   }),
-  campaignController.updateCampaign
+  asyncHandler(campaignController.updateCampaign)
 )
 
 router.delete(
@@ -76,7 +77,7 @@ router.delete(
     action: AuditAction.delete,
     module: 'campaigns',
   }),
-  campaignController.deleteCampaign
+  asyncHandler(campaignController.deleteCampaign)
 )
 
 export default router

@@ -24,6 +24,8 @@ JWT_2FA_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
 
 REDIS_URL=redis://localhost:6379
 
+LOG_LEVEL=debug
+
 # 2FA
 TWO_FACTOR_APP_NAME=SIMAS
 

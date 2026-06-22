@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { AttendanceController } from "./attendance.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -8,22 +9,22 @@ import { auditMiddleware } from '../audit/audit.middleware'
 const router = Router()
 
 // Public
-router.get("/", AttendanceController.getAll)
+router.get("/", asyncHandler(AttendanceController.getAll))
 router.get(
-  "/report",
+	"/report",
   authMiddleware,
   rbacMiddleware("superadmin", "admin_kegiatan"),
-  AttendanceController.report
+	asyncHandler(AttendanceController.report)
 )
-router.get("/:id", AttendanceController.getById)
-router.post("/checkin", AttendanceController.checkIn)
+router.get("/:id", asyncHandler(AttendanceController.getById))
+router.post("/checkin", asyncHandler(AttendanceController.checkIn))
 
 router.post(
 	"/",
 	authMiddleware,
 	rbacMiddleware("superadmin", "admin_kegiatan"),
 	auditMiddleware({ action: AuditAction.create, module: 'attendance' }),
-	AttendanceController.create
+	asyncHandler(AttendanceController.create)
 )
 
 router.put(
@@ -31,7 +32,7 @@ router.put(
 	authMiddleware,
 	rbacMiddleware("superadmin", "admin_kegiatan"),
 	auditMiddleware({ action: AuditAction.update, module: 'attendance' }),
-	AttendanceController.update
+	asyncHandler(AttendanceController.update)
 )
 
 router.delete(
@@ -39,7 +40,7 @@ router.delete(
 	authMiddleware,
 	rbacMiddleware("superadmin", "admin_kegiatan"),
 	auditMiddleware({ action: AuditAction.delete, module: 'attendance' }),
-	AttendanceController.delete
+	asyncHandler(AttendanceController.delete)
 )
 
 export default router

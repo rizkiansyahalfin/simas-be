@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { AuditAction } from '../../generated/client'
 import * as jumatScheduleController from './jumat-schedule.controller';
+import { asyncHandler } from '../../utils/async-handler';
 import { authMiddleware } from '../../middlewares/auth.middleware';
 import { auditMiddleware } from '../audit/audit.middleware';
 
 const router = Router();
 
-router.get('/', authMiddleware, jumatScheduleController.getAll);
-router.get('/:id', authMiddleware, jumatScheduleController.getById);
+router.get('/', authMiddleware, asyncHandler(jumatScheduleController.getAll));
+router.get('/:id', authMiddleware, asyncHandler(jumatScheduleController.getById));
 router.post(
   '/',
   authMiddleware,
@@ -15,7 +16,7 @@ router.post(
     action: AuditAction.create,
     module: 'jumat-schedules',
   }),
-  jumatScheduleController.create
+  asyncHandler(jumatScheduleController.create)
 );
 router.put(
   '/:id',
@@ -24,7 +25,7 @@ router.put(
     action: AuditAction.update,
     module: 'jumat-schedules',
   }),
-  jumatScheduleController.update
+  asyncHandler(jumatScheduleController.update)
 );
 
 export default router;

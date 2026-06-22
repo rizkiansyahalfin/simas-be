@@ -14,7 +14,11 @@ export type CongregationReportData =
   Prisma.CongregationGetPayload<{
     include: {
       mustahik: true
-      attendanceRecords: true
+      attendanceRecords: {
+        include: {
+          session: true
+        }
+      }
     }
   }>
 
@@ -25,11 +29,11 @@ export type MustahikStatistic = {
   }
 }
 
-export type AttendanceStatistic = {
-  congregationId: number
-  _count: {
-    congregationId: number
-  }
+export type CongregationReportPayload = {
+  congregations: CongregationReportData[]
+  mustahikStats: MustahikStatistic[]
+  totalSessions: number
+  totalAttendanceRecords: number
 }
 
 export type DonationReport = Donation & {
@@ -154,4 +158,71 @@ export type InventoryReportPdfPayload = {
   }
 
   inventories: InventoryReportPdfItem[]
+}
+
+export type AnnualReportQuery = {
+  year: number
+}
+
+export type AnnualReportResponse = {
+  year: number
+
+  finance: {
+    income: number
+    expense: number
+    balance: number
+    transactionCount: number
+  }
+
+  zis: {
+    receipts: number
+    distributions: number
+    balance: number
+    transactionCount: number
+  }
+
+  donations: {
+    totalAmount: number
+    verifiedAmount: number
+    pendingAmount: number
+    totalDonations: number
+  }
+
+  campaigns: {
+    total: number
+    active: number
+    completed: number
+    cancelled: number
+    totalRaised: number
+  }
+
+  events: {
+    total: number
+    upcoming: number
+    ongoing: number
+    completed: number
+    cancelled: number
+  }
+
+  attendance: {
+    totalSessions: number
+    totalRecords: number
+    averageAttendancePerSession: number
+  }
+
+  congregations: {
+    total: number
+    active: number
+    mustahik: number
+  }
+
+  mustahik: {
+    total: number
+    active: number
+    totalDistributed: number
+    byCategory: {
+      category: string
+      count: number
+    }[]
+  }
 }

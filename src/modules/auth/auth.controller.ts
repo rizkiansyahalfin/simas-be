@@ -1,4 +1,6 @@
 import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
+import { AppError } from "../../errors/app-error"
 import { AuthService } from "./auth.service"
 import { AuthUtils } from "./auth.utils"
 import { LoginRequest, LoginSuccessResponse, VerifyLogin2FARequest } from "./auth.type"
@@ -13,21 +15,20 @@ import {
 
 
 export const AuthController = {
-  async verifyTwoFactor(
+  verifyTwoFactor: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     const userId =
       req.user?.id
 
     if (!userId) {
-      return res.status(401).json({
-        success: false,
-        error_code: "UNAUTHORIZED"
-      })
+      throw new AppError(
+        "UNAUTHORIZED",
+        "Unauthorized",
+        401
+      )
     }
 
     const { otpCode } =
@@ -45,34 +46,22 @@ export const AuthController = {
       success: true,
       data: result
     })
+}),
 
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-},
-
-async disableTwoFactor(
+disableTwoFactor: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     const userId =
       req.user?.id
 
     if (!userId) {
-      return res.status(401).json({
-        success: false,
-        error_code: "UNAUTHORIZED"
-      })
+      throw new AppError(
+        "UNAUTHORIZED",
+        "Unauthorized",
+        401
+      )
     }
 
     const { otpCode } =
@@ -90,21 +79,9 @@ async disableTwoFactor(
       success: true,
       data: result
     })
+}),
 
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-},
-
-  async login(req: Request, res: Response) {
-    try {
+  login: asyncHandler(async (req: Request, res: Response) => {
       const { email, password, otpCode }: LoginRequest = loginSchema.parse(req.body)
       const result = await AuthService.login({ email, password, otpCode })
 
@@ -124,17 +101,9 @@ async disableTwoFactor(
           user: result.user
         }
       })
-    } catch (error: unknown) {
-      const errorCode = error instanceof Error ? error.message : String(error)
-      return res.status(401).json({
-        success: false,
-        error_code: errorCode
-      })
-    }
-  },
+  }),
 
-  async verifyLoginTwoFactor(req: Request, res: Response) {
-    try {
+  verifyLoginTwoFactor: asyncHandler(async (req: Request, res: Response) => {
       const { tempToken, token }: VerifyLogin2FARequest = verifyLoginTwoFactorSchema.parse(req.body)
       const result: LoginSuccessResponse = await AuthService.verifyLoginTwoFactor(tempToken, token)
 
@@ -147,24 +116,17 @@ async disableTwoFactor(
           user: result.user
         }
       })
-    } catch (error: unknown) {
-      const errorCode = error instanceof Error ? error.message : String(error)
-      return res.status(401).json({
-        success: false,
-        error_code: errorCode
-      })
-    }
-  },
+  }),
 
-  async setupTwoFactor(req: Request, res: Response) {
-    try {
+  setupTwoFactor: asyncHandler(async (req: Request, res: Response) => {
       const userId = req.user?.id
 
       if (!userId) {
-        return res.status(401).json({
-          success: false,
-          error_code: "UNAUTHORIZED"
-        })
+        throw new AppError(
+          "UNAUTHORIZED",
+          "Unauthorized",
+          401
+        )
       }
 
       const result = await AuthService.setupTwoFactor(userId)
@@ -173,26 +135,17 @@ async disableTwoFactor(
         success: true,
         data: result
       })
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        error_code:
-          error instanceof Error
-            ? error.message
-            : "UNKNOWN_ERROR"
-      })
-    }
-  },
+  }),
 
-  async refresh(req: Request, res: Response) {
-    try {
+  refresh: asyncHandler(async (req: Request, res: Response) => {
       const refreshToken = AuthUtils.getRefreshTokenFromRequest(req)
 
       if (!refreshToken) {
-        return res.status(401).json({
-          success: false,
-          error_code: "REFRESH_TOKEN_REQUIRED"
-        })
+        throw new AppError(
+          "REFRESH_TOKEN_REQUIRED",
+          "Refresh token is required",
+          401
+        )
       }
 
       const result = await AuthService.refresh(refreshToken)
@@ -201,19 +154,12 @@ async disableTwoFactor(
         success: true,
         data: result
       })
-    } catch {
-      return res.status(401).json({
-        success: false,
-        error_code: "INVALID_REFRESH_TOKEN"
-      })
-    }
-  },
-  async forgotPassword(
+  }),
+
+  forgotPassword: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     const { email } =
       forgotPasswordSchema.parse(
@@ -230,24 +176,12 @@ async disableTwoFactor(
       message:
         "Jika email terdaftar, link reset password telah dikirim"
     })
+}),
 
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-},
-async resetPassword(
+resetPassword: asyncHandler(async (
   req: Request,
   res: Response
-) {
-
-  try {
+) => {
 
     const {
       token,
@@ -268,16 +202,5 @@ async resetPassword(
       message:
         "Password berhasil diubah"
     })
-
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      error_code:
-        error instanceof Error
-          ? error.message
-          : "UNKNOWN_ERROR"
-    })
-  }
-}
+})
 }

@@ -1,21 +1,22 @@
 import type { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { MosqueProfileService } from "./mosque-profile.service"
 import { updateMosqueProfileSchema } from "./mosque-profile.validation"
 
 export const MosqueProfileController = {
-  async get(req: Request, res: Response) {
+  get: asyncHandler(async (req: Request, res: Response) => {
     const data = await MosqueProfileService.getProfile()
 
     return res.json({
       success: true,
       data
     })
-  },
+  }),
 
-  async getPublicConfig(
+  getPublicConfig: asyncHandler(async (
   req: Request,
   res: Response
-) {
+) => {
 
   const data =
     await MosqueProfileService.getPublicConfig()
@@ -24,9 +25,9 @@ export const MosqueProfileController = {
     success: true,
     data,
   })
-},
+}),
 
-  async update(req: Request, res: Response) {
+  update: asyncHandler(async (req: Request, res: Response) => {
     const parsed = updateMosqueProfileSchema.safeParse(req.body)
 
     if (!parsed.success) {
@@ -46,5 +47,5 @@ export const MosqueProfileController = {
       success: true,
       data
     })
-  }
+  })
 }

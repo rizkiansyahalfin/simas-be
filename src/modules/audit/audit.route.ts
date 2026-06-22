@@ -3,6 +3,7 @@
 import { Router } from 'express'
 
 import * as auditController from './audit.controller'
+import { asyncHandler } from '../../utils/async-handler'
 
 import {
   authMiddleware,
@@ -23,7 +24,7 @@ router.use(authMiddleware)
 router.get(
   '/',
   rbacMiddleware(Role.superadmin),
-  auditController.getAuditLogs
+  asyncHandler(auditController.getAuditLogs)
 )
 
 export default router

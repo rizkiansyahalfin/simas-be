@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import * as controller
 from "./article-category.controller"
+import { asyncHandler } from "../../utils/async-handler"
 
 import {
   authMiddleware
@@ -15,28 +16,28 @@ const router = Router()
 
 router.get(
   "/",
-  controller.getAll
+  asyncHandler(controller.getAll)
 )
 
 router.post(
   "/",
   authMiddleware,
   rbacMiddleware("superadmin"),
-  controller.create
+  asyncHandler(controller.create)
 )
 
 router.put(
   "/:id",
   authMiddleware,
   rbacMiddleware("superadmin"),
-  controller.update
+  asyncHandler(controller.update)
 )
 
 router.delete(
   "/:id",
   authMiddleware,
   rbacMiddleware("superadmin"),
-  controller.deleteCategory
+  asyncHandler(controller.deleteCategory)
 )
 
 export default router

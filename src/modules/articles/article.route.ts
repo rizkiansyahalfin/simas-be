@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { AuditAction } from '../../generated/client'
 import * as controller from "./article.controller"
+import { asyncHandler } from "../../utils/async-handler";
 import { rbacMiddleware } from "../../middlewares/rbac.middleware";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { auditMiddleware } from '../audit/audit.middleware'
 
 const router = Router()
 
-router.get("/", controller.getAll)
+router.get("/", asyncHandler(controller.getAll))
 
 router.post(
   "/",
@@ -17,7 +18,7 @@ router.post(
     action: AuditAction.create,
     module: 'articles',
   }),
-  controller.create
+  asyncHandler(controller.create)
 )
 
 router.put(
@@ -27,7 +28,7 @@ router.put(
     action: AuditAction.update,
     module: 'articles',
   }),
-  controller.update
+  asyncHandler(controller.update)
 )
 
 router.delete(
@@ -38,14 +39,14 @@ router.delete(
     action: AuditAction.delete,
     module: 'articles',
   }),
-  controller.deleteArticle
+  asyncHandler(controller.deleteArticle)
 )
 
 router.patch(
   "/:id/publish",
   authMiddleware,
   rbacMiddleware("superadmin"),
-  controller.publish
+  asyncHandler(controller.publish)
 )
 
 export default router

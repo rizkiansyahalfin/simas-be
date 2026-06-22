@@ -9,9 +9,12 @@ import path from "path";
 import {securityHeadersConfig} from "./config/security-headers.config"
 import { userRateLimitMiddleware } from "./middlewares/user-rate-limit.middleware";
 import { inputSanitizationMiddleware } from "./middlewares/input-sanitization.middleware";
+import { requestLogger } from "./middlewares/request-logger.middleware"
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
+import { errorMiddleware } from "./middlewares/error.middleware";
+import docsRouter from "./docs/docs.route";
 
 dotenv.config();
 
@@ -51,6 +54,7 @@ app.use(inputSanitizationMiddleware)
 app.use(userRateLimitMiddleware)
 app.use(limiter)
 app.use(cookieParser())
+app.use(requestLogger)
 
 app.use(
   "/uploads",
@@ -82,6 +86,11 @@ app.use((_req, res, next) => {//'req' is declared but its value is never read.
   next();
 });
 
+// API Documentation
+app.use("/api-docs", docsRouter);
+
 app.use("/api", routes);
+
+app.use( errorMiddleware )
 
 export default app;

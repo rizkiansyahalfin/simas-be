@@ -1,19 +1,17 @@
 import type {
   Request,
   Response,
-  NextFunction,
 } from "express"
 
+import { asyncHandler } from "../../utils/async-handler"
 import { createTransactionSchema, refundSchema } from "./payment.validation"
 import { PaymentService } from "./payment.service"
 
 export const PaymentController = {
-  async createTransaction(
+  createTransaction: asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
+    res: Response
+  ) => {
       const validated = createTransactionSchema.parse(req.body)
       const result = await PaymentService.createTransaction(validated)
 
@@ -21,17 +19,12 @@ export const PaymentController = {
         status: "success",
         data: result,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async getStatus(
+  getStatus: asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
+    res: Response
+  ) => {
       const orderId = req.params.orderId as string
       const result = await PaymentService.getTransactionStatus(orderId)
 
@@ -39,17 +32,12 @@ export const PaymentController = {
         status: "success",
         data: result,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async refund(
+  refund: asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
+    res: Response
+  ) => {
       const orderId = req.params.orderId
       const body = refundSchema.parse(req.body)
 
@@ -63,22 +51,14 @@ export const PaymentController = {
         status: "success",
         data: result,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async notification(
+  notification: asyncHandler(async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
+    res: Response
+  ) => {
       await PaymentService.handleNotification(req.body)
 
       res.status(200).json({ received: true })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 }

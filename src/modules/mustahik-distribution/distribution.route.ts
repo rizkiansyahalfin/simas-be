@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AuditAction } from '../../generated/client'
 import { DistributionController } from "./distribution.controller"
+import { asyncHandler } from "../../utils/async-handler"
 import { authMiddleware } from "../../middlewares/auth.middleware"
 import { rbacMiddleware } from "../../middlewares/rbac.middleware"
 import { auditMiddleware } from '../audit/audit.middleware'
@@ -11,7 +12,7 @@ router.get(
   "/",
   authMiddleware,
   rbacMiddleware("superadmin", "bendahara"),
-  DistributionController.getHistory
+  asyncHandler(DistributionController.getHistory)
 )
 
 router.post(
@@ -22,7 +23,7 @@ router.post(
     action: AuditAction.create,
     module: 'mustahik-distribution',
   }),
-  DistributionController.create
+  asyncHandler(DistributionController.create)
 )
 
 export default router

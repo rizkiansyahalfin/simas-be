@@ -1,15 +1,17 @@
 import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { ReportsService } from "./reports.service"
 import {
   monthlyFinanceQuerySchema,
   monthlyZisQuerySchema,
   weeklyFinanceQuerySchema,
   donationsReportQuerySchema,
-  inventoryReportQuerySchema
+  inventoryReportQuerySchema,
+  annualReportQuerySchema
 } from "./reports.validation"
 
 export const ReportsController = {
-  async monthlyFinance(req: Request, res: Response) {
+  monthlyFinance: asyncHandler(async (req: Request, res: Response) => {
     const query = monthlyFinanceQuerySchema.safeParse(req.query)
 
     if (!query.success) {
@@ -29,9 +31,9 @@ export const ReportsController = {
     )
 
     return res.send(pdf)
-  },
+  }),
 
-  async inventoryExcel(req: Request, res: Response) {
+  inventoryExcel: asyncHandler(async (req: Request, res: Response) => {
     const buffer = await ReportsService.generateInventoryExcel()
 
     res.setHeader(
@@ -44,9 +46,9 @@ export const ReportsController = {
     )
 
     return res.send(buffer)
-  },
+  }),
 
-  async weeklyFinanceExcel(req: Request, res: Response) {
+  weeklyFinanceExcel: asyncHandler(async (req: Request, res: Response) => {
     const query = weeklyFinanceQuerySchema.safeParse(req.query)
 
     if (!query.success) {
@@ -69,9 +71,9 @@ export const ReportsController = {
     )
 
     return res.send(buffer)
-  },
+  }),
 
-  async monthlyZis(req: Request, res: Response) {
+  monthlyZis: asyncHandler(async (req: Request, res: Response) => {
     const query = monthlyZisQuerySchema.safeParse(req.query)
 
     if (!query.success) {
@@ -96,12 +98,12 @@ export const ReportsController = {
     }
 
     return res.status(400).json({ message: 'Invalid format, only pdf is supported' })
-  },
+  }),
 
-  async donationsExcel(
+  donationsExcel: asyncHandler(async (
   req: Request,
   res: Response
-) {
+) => {
 
   const query =
     donationsReportQuerySchema
@@ -150,11 +152,12 @@ export const ReportsController = {
   )
 
   return res.send(buffer)
-},
-async inventoryFull(
+}),
+
+inventoryFull: asyncHandler(async (
   req: Request,
   res: Response
-) {
+) => {
 
   const query =
     inventoryReportQuerySchema
@@ -185,11 +188,12 @@ async inventoryFull(
   )
 
   return res.send(pdf)
-},
-async congregations(
+}),
+
+congregations: asyncHandler(async (
   req: Request,
   res: Response
-) {
+) => {
 
   const buffer =
     await ReportsService
@@ -206,5 +210,26 @@ async congregations(
   )
 
   return res.send(buffer)
-}
+}),
+
+ annualReport: asyncHandler(async (
+  req: Request,
+  res: Response
+) => {
+
+  const query =
+    annualReportQuerySchema
+      .parse(req.query)
+
+  const result =
+    await ReportsService
+      .generateAnnualReport(
+        query.year
+      )
+
+  return res.json({
+    success: true,
+    data: result
+  })
+})
 }

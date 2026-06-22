@@ -1,5 +1,7 @@
 import prisma from "../../database"
 
+import type { CongregationReportPayload } from "./reports.type"
+
 export const ReportsRepository = {
   async getWeeklyFinance({
   startDate,
@@ -312,40 +314,192 @@ export const ReportsRepository = {
     }
   })
 },
-async getCongregationReport() {
-  const congregations = await prisma.congregation.findMany({
-    where: {
-      deletedAt: null
-    },
-    include: {
-      mustahik: true,
-      attendanceRecords: true
-    },
-    orderBy: {
-      fullName: "asc"
-    }
-  })
+  async getCongregationReport():
+  Promise<CongregationReportPayload> {
 
-  const mustahikStats =
-    await prisma.mustahik.groupBy({
+    const [
+      congregations,
+      mustahikStats,
+      totalSessions,
+      totalAttendanceRecords
+    ] = await Promise.all([
+
+      prisma.congregation.findMany({
+
+        where: {
+          deletedAt: null
+        },
+
+        include: {
+
+          mustahik: true,
+
+          attendanceRecords: {
+
+            include: {
+              session: true
+            },
+
+            orderBy: {
+              checkInAt: "desc"
+            }
+          }
+        },
+
+        orderBy: {
+          fullName: "asc"
+        }
+      }),
+
+      prisma.mustahik.groupBy({
+
+        by: ["category"],
+
+        _count: {
+          category: true
+        }
+      }),
+
+      prisma.attendanceSession.count(),
+
+      prisma.attendanceRecord.count()
+    ])
+
+    return {
+      congregations,
+      mustahikStats,
+      totalSessions,
+      totalAttendanceRecords
+    }
+  },
+  async getAnnualReportData(
+  year: number
+) {
+
+  const startDate =
+    new Date(year, 0, 1)
+
+  const endDate =
+    new Date(year, 11, 31)
+
+  const [
+    cashTransactions,
+    zisTransactions,
+    distributions,
+    donations,
+    campaigns,
+    events,
+    sessions,
+    attendanceRecords,
+    congregations,
+    mustahiks,
+    mustahikCategories,
+    payments
+  ] = await Promise.all([
+
+    prisma.cashTransaction.findMany({
+      where: {
+        deletedAt: null,
+        transactionDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.zisTransaction.findMany({
+      where: {
+        deletedAt: null,
+        transactionDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.mustahikDistribution.findMany({
+      where: {
+        distributionDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.donation.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.campaign.findMany(),
+
+    prisma.event.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.attendanceSession.findMany({
+      where: {
+        sessionDate: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.attendanceRecord.findMany({
+      where: {
+        checkInAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      }
+    }),
+
+    prisma.congregation.findMany({
+      where: {
+        deletedAt: null
+      }
+    }),
+
+    prisma.mustahik.findMany(),
+
+    prisma.mustahik.groupBy({
       by: ["category"],
       _count: {
         category: true
       }
-    })
+    }),
 
-  const attendanceStats =
-    await prisma.attendanceRecord.groupBy({
-      by: ["congregationId"],
-      _count: {
-        congregationId: true
+    prisma.payment.findMany({
+      where: {
+        transactionStatus:
+          "settlement"
       }
     })
+  ])
 
   return {
+    cashTransactions,
+    zisTransactions,
+    distributions,
+    donations,
+    campaigns,
+    events,
+    sessions,
+    attendanceRecords,
     congregations,
-    mustahikStats,
-    attendanceStats
+    mustahiks,
+    mustahikCategories,
+    payments
   }
 }
 }

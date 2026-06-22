@@ -5,28 +5,29 @@ import { rbacMiddleware } from '../../middlewares/rbac.middleware'
 import { auditMiddleware } from '../audit/audit.middleware'
 import { uploadDonationProof } from '../../middlewares/upload.middleware'
 import * as controller from './donation.controller'
+import { asyncHandler } from '../../utils/async-handler'
 
 const router = Router()
 
 // PUBLIC
-router.post('/', uploadDonationProof.single('proof'), controller.submitDonation)
+router.post('/', uploadDonationProof.single('proof'), asyncHandler(controller.submitDonation))
 
 // ADMIN
 router.get(
   '/',
   authMiddleware,
   rbacMiddleware('bendahara', 'superadmin'),
-  controller.getDonations
+  asyncHandler(controller.getDonations)
 )
 
 router.get(
   '/:id/certificate',
-  controller.getDonationCertificate
+  asyncHandler(controller.getDonationCertificate)
 )
 
 router.get(
   "/stats",
-  controller.getDonationStats
+  asyncHandler(controller.getDonationStats)
 )
 
 router.put(
@@ -37,7 +38,7 @@ router.put(
     action: AuditAction.update,
     module: 'donations',
   }),
-  controller.verifyDonation
+  asyncHandler(controller.verifyDonation)
 )
 
 router.put(
@@ -48,7 +49,7 @@ router.put(
     action: AuditAction.update,
     module: 'donations',
   }),
-  controller.rejectDonation
+  asyncHandler(controller.rejectDonation)
 )
 
 export default router

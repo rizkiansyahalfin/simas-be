@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import {
   loanQuerySchema,
   createInventoryLoanSchema,
@@ -8,8 +9,7 @@ import {
 import { InventoryLoanService } from "./inventory-loan.service"
 
 export const InventoryLoanController = {
-  async getAll(req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (req: Request, res: Response) => {
       const query = loanQuerySchema.parse(req.query)
       const result = await InventoryLoanService.getAll(query)
 
@@ -17,13 +17,9 @@ export const InventoryLoanController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async getById(req: Request, res: Response, next: NextFunction) {
-    try {
+  getById: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -39,13 +35,9 @@ export const InventoryLoanController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const validated = createInventoryLoanSchema.parse(req.body)
       const userId = req.user?.id
 
@@ -65,13 +57,9 @@ export const InventoryLoanController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -88,13 +76,9 @@ export const InventoryLoanController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async returnLoan(req: Request, res: Response, next: NextFunction) {
-    try {
+  returnLoan: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -111,13 +95,9 @@ export const InventoryLoanController = {
         status: "success",
         data: result
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
+  delete: asyncHandler(async (req: Request, res: Response) => {
       const id = Number(req.params.id)
 
       if (isNaN(id)) {
@@ -133,8 +113,5 @@ export const InventoryLoanController = {
         status: "success",
         message: "Loan deleted successfully"
       })
-    } catch (err) {
-      next(err)
-    }
-  }
+  })
 }

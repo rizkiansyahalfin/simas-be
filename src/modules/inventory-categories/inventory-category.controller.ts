@@ -1,4 +1,5 @@
-import type { Request, Response, NextFunction } from "express"
+import type { Request, Response } from "express"
+import { asyncHandler } from "../../utils/async-handler"
 import { InventoryCategoryService } from "./inventory-category.service"
 import {
   createInventoryCategorySchema,
@@ -16,21 +17,16 @@ const parseId = (value: unknown): number => {
 }
 
 export const InventoryCategoryController = {
-  async getAll(_req: Request, res: Response, next: NextFunction) {
-    try {
+  getAll: asyncHandler(async (_req: Request, res: Response) => {
       const data = await InventoryCategoryService.getAll()
 
       res.json({
         status: "success",
         data,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    try {
+  create: asyncHandler(async (req: Request, res: Response) => {
       const payload = createInventoryCategorySchema.parse(req.body)
       const result = await InventoryCategoryService.create(payload)
 
@@ -38,13 +34,9 @@ export const InventoryCategoryController = {
         status: "success",
         data: result,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
+  update: asyncHandler(async (req: Request, res: Response) => {
       const id = parseId(req.params.id)
       const payload = updateInventoryCategorySchema.parse(req.body)
       const result = await InventoryCategoryService.update(id, payload)
@@ -53,13 +45,9 @@ export const InventoryCategoryController = {
         status: "success",
         data: result,
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
+  delete: asyncHandler(async (req: Request, res: Response) => {
       const id = parseId(req.params.id)
       await InventoryCategoryService.delete(id)
 
@@ -67,8 +55,5 @@ export const InventoryCategoryController = {
         status: "success",
         message: "Category deleted successfully",
       })
-    } catch (err) {
-      next(err)
-    }
-  },
+  }),
 }
