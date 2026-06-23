@@ -5,6 +5,7 @@ import { generateZisMonthlyPdf } from "./generators/reports.zis.pdf"
 import { generateInventoryPdf } from "./generators/reports.inventory.pdf"
 import { generateDonationsExcel } from "./exporters/reports.excel"
 import { generateCongregationExcel } from "./generators/reports.congregation.excel"
+import redis from "../../lib/redis"
 import type {
   MonthlyFinanceQuery,
   MonthlyZisQuery,
@@ -13,6 +14,8 @@ import type {
   InventoryReport,
   ZisReportPdfPayload,
 } from "./reports.type"
+
+const ANNUAL_REPORT_TTL = 300 // 5 minutes cache
 
 export const ReportsService = {
   async generateMonthlyFinancePdf({ month, year }: MonthlyFinanceQuery) {
@@ -164,6 +167,13 @@ async generateCongregationExcel() {
 async generateAnnualReport(
   year: number
 ) {
+  const cacheKey = `annual-report:${year}`
+
+  // Try Redis cache first
+  const cached = await redis.get(cacheKey)
+  if (cached) {
+    return JSON.parse(cached)
+  }
 
   const data =
     await ReportsRepository
@@ -171,122 +181,55 @@ async generateAnnualReport(
         year
       )
 
-  const financeIncome =
-    data.cashTransactions
-      .filter(
-        t =>
-          t.type === "income"
-      )
-      .reduce(
-        (sum, t) =>
-          sum +
-          Number(t.amount),
-        0
-      )
+  // Helper to extract campaign/event counts from groupBy results
+  const getCampaignCount = (status: string) => {
+    const found = data.campaigns.find(c => c.status === status)
+    return found?._count?.id ?? 0
+  }
 
-  const financeExpense =
-    data.cashTransactions
-      .filter(
-        t =>
-          t.type === "expense"
-      )
-      .reduce(
-        (sum, t) =>
-          sum +
-          Number(t.amount),
-        0
-      )
-
-  const zisReceipts =
-    data.zisTransactions
-      .reduce(
-        (sum, t) =>
-          sum +
-          Number(t.amount),
-        0
-      )
-
-  const zisDistributions =
-    data.distributions
-      .reduce(
-        (sum, d) =>
-          sum +
-          Number(d.amount),
-        0
-      )
-
-  const verifiedAmount =
-    data.donations
-      .filter(
-        d =>
-          d.status ===
-          "verified"
-      )
-      .reduce(
-        (sum, d) =>
-          sum +
-          Number(d.amount),
-        0
-      )
-
-  const pendingAmount =
-    data.donations
-      .filter(
-        d =>
-          d.status ===
-          "pending"
-      )
-      .reduce(
-        (sum, d) =>
-          sum +
-          Number(d.amount),
-        0
-      )
+  const getEventCount = (status: string) => {
+    const found = data.events.find(e => e.status === status)
+    return found?._count?.id ?? 0
+  }
 
   const totalDonations =
-    data.donations.reduce(
-      (sum, d) =>
-        sum +
-        Number(d.amount),
-      0
-    )
+    data.donationsVerifiedAmount +
+    data.donationsPendingAmount
 
-  return {
+  const result = {
 
     year,
 
     finance: {
 
       income:
-        financeIncome,
+        data.financeIncome,
 
       expense:
-        financeExpense,
+        data.financeExpense,
 
       balance:
-        financeIncome -
-        financeExpense,
+        data.financeIncome -
+        data.financeExpense,
 
       transactionCount:
-        data.cashTransactions
-          .length
+        data.financeTransactionCount
     },
 
     zis: {
 
       receipts:
-        zisReceipts,
+        data.zisReceipts,
 
       distributions:
-        zisDistributions,
+        data.zisDistributions,
 
       balance:
-        zisReceipts -
-        zisDistributions,
+        data.zisReceipts -
+        data.zisDistributions,
 
       transactionCount:
-        data.zisTransactions
-          .length
+        data.zisTransactionCount
     },
 
     donations: {
@@ -294,106 +237,74 @@ async generateAnnualReport(
       totalAmount:
         totalDonations,
 
-      verifiedAmount,
+      verifiedAmount:
+        data.donationsVerifiedAmount,
 
-      pendingAmount,
+      pendingAmount:
+        data.donationsPendingAmount,
 
       totalDonations:
-        data.donations
-          .length
+        data.donationsTotalCount
     },
 
     campaigns: {
 
       total:
-        data.campaigns.length,
+        getCampaignCount("active") +
+        getCampaignCount("completed") +
+        getCampaignCount("cancelled"),
 
       active:
-        data.campaigns.filter(
-          c =>
-            c.status ===
-            "active"
-        ).length,
+        getCampaignCount("active"),
 
       completed:
-        data.campaigns.filter(
-          c =>
-            c.status ===
-            "completed"
-        ).length,
+        getCampaignCount("completed"),
 
       cancelled:
-        data.campaigns.filter(
-          c =>
-            c.status ===
-            "cancelled"
-        ).length,
+        getCampaignCount("cancelled"),
 
       totalRaised:
-        data.payments.reduce(
-          (sum, p) =>
-            sum +
-            Number(
-              p.amount
-            ),
-          0
-        )
+        data.totalRaised
     },
 
     events: {
 
       total:
-        data.events.length,
+        getEventCount("upcoming") +
+        getEventCount("ongoing") +
+        getEventCount("completed") +
+        getEventCount("cancelled"),
 
       upcoming:
-        data.events.filter(
-          e =>
-            e.status ===
-            "upcoming"
-        ).length,
+        getEventCount("upcoming"),
 
       ongoing:
-        data.events.filter(
-          e =>
-            e.status ===
-            "ongoing"
-        ).length,
+        getEventCount("ongoing"),
 
       completed:
-        data.events.filter(
-          e =>
-            e.status ===
-            "completed"
-        ).length,
+        getEventCount("completed"),
 
       cancelled:
-        data.events.filter(
-          e =>
-            e.status ===
-            "cancelled"
-        ).length
+        getEventCount("cancelled")
     },
 
     attendance: {
 
       totalSessions:
-        data.sessions.length,
+        data.sessionCount,
 
       totalRecords:
-        data.attendanceRecords
-          .length,
+        data.attendanceRecordCount,
 
       averageAttendancePerSession:
-        data.sessions.length === 0
+        data.sessionCount === 0
           ? 0
           : Number(
               (
                 data
-                  .attendanceRecords
-                  .length /
+                  .attendanceRecordCount /
                 data
-                  .sessions
-                  .length
+                  .sessionCount
               ).toFixed(2)
             )
     },
@@ -401,38 +312,25 @@ async generateAnnualReport(
     congregations: {
 
       total:
-        data.congregations
-          .length,
+        data.congregationCount,
 
       active:
-        data.congregations
-          .filter(
-            c =>
-              c.isActive
-          ).length,
+        data.activeCongregationCount,
 
       mustahik:
-        data.congregations
-          .filter(
-            c =>
-              c.isMustahik
-          ).length
+        data.mustahikCongregationCount
     },
 
     mustahik: {
 
       total:
-        data.mustahiks.length,
+        data.mustahikCount,
 
       active:
-        data.mustahiks
-          .filter(
-            m =>
-              m.isActive
-          ).length,
+        data.activeMustahikCount,
 
       totalDistributed:
-        zisDistributions,
+        data.zisDistributions,
 
       byCategory:
         data.mustahikCategories
@@ -448,5 +346,10 @@ async generateAnnualReport(
           )
     }
   }
+
+  // Cache for 5 minutes
+  await redis.setex(cacheKey, ANNUAL_REPORT_TTL, JSON.stringify(result))
+
+  return result
 }
 }

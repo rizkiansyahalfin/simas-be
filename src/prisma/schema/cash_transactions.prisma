@@ -12,5 +12,7 @@ model CashTransaction {
   // Relations
   creator User @relation(fields: [createdBy], references: [id])
 
+  @@index([deletedAt, type, transactionDate])
+  @@index([transactionDate])
   @@map("cash_transactions")
 }

@@ -14,5 +14,7 @@ model ZisTransaction {
   creator               User                   @relation(fields: [createdBy], references: [id])
   mustahikDistributions MustahikDistribution[]
 
+  @@index([deletedAt, transactionDate])
+  @@index([transactionDate])
   @@map("zis_transactions")
 }

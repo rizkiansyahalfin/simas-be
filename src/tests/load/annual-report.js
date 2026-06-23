@@ -28,7 +28,7 @@ export default function () {
 
   const res =
     http.get(
-      `${BASE_URL}/reports/annual?year=2025`,
+      `${BASE_URL}/api/reports/annual?year=2025`,
       { headers }
     )
 

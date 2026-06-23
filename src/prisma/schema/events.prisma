@@ -15,5 +15,6 @@ model Event {
 
   creator User @relation(fields: [createdBy], references: [id])
 
+  @@index([createdAt, status])
   @@map("events")
 }

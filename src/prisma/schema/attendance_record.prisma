@@ -15,5 +15,6 @@ model AttendanceRecord {
 
   @@unique([ congregationId, sessionId ])
 
+  @@index([checkInAt])
   @@map("attendance_records")
 }
