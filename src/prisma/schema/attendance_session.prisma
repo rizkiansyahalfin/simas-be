@@ -21,5 +21,6 @@ model AttendanceSession {
 
   records AttendanceRecord[]
 
+  @@index([sessionDate])
   @@map("attendance_sessions")
 }

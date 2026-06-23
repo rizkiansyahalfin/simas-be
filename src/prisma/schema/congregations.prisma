@@ -18,5 +18,6 @@ model Congregation {
   mustahik Mustahik?
   attendanceRecords AttendanceRecord[]
 
+  @@index([deletedAt, isActive, isMustahik])
   @@map("congregations")
 }

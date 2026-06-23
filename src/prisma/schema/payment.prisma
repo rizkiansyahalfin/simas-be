@@ -35,5 +35,6 @@ model Payment {
   donation Donation  @relation(fields: [donationId], references: [id])
   campaign Campaign? @relation(fields: [campaignId], references: [id])
 
+  @@index([transactionStatus])
   @@map("payments")
 }

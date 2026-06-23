@@ -18,5 +18,6 @@ model Donation {
   category DonationCategory? @relation(fields: [categoryId], references: [id])
   payments Payment[]
 
+  @@index([createdAt, status])
   @@map("donations")
 }

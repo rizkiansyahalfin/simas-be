@@ -20,7 +20,7 @@ export default function () {
     })
 
   const res = http.post(
-    `${BASE_URL}/payments/create-transaction`,
+    `${BASE_URL}/api/payments/create-transaction`,
     payload,
     {
       headers: {

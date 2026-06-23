@@ -12,5 +12,6 @@ model MustahikDistribution {
   mustahik       Mustahik       @relation(fields: [mustahikId], references: [id])
   zisTransaction ZisTransaction @relation(fields: [zisTransactionId], references: [id])
 
+  @@index([distributionDate])
   @@map("mustahik_distributions")
 }
