@@ -14,24 +14,25 @@ export const options = {
 
 export default function () {
 
-  const payload =
-    JSON.stringify({
-      donationId: 1
-    })
+  const payload = JSON.stringify({
+    donorName: "Load Test User",
+    donorEmail: "loadtest@example.com",
+    phone: "08123456789",
+    amount: 100000,
+    categoryId: 1
+  })
 
   const res = http.post(
     `${BASE_URL}/api/payments/create-transaction`,
     payload,
     {
       headers: {
-        "Content-Type":
-          "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
 
   check(res, {
-    "transaction created":
-      r => r.status === 200
+    "transaction created": (r) => r.status === 201
   })
 }
