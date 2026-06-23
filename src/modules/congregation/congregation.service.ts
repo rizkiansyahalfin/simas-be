@@ -13,6 +13,7 @@ import type {
   PaginatedCongregations,
   CongregationImportRow,
 } from "./congregation.type"
+import { clearDashboardCache } from "../dashboard/dashboard.cache"
 
 export const CongregationService = {
   async getAll(query: CongregationQueryInput): Promise<PaginatedCongregations> {
@@ -28,7 +29,9 @@ export const CongregationService = {
   },
 
   async create(data: CreateCongregationInput) {
-    return CongregationRepository.create(data)
+    const result = await CongregationRepository.create(data)
+    await clearDashboardCache()
+    return result
   },
 
   async update(id: number, data: UpdateCongregationInput) {
@@ -38,7 +41,9 @@ export const CongregationService = {
       throw new Error("CONGREGATION_NOT_FOUND")
     }
 
-    return CongregationRepository.update(id, data)
+    const result = await CongregationRepository.update(id, data)
+    await clearDashboardCache()
+    return result
   },
 
   async delete(id: number) {
@@ -48,7 +53,9 @@ export const CongregationService = {
       throw new Error("CONGREGATION_NOT_FOUND")
     }
 
-    return CongregationRepository.softDelete(id)
+    const result = await CongregationRepository.softDelete(id)
+    await clearDashboardCache()
+    return result
   },
   async generateQrCode(id: number) {
   const congregation =
@@ -167,6 +174,7 @@ async importFile(filePath: string) {
     await CongregationRepository.createMany(
       successRows
     )
+    await clearDashboardCache()
   }
 
   return {

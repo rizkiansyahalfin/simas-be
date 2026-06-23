@@ -3,6 +3,7 @@
 import { DonationRepository } from './donation.repository'
 import { MosqueProfileService } from '../mosque-profile/mosque-profile.service'
 import { generateDonationCertificatePdf } from './donation.pdf'
+import { clearDashboardCache } from '../dashboard/dashboard.cache'
 
 import type {
   CreateDonationInput,
@@ -98,6 +99,8 @@ export const DonationService = {
         }
       )
 
+    await clearDashboardCache()
+
     await NotificationTrigger.donationVerified({
       donationId:
         updatedDonation.id,
@@ -157,7 +160,7 @@ export const DonationService = {
       )
     }
 
-    return DonationRepository.update(
+    const result = await DonationRepository.update(
       id,
       {
         status: 'rejected',
@@ -166,6 +169,10 @@ export const DonationService = {
         rejectionNote: note,
       }
     )
+
+    await clearDashboardCache()
+
+    return result
   },
 
   async generateDonationCertificate(id: number) {

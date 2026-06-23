@@ -10,6 +10,7 @@ import prisma from "../../database"
 import {
   NotificationTrigger,
 } from '../notification/notification.trigger'
+import { clearDashboardCache } from '../dashboard/dashboard.cache'
 
 export const InventoryLoanService = {
   async getAll(query: LoanQueryParams): Promise<PaginatedInventoryLoans> {
@@ -48,7 +49,9 @@ export const InventoryLoanService = {
       throw new Error("INVALID_LOAN_DATES")
     }
 
-    return InventoryLoanRepository.create(data)
+    const result = await InventoryLoanRepository.create(data)
+    await clearDashboardCache()
+    return result
   },
 
   async update(id: number, data: UpdateInventoryLoanData) {
@@ -70,7 +73,9 @@ export const InventoryLoanService = {
       }
     }
 
-    return InventoryLoanRepository.update(id, data)
+    const result = await InventoryLoanRepository.update(id, data)
+    await clearDashboardCache()
+    return result
   },
 
   async returnLoan(id: number, data: ReturnLoanData) {
@@ -92,6 +97,8 @@ export const InventoryLoanService = {
       actualReturnDate: returnDate,
       notes: data.notes || undefined
     })
+
+    await clearDashboardCache()
 
     // Update inventory condition if provided
     if (data.condition) {
@@ -136,6 +143,8 @@ export const InventoryLoanService = {
     })
   }
 
+  await clearDashboardCache()
+
   return overdueLoans.length
 },
 
@@ -150,6 +159,8 @@ export const InventoryLoanService = {
       throw new Error("CANNOT_DELETE_RETURNED_LOAN")
     }
 
-    return InventoryLoanRepository.delete(id)
+    const result = await InventoryLoanRepository.delete(id)
+    await clearDashboardCache()
+    return result
   }
 }

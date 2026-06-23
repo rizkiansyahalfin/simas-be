@@ -9,6 +9,7 @@ import {
 } from './finance.type';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { calculateSummary } from './finance.domain';
+import { clearDashboardCache } from '../dashboard/dashboard.cache';
 
 
 export const getSummary = async () => {
@@ -49,10 +50,12 @@ export const getCashTransactionById = async (id: number) => {
 };
 
 export const addCashTransaction = async (data: CreateCashInput, userId: number) => {
-  return await repo.createCashTransaction({
+  const result = await repo.createCashTransaction({
     ...data,
     createdBy: userId,
   });
+  await clearDashboardCache();
+  return result;
 };
 
 export const updateCashTransaction = async (
@@ -87,14 +90,18 @@ export const updateCashTransaction = async (
     )
   }
 
-  return await repo.updateCashTransaction(
+  const result = await repo.updateCashTransaction(
     id,
     data
   )
+  await clearDashboardCache()
+  return result
 }
 
 export const removeCashTransaction = async (id: number) => {
-  return await repo.softDeleteCashTransaction(id);
+  const result = await repo.softDeleteCashTransaction(id);
+  await clearDashboardCache()
+  return result;
 };
 
 export const getZisTransactions = async ({
@@ -121,16 +128,22 @@ export const getZisTransactionById = async (id: number) => {
 };
 
 export const addZisTransaction = async (data: CreateZisInput, userId: number) => {
-  return await repo.createZisTransaction({
+  const result = await repo.createZisTransaction({
     ...data,
     createdBy: userId,
   });
+  await clearDashboardCache()
+  return result;
 };
 
 export const updateZisTransaction = async (id: number, data: UpdateZisInput) => {
-  return await repo.updateZisTransaction(id, data);
+  const result = await repo.updateZisTransaction(id, data);
+  await clearDashboardCache()
+  return result;
 };
 
 export const removeZisTransaction = async (id: number) => {
-  return await repo.softDeleteZisTransaction(id);
+  const result = await repo.softDeleteZisTransaction(id);
+  await clearDashboardCache()
+  return result;
 };

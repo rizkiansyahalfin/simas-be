@@ -19,6 +19,8 @@ import {
   NotificationTrigger,
 } from '../notification/notification.trigger'
 
+import { clearDashboardCache } from '../dashboard/dashboard.cache'
+
 export const EventService = {
   async getAll({
     status,
@@ -49,11 +51,13 @@ export const EventService = {
       throw new Error("INVALID_DATE_FORMAT")
     }
 
-    return EventRepository.create({
+    const result = await EventRepository.create({
       ...data,
       posterUrl,
       createdBy: userId
     })
+    await clearDashboardCache()
+    return result
   },
 
   async update(id: number, data: UpdateEventData, posterUrl?: string): Promise<Event> {
@@ -81,7 +85,9 @@ export const EventService = {
       }
     }
 
-    return EventRepository.update(id, { ...data, posterUrl })
+    const result = await EventRepository.update(id, { ...data, posterUrl })
+    await clearDashboardCache()
+    return result
   },
 
   async updateStatus(id: number, status: string): Promise<Event> {
@@ -91,7 +97,9 @@ export const EventService = {
       throw new Error("EVENT_NOT_FOUND")
     }
 
-    return EventRepository.update(id, { status: status as EventStatus })
+    const result = await EventRepository.update(id, { status: status as EventStatus })
+    await clearDashboardCache()
+    return result
   },
 async sendTomorrowReminders() {
 
@@ -133,6 +141,8 @@ async sendTomorrowReminders() {
       throw new Error("EVENT_NOT_FOUND")
     }
 
-    return EventRepository.delete(id)
+    const result = await EventRepository.delete(id)
+    await clearDashboardCache()
+    return result
   }
 }
