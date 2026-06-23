@@ -3,6 +3,13 @@
 import { subMonths, startOfMonth, endOfMonth, format, } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
+import redis from "../../lib/redis";
+
+import {
+  DASHBOARD_STATS_CACHE_KEY,
+  DASHBOARD_STATS_TTL,
+} from "./dashboard.cache";
+
 import * as repo from './dashboard.repository';
 
 import type {
@@ -209,37 +216,65 @@ export const getDonationChart = async (
   };
 };
 
-export const getDashboardStats = async (): Promise<DashboardStats> => {
-  const now = new Date();
-  const startDate = startOfMonth(now);
-  const endDate = endOfMonth(now);
+export const getDashboardStats =
+  async (): Promise<DashboardStats> => {
 
-  const [
-    totalCongregations,
-    cashBalance,
-    donationsThisMonth,
-    upcomingEvents,
-    borrowedInventories,
-  ] = await Promise.all([
-    repo.countActiveCongregations(),
-    repo.getCashBalanceSummary(),
-    repo.getDonationsThisMonth(startDate, endDate),
-    repo.countUpcomingEvents(),
-    repo.countBorrowedInventories(),
-  ]);
+    const cached =
+      await redis.get(
+        DASHBOARD_STATS_CACHE_KEY
+      );
 
-  const incomeAmount = toNumber(cashBalance.income);
-  const expenseAmount = toNumber(cashBalance.expense);
-  const donationsAmount = toNumber(donationsThisMonth);
+    if (cached) {
+      return JSON.parse(cached);
+    }
 
-  return {
-    totalCongregations,
-    currentCashBalance: incomeAmount - expenseAmount,
-    donationsThisMonth: donationsAmount,
-    upcomingEvents,
-    borrowedInventories,
+    const now = new Date();
+
+    const startDate =
+      startOfMonth(now);
+
+    const endDate =
+      endOfMonth(now);
+
+    const [
+      totalCongregations,
+      cashBalance,
+      donationsThisMonth,
+      upcomingEvents,
+      borrowedInventories,
+    ] = await Promise.all([
+      repo.countActiveCongregations(),
+      repo.getCashBalanceSummary(),
+      repo.getDonationsThisMonth(
+        startDate,
+        endDate
+      ),
+      repo.countUpcomingEvents(),
+      repo.countBorrowedInventories(),
+    ]);
+
+    const result: DashboardStats = {
+      totalCongregations,
+      currentCashBalance:
+        toNumber(cashBalance.income)
+        - toNumber(cashBalance.expense),
+
+      donationsThisMonth:
+        toNumber(donationsThisMonth),
+
+      upcomingEvents,
+      borrowedInventories,
+    };
+
+    await redis.set(
+      DASHBOARD_STATS_CACHE_KEY,
+      JSON.stringify(result),
+      "EX",
+      DASHBOARD_STATS_TTL
+    );
+
+    return result;
   };
-};
 
 export const getZisChart = async (
   range: DashboardRange = '6months'

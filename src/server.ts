@@ -35,4 +35,5 @@ process.on(
 
 app.listen(PORT, () => {
   console.log(`Server jalan di http://localhost:${PORT}`);
+  console.log(`Rate Limit Test Status : ${process.env.LOAD_TEST}`);
 });

@@ -17,6 +17,15 @@ export const userRateLimitMiddleware =
     legacyHeaders: false,
     skipFailedRequests: true,
 
+    skip: () => {
+    console.log(
+      "LOAD_TEST =",
+      process.env.LOAD_TEST
+    )
+
+    return process.env.LOAD_TEST === "test"
+  },
+
     store:
       new RedisStore({
         sendCommand: (
