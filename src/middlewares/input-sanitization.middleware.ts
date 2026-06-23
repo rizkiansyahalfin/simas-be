@@ -24,7 +24,7 @@ const sanitizeValue = (value: unknown): unknown => {
 
 export const inputSanitizationMiddleware: RequestHandler = (req, _res, next) => {
   req.body = sanitizeValue(req.body) as typeof req.body
-  req.query = sanitizeValue(req.query) as typeof req.query
+  // req.query = sanitizeValue(req.query) as typeof req.query
   req.params = sanitizeValue(req.params) as typeof req.params
 
   next()

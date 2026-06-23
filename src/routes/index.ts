@@ -3,7 +3,6 @@ import {startJumatReminderJob} from "../modules/jumat-schedules/jumat-reminder.j
 import { startInventoryOverdueJob } from "../modules/inventory-loan/inventory-overdue.job"
 import { startPaymentRetryJob } from "../modules/payment/payment.cron"
 import { BackupCron }from "../modules/backup/backup.cron"
-
 import financeRouter from '../modules/finance/finance.route'
 import authRoutes from '../modules/auth/auth.route'
 import userRoutes from '../modules/auth/user.route'

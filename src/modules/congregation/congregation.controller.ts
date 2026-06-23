@@ -108,5 +108,25 @@ export const CongregationController = {
         status: "success",
         message: "Congregation deleted successfully"
       })
+    }
+  ),
+
+  getQrCode: asyncHandler(async (req: Request, res: Response) => {
+    const id = Number(req.params.id)
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid congregation ID"
+      })
+    }
+
+    const result =
+      await CongregationService.generateQrCode(id)
+
+    res.json({
+      status: "success",
+      data: result
+    })
   })
 }

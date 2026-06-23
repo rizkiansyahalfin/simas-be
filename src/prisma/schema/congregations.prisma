@@ -1,6 +1,7 @@
 
 model Congregation {
   id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
   fullName   String   @map("full_name") @db.VarChar(255)
   nik        String?  @unique @db.VarChar(50)
   address    String?  @db.Text
