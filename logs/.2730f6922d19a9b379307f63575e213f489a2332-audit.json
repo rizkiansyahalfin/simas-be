@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 60
+    },
+    "auditLog": "C:\\simas-be\\logs\\.2730f6922d19a9b379307f63575e213f489a2332-audit.json",
+    "files": [
+        {
+            "date": 1782178812396,
+            "name": "C:\\simas-be\\logs\\rejections-2026-06-23.log",
+            "hash": "63d32cf0c511844c6980feb3cab727628501e11f0a37b2312cfb570a9f7363e5"
+        }
+    ],
+    "hashType": "sha256"
+}

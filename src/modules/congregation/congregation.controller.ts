@@ -108,20 +108,10 @@ export const CongregationController = {
         status: "success",
         message: "Congregation deleted successfully"
       })
-<<<<<<< HEAD
-  })
-}
-=======
-    } catch (err) {
-      next(err)
     }
-  },
-  async getQrCode(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+  ),
+
+  getQrCode: asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id)
 
     if (isNaN(id)) {
@@ -138,10 +128,5 @@ export const CongregationController = {
       status: "success",
       data: result
     })
-
-  } catch (err) {
-    next(err)
-  }
-},
+  })
 }
->>>>>>> feat/be-congregation-qr-code
