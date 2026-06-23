@@ -37,6 +37,18 @@ async function main() {
   });
 
   console.log("🌱 Seed users success!");
+
+  await prisma.donationCategory.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      name: "Donasi Umum",
+      description: "Kategori donasi untuk keperluan umum (mock untuk testing)",
+    },
+  });
+
+  console.log("🌱 Seed donation category success!");
 }
 
 main()
