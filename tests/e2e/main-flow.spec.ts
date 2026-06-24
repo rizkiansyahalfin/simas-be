@@ -13,17 +13,9 @@ test("main business flow", async ({ request }) => {
       },
     }
   )
-
-  const loginText =
-  await loginResponse.text()
-
-    console.log(
-      loginResponse.status()
-    )
-    
-    console.log(
-      loginText
-    )
+    console.log("LOGIN")
+    console.log(loginResponse.status())
+    console.log(await loginResponse.text())
   
 
   expect(loginResponse.status()).toBe(200)
@@ -37,27 +29,42 @@ test("main business flow", async ({ request }) => {
   //
   // CREATE CONGREGATION
   //
-  const uniqueNik =
-    `${Date.now()}${Math.floor(Math.random() * 1000)}`
+  const unique =
+  Date.now().toString()
 
-  const congregationResponse =
-    await request.post(
-      "/api/congregation",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+const congregationResponse =
+  await request.post(
+    "/api/congregation",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
 
-        data: {
-          fullName: "Playwright Congregation",
-          nik: uniqueNik,
-          phone: "081234567890",
-          address: "Playwright Address",
-          gender: "male",
-          isMustahik: false,
-        },
-      }
-    )
+      data: {
+        fullName:
+          `Playwright ${unique}`,
+
+        nik:
+          `3578${unique}`,
+
+        phone:
+          `08${unique.slice(-10)}`,
+
+        address:
+          "Playwright Address",
+
+        gender:
+          "male",
+
+        isMustahik:
+          false,
+      },
+    }
+  )
+
+    console.log("CONGREGATION")
+    console.log(congregationResponse.status())
+    console.log(await congregationResponse.text())
 
   expect(congregationResponse.status()).toBe(201)
 
@@ -102,6 +109,11 @@ test("main business flow", async ({ request }) => {
       }
     )
 
+    console.log("SESSION")
+    console.log(sessionResponse.status())
+    console.log(await sessionResponse.text())
+
+
   expect(sessionResponse.status()).toBe(201)
 
   const sessionBody =
@@ -132,6 +144,10 @@ test("main business flow", async ({ request }) => {
         },
       }
     )
+
+    console.log("DONATION")
+    console.log(donationResponse.status())
+    console.log(await donationResponse.text())
 
   expect(donationResponse.status()).toBe(201)
 
