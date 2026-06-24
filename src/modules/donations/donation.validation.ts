@@ -3,8 +3,8 @@ import { z } from 'zod'
 export const createDonationSchema = z.object({
   donorName: z.string().min(3, 'Donor name must be at least 3 characters'),
   phone: z.string().min(7).max(15, 'Invalid phone format').optional(),
-  amount: z.number().positive('Amount must be greater than 0'),
-  categoryId: z.number().int().positive('Category ID must be a positive integer'),
+  amount: z.coerce.number().positive('Amount must be greater than 0'),
+  categoryId: z.coerce.number().int().positive('Category ID must be a positive integer'),
 })
 
 export const rejectDonationSchema = z.object({
