@@ -13,17 +13,9 @@ test("main business flow", async ({ request }) => {
       },
     }
   )
-
-  const loginText =
-  await loginResponse.text()
-
-    console.log(
-      loginResponse.status()
-    )
-
-    console.log(
-      loginText
-    )
+    console.log("LOGIN")
+    console.log(loginResponse.status())
+    console.log(await loginResponse.text())
   
 
   expect(loginResponse.status()).toBe(200)
@@ -70,9 +62,9 @@ const congregationResponse =
     }
   )
 
-    console.log(
-  await congregationResponse.text()
-)
+    console.log("CONGREGATION")
+    console.log(congregationResponse.status())
+    console.log(await congregationResponse.text())
 
   expect(congregationResponse.status()).toBe(201)
 
@@ -117,6 +109,11 @@ const congregationResponse =
       }
     )
 
+    console.log("SESSION")
+    console.log(sessionResponse.status())
+    console.log(await sessionResponse.text())
+
+
   expect(sessionResponse.status()).toBe(201)
 
   const sessionBody =
@@ -147,6 +144,10 @@ const congregationResponse =
         },
       }
     )
+
+    console.log("DONATION")
+    console.log(donationResponse.status())
+    console.log(await donationResponse.text())
 
   expect(donationResponse.status()).toBe(201)
 
