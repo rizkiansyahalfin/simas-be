@@ -20,7 +20,7 @@ test("main business flow", async ({ request }) => {
     console.log(
       loginResponse.status()
     )
-    
+
     console.log(
       loginText
     )
@@ -37,27 +37,42 @@ test("main business flow", async ({ request }) => {
   //
   // CREATE CONGREGATION
   //
-  const uniqueNik =
-    `${Date.now()}${Math.floor(Math.random() * 1000)}`
+  const unique =
+  Date.now().toString()
 
-  const congregationResponse =
-    await request.post(
-      "/api/congregation",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+const congregationResponse =
+  await request.post(
+    "/api/congregation",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
 
-        data: {
-          fullName: "Playwright Congregation",
-          nik: uniqueNik,
-          phone: "081234567890",
-          address: "Playwright Address",
-          gender: "male",
-          isMustahik: false,
-        },
-      }
-    )
+      data: {
+        fullName:
+          `Playwright ${unique}`,
+
+        nik:
+          `3578${unique}`,
+
+        phone:
+          `08${unique.slice(-10)}`,
+
+        address:
+          "Playwright Address",
+
+        gender:
+          "male",
+
+        isMustahik:
+          false,
+      },
+    }
+  )
+
+    console.log(
+  await congregationResponse.text()
+)
 
   expect(congregationResponse.status()).toBe(201)
 
