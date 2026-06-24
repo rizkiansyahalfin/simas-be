@@ -11,6 +11,9 @@ export const errorMiddleware = (
   _: NextFunction
 ) => {
 
+  console.error("FULL ERROR:")
+  console.error(error)
+
   logger.error(
     error.message,
     {

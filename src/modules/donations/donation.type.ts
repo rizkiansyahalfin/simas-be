@@ -1,4 +1,5 @@
-import { Donation } from "../../generated/client"
+import { Donation, Prisma } from "../../generated/client"
+
 
 export type CreateDonationInput = {
   donorName: string
@@ -33,3 +34,14 @@ export type GetDonationsQuery = {
   page: number
   limit: number
 }
+
+export type DonationWithCategory =
+  Prisma.DonationGetPayload<{
+    include: {
+      category: {
+        select: {
+          name: true
+        }
+      }
+    }
+  }>
