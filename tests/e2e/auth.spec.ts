@@ -21,6 +21,10 @@ test("login success", async ({
       }
     )
 
+
+console.log(response.status())
+console.log(await response.text())
+
   expect(
     response.status()
   ).toBe(200)
@@ -29,6 +33,6 @@ test("login success", async ({
     await response.json()
 
   expect(
-    body.data.token
+    body.data.accessToken
   ).toBeTruthy()
 })
