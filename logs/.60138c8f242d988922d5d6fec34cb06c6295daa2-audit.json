@@ -9,6 +9,11 @@
             "date": 1782178812378,
             "name": "C:\\simas-be\\logs\\app-2026-06-23.log",
             "hash": "079e36cbfbee4ce204688ffa6ffa554955bd2c58f0a482042107306e2433b03a"
+        },
+        {
+            "date": 1782262167736,
+            "name": "C:\\simas-be\\logs\\app-2026-06-24.log",
+            "hash": "8f3a5d360de490ae4f8c2df35e1f1647fe40ceca23074021841781dcb5d0ef65"
         }
     ],
     "hashType": "sha256"
