@@ -71,7 +71,6 @@ export const submitDonation = asyncHandler(async (
 ) => {
     const validated = createDonationSchema.parse({
       ...req.body,
-      amount: Number(req.body.amount),
     })
 
     const result = await DonationService.submit(validated, req.file)
