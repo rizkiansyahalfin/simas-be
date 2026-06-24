@@ -153,10 +153,10 @@ export const DonationRepository = {
             id: true,
             username: true,
             role: true,
-
           },
         },
-        categoryId: {
+      
+        category: {
           select: {
             name: true,
           },

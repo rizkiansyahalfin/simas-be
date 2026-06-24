@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit'
-import type { Donation } from '../../generated/client'
 import type { MosqueProfile } from '../../generated/client'
+import type { DonationWithCategory } from './donation.type'
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('id-ID', {
@@ -19,9 +19,7 @@ const formatDate = (value: Date | string) => {
 }
 
 export const generateDonationCertificatePdf = async (
-  donation: Donation & {
-    category?: { name: string | null }
-  },
+  donation: DonationWithCategory,
   mosqueProfile?: MosqueProfile | null
 ) => {
   const doc = new PDFDocument({ size: 'A4', margin: 40 })
@@ -49,7 +47,7 @@ export const generateDonationCertificatePdf = async (
 
     doc.fontSize(11).text(`Nama Donatur: ${donation.donorName}`)
     doc.text(`Nominal Donasi: ${formatCurrency(Number(donation.amount))}`)
-    doc.text(`Kategori Donasi: ${donation.category?.name ?? '-'}`)
+    doc.text(`Kategori Donasi: ${donation.category?.name}`)
     doc.text(`Tanggal Donasi: ${formatDate(donation.createdAt)}`)
     doc.text(`Status Donasi: ${donation.status.toUpperCase()}`)
     doc.moveDown(1)
