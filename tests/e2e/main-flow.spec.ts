@@ -41,23 +41,12 @@ const congregationResponse =
       },
 
       data: {
-        fullName:
-          `Playwright ${unique}`,
-
-        nik:
-          `3578${unique}`,
-
-        phone:
-          `08${unique.slice(-10)}`,
-
-        address:
-          "Playwright Address",
-
-        gender:
-          "male",
-
-        isMustahik:
-          false,
+        fullName: `Playwright ${unique}`,
+        nik: `3578${unique}`,
+        phone: `08${unique.slice(-10)}`,
+        address: "Playwright Address",
+        gender: "male",
+        isMustahik: false,
       },
     }
   )
@@ -171,6 +160,10 @@ const congregationResponse =
       }
     )
 
+    console.log("VERIFY")
+    console.log(verifyResponse.status())
+    console.log(await verifyResponse.text())
+
   expect(
     verifyResponse.status()
   ).toBe(200)
@@ -189,6 +182,10 @@ const congregationResponse =
         },
       }
     )
+
+    console.log("CHECKIN")
+    console.log(checkInResponse.status())
+    console.log(await checkInResponse.text())
 
   expect(
     checkInResponse.status()
