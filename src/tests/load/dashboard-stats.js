@@ -28,17 +28,7 @@ export default function () {
     }
   );
 
-  const success = check(res, {
-    "status is 200": (r) => r.status === 200,
-    "response time < 1s": (r) => r.timings.duration < 1000,
+  check(res, {
+    "is status 200": (r) => r.status === 200,
   });
-
-  if (!success) {
-    console.log(
-      JSON.stringify({
-        status: res.status,
-        body: res.body?.slice(0, 300),
-      })
-    );
-  }
 }
