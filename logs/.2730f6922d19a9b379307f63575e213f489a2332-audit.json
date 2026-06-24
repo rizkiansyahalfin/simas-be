@@ -9,6 +9,11 @@
             "date": 1782178812396,
             "name": "C:\\simas-be\\logs\\rejections-2026-06-23.log",
             "hash": "63d32cf0c511844c6980feb3cab727628501e11f0a37b2312cfb570a9f7363e5"
+        },
+        {
+            "date": 1782262167748,
+            "name": "C:\\simas-be\\logs\\rejections-2026-06-24.log",
+            "hash": "950ccf02b917360edd56a22dea2ff348be2fed48d36a44aed6520eea9e8590ee"
         }
     ],
     "hashType": "sha256"

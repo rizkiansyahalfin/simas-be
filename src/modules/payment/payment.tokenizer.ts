@@ -5,9 +5,20 @@ import type {
   SnapTransactionResult,
 } from "./payment.type"
 
+const isLoadTest = (): boolean => {
+  return process.env.LOAD_TEST === "test"
+}
+
 export const requestMidtransSnapToken = async (
   input: SnapTransactionInput
 ): Promise<SnapTransactionResult> => {
+  if (isLoadTest()) {
+    return {
+      snapToken: `mock-snap-token-${input.orderId}`,
+      redirectUrl: `https://mock.midtrans.com/redirect/${input.orderId}`,
+    }
+  }
+
   const customerDetails = {
     first_name: input.donorName,
     email: input.donorEmail,
