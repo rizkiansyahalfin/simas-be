@@ -1,47 +1,96 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
+//src/app.ts
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
+import cookieParser from "cookie-parser";
+import path from "path";
+import {securityHeadersConfig} from "./config/security-headers.config"
+import { userRateLimitMiddleware } from "./middlewares/user-rate-limit.middleware";
+import { inputSanitizationMiddleware } from "./middlewares/input-sanitization.middleware";
+import { requestLogger } from "./middlewares/request-logger.middleware"
 
 import { corsOptions, limiter } from './config/middleware';
 import routes from './routes';
+import { errorMiddleware } from "./middlewares/error.middleware";
+import docsRouter from "./docs/docs.route";
 
 dotenv.config();
 
-const app: Application = express();
+const app = express();
 
-// ✅ MIDDLEWARE GLOBAL (URUTAN BEST PRACTICE)
-app.use(helmet()); // security headers
-app.use(cors(corsOptions)); // CORS config
-app.use(morgan('dev')); // logging
-app.use(express.json()); // parse JSON body
-app.use(express.urlencoded({ extended: true })); // form data
-app.use(limiter); // rate limiting
+// Trust proxy for correct IP detection when running behind a load balancer or reverse proxy
+app.set("trust proxy", 1)
 
-// ✅ ROUTES
-app.use('/api', routes);
+// Basic security & body parsing
+app.disable("x-powered-by")
+app.use(cors(corsOptions));
+app.use(
+  helmet({
 
-// ✅ 404 HANDLER
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Route tidak ditemukan',
-  });
-});
+    hsts:
+      securityHeadersConfig.hsts,
 
-// ✅ GLOBAL ERROR HANDLER
-interface CustomError extends Error {
-  status?: number;
-}
+    contentSecurityPolicy:
+      securityHeadersConfig
+        .contentSecurityPolicy,
+
+    frameguard: {
+      action: "deny"
+    },
+
+    noSniff: true,
+
+    referrerPolicy: {
+      policy:
+        "strict-origin-when-cross-origin"
+    }
+  })
+);
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: false, limit: "10kb" }))
+app.use(inputSanitizationMiddleware)
+app.use(userRateLimitMiddleware)
+app.use(limiter)
+app.use(cookieParser())
+app.use(requestLogger)
 
 app.use(
-  (err: CustomError, req: Request, res: Response, _next: NextFunction) => {
-    console.error(err.stack);
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+)
 
-    res.status(err.status || 500).json({
-      error: err.message || 'Internal Server Error',
-    });
-  }
-);
+
+// Custom Middleware: X-Request-ID
+app.use((req, res, next) => {
+  const id = uuidv4();
+  req.headers["x-request-id"] = id;
+  res.setHeader("X-Request-ID", id);
+  next();
+});
+
+// Response Time Middleware
+app.use((_req, res, next) => {//'req' is declared but its value is never read.
+  const start = Date.now();
+  const original = res.json.bind(res);
+
+  res.json = (body: unknown) => {
+    const duration = Date.now() - start;
+    res.setHeader("X-Response-Time", `${duration}ms`);
+    return original(body);
+  };
+
+  next();
+});
+
+// API Documentation
+app.use("/api-docs", docsRouter);
+
+app.use("/api", routes);
+
+app.use( errorMiddleware )
 
 export default app;

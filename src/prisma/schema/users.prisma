@@ -1,0 +1,40 @@
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  email        String   @unique @db.VarChar(100)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+
+  profileImage String?  @map("profile_image") @db.VarChar(255)
+
+  role         Role
+  isActive     Boolean  @default(true) @map("is_active")
+
+  // =====================
+  // TWO FACTOR AUTH
+  // =====================
+
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+
+  twoFactorSecret  String? @map("two_factor_secret") @db.VarChar(255)
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  articles           Article[]
+  cashTransactions   CashTransaction[]
+  zisTransactions    ZisTransaction[]
+  donationsVerified  Donation[] @relation("DonationVerifier")
+  events             Event[]
+  jumatSchedules     JumatSchedule[]
+  inventories        Inventory[]
+  inventoryLoans     InventoryLoan[]
+  galleries          Gallery[]
+  campaigns          Campaign[]
+  auditLogs          AuditLog[]
+  refreshTokens      RefreshToken[]
+  AttendanceSessions AttendanceSession[]
+  PasswordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}

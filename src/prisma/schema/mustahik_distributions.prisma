@@ -1,0 +1,17 @@
+
+model MustahikDistribution {
+  id               Int      @id @default(autoincrement())
+  mustahikId       Int      @map("mustahik_id")
+  zisTransactionId Int      @map("zis_transaction_id")
+  amount           Decimal  @db.Decimal(15, 2)
+  description      String?  @db.Text
+  distributionDate DateTime @map("distribution_date") @db.Date
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Relations
+  mustahik       Mustahik       @relation(fields: [mustahikId], references: [id])
+  zisTransaction ZisTransaction @relation(fields: [zisTransactionId], references: [id])
+
+  @@index([distributionDate])
+  @@map("mustahik_distributions")
+}

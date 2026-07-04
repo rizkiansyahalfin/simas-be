@@ -1,3 +1,21 @@
 node_modules
-
+dist
 .env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage
+.vscode
+src/prisma/generated/
+generated/
+package-lock.json
+
+/src/generated/prisma
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
